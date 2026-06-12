@@ -605,6 +605,23 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- MODAL EDITAR USUARIO -->
+<div class="modal-ov" id="modal-edit-user">
+  <div class="modal">
+    <div class="mhdr"><span class="mttl">Editar usuario</span><button class="mclose" onclick="cerrarModal('modal-edit-user')">&#215;</button></div>
+    <div class="mbody">
+      <input type="hidden" id="euf-id">
+      <div class="fg"><label class="flabel">Nombre completo</label><input type="text" class="fi" id="euf-nombre" placeholder="Nombre completo"></div>
+      <div class="frow">
+        <div class="fg"><label class="flabel">Rol</label><select class="fs" id="euf-rol"><option value="colaborador">Colaborador</option><option value="gerente">Gerente</option><option value="admin">Admin</option></select></div>
+        <div class="fg"><label class="flabel">Departamento</label><select class="fs" id="euf-dept"></select></div>
+      </div>
+      <div class="fg"><label class="flabel">Estado</label><select class="fs" id="euf-activo"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-edit-user')">Cancelar</button><button class="btn-save" onclick="guardarUsuario()">Guardar</button></div>
+  </div>
+</div>
+
 <!-- MODAL DEPARTAMENTO -->
 <div class="modal-ov" id="modal-dept">
   <div class="modal">
@@ -713,10 +730,16 @@ async function iniciarApp(user){
 // CARGA DE DATOS
 // ══════════════════════════════════════════════════════════
 async function cargarUsuarios(){
+  // Para el tablero: todos los activos del departamento
   const q=sb.from('perfiles').select('*').eq('activo',true);
   if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
   const{data}=await q.order('nombre');
   usuarios=data||[];
+}
+async function cargarTodosUsuarios(){
+  // Para Admin: todos los usuarios sin filtro
+  const{data}=await sb.from('perfiles').select('*').order('nombre');
+  return data||[];
 }
 async function cargarMatriz(){
   const q=sb.from('matriz').select('*');
@@ -1319,10 +1342,19 @@ function renderReporte(){
 function setPeriodo(p,btn){periodoActivo=p;document.querySelectorAll('.per-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderReporte();}
 
 // ADMIN
-function renderAdmin(){
+async function renderAdmin(){
+  const esAdmin=PERFIL?.rol==='admin';
+  // Admin ve todos, Gerente ve solo su departamento
+  const todosUsuarios=esAdmin ? await cargarTodosUsuarios() : usuarios;
+  // Título dinámico
+  document.querySelector('#vista-admin .proy-top .proy-titulo').textContent=
+    esAdmin ? '⚙ Administración global' : `⚙ Equipo — ${(departamentos.find(d=>d.id===DEPT_ID)||{}).nombre||'Mi departamento'}`;
+  // Mostrar/ocultar sección de departamentos (solo admin)
+  const deptSection=document.querySelector('#vista-admin .admin-section:last-child');
+  if(deptSection)deptSection.style.display=esAdmin?'':'none';
   // Usuarios
   const grid=document.getElementById('users-grid');grid.innerHTML='';
-  usuarios.forEach(u=>{
+  todosUsuarios.forEach(u=>{
     const ini=u.nombre.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase();
     const div=document.createElement('div');div.className='user-card';
     div.innerHTML=`<div class="user-avatar">${ini}</div>
@@ -1348,6 +1380,45 @@ function renderAdmin(){
   const sel=document.getElementById('uf-dept');sel.innerHTML='';
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});
 }
+function editarUsuario(id){
+  const esAdmin=PERFIL?.rol==='admin';
+  // Para buscar el usuario, buscar en todos (puede no estar en la lista filtrada)
+  const u=usuarios.find(x=>x.id===id)||{id,nombre:'',rol:'colaborador',activo:true};
+  document.getElementById('euf-id').value=id;
+  document.getElementById('euf-nombre').value=u.nombre||'';
+  document.getElementById('euf-activo').value=String(u.activo!==false);
+  // Rol: admin puede asignar cualquier rol, gerente solo colaborador/gerente
+  const selRol=document.getElementById('euf-rol');
+  selRol.innerHTML='';
+  const roles=esAdmin
+    ?[['colaborador','Colaborador'],['gerente','Gerente'],['admin','Admin']]
+    :[['colaborador','Colaborador'],['gerente','Gerente']];
+  roles.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===u.rol)o.selected=true;selRol.appendChild(o);});
+  // Departamento: admin puede mover a cualquier dept, gerente no puede cambiar dept
+  const selDept=document.getElementById('euf-dept');
+  selDept.innerHTML='<option value="">Sin departamento</option>';
+  selDept.disabled=!esAdmin;
+  departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;if(d.id===u.departamento_id)o.selected=true;selDept.appendChild(o);});
+  document.getElementById('modal-edit-user').classList.add('open');
+}
+async function guardarUsuario(){
+  const esAdmin=PERFIL?.rol==='admin';
+  const id=document.getElementById('euf-id').value;
+  const nombre=document.getElementById('euf-nombre').value.trim();
+  const rol=document.getElementById('euf-rol').value;
+  const activo=document.getElementById('euf-activo').value==='true';
+  // Solo admin puede cambiar departamento
+  const dept=esAdmin?(document.getElementById('euf-dept').value||null):DEPT_ID;
+  if(!nombre){document.getElementById('euf-nombre').focus();return;}
+  const update={nombre,rol,activo};
+  if(esAdmin)update.departamento_id=dept;
+  const{error}=await sb.from('perfiles').update(update).eq('id',id);
+  if(error){toast('Error: '+error.message);return;}
+  const idx=usuarios.findIndex(u=>u.id===id);
+  if(idx>-1)Object.assign(usuarios[idx],{nombre,rol,departamento_id:dept,activo});
+  cerrarModal('modal-edit-user');renderAdmin();toast('Usuario actualizado');
+}
+
 function abrirModalUsuario(){document.getElementById('mu-ttl').textContent='Invitar usuario';['uf-nombre','uf-email','uf-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('uf-rol').value='colaborador';const sel=document.getElementById('uf-dept');departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});document.getElementById('modal-usuario').classList.add('open');}
 async function crearUsuario(){
   const nombre=document.getElementById('uf-nombre').value.trim();
@@ -1377,8 +1448,8 @@ async function crearDept(){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 // INIT
 (async()=>{

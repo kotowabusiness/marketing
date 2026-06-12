@@ -674,13 +674,27 @@ document.getElementById('l-pass').addEventListener('keydown',e=>{if(e.key==='Ent
 async function iniciarApp(user){
   USER=user;
   // Cargar perfil
-  const{data:perfil}=await sb.from('perfiles').select('*').eq('id',user.id).single();
+  const{data:perfil, error:perfilError}=await sb.from('perfiles').select('*').eq('id',user.id).single();
+  console.log('Perfil cargado:', perfil, 'Error:', perfilError);
   PERFIL=perfil;
   DEPT_ID=perfil?.departamento_id;
+  // Si no hay perfil, crearlo con datos del user
+  if(!perfil){
+    const{data:nuevoPerfil}=await sb.from('perfiles').insert({
+      id:user.id,
+      nombre:user.user_metadata?.nombre||user.email.split('@')[0],
+      email:user.email,
+      rol:user.user_metadata?.rol||'admin',
+      departamento_id:user.user_metadata?.departamento_id||null
+    }).select().single();
+    PERFIL=nuevoPerfil;
+    DEPT_ID=nuevoPerfil?.departamento_id;
+  }
+  const rolFinal=PERFIL?.rol||'colaborador';
   // Mostrar nombre y rol en header
-  document.getElementById('h-user').innerHTML=`<strong>${perfil?.nombre||user.email}</strong> &middot; ${perfil?.rol||'colaborador'}`;
+  document.getElementById('h-user').innerHTML=`<strong>${PERFIL?.nombre||user.email}</strong> &middot; ${rolFinal}`;
   // Mostrar tab admin solo si es admin o gerente
-  if(perfil?.rol==='admin'||perfil?.rol==='gerente'){
+  if(rolFinal==='admin'||rolFinal==='gerente'){
     document.getElementById('admin-tab').style.display='inline-block';
   }
   // Cargar todos los datos

@@ -512,6 +512,10 @@ table.r-table tr:last-child td{border-bottom:none;}
         <div class="form-group"><label class="form-label">Fecha de inicio</label><input type="date" class="form-input" id="pf-inicio"></div>
         <div class="form-group"><label class="form-label">Fecha límite</label><input type="date" class="form-input" id="pf-fin"></div>
       </div>
+      <div class="form-group">
+        <label class="form-label">Fecha de entrega / lanzamiento <span style="font-weight:400;color:var(--gray3)">(deadline del proyecto)</span></label>
+        <input type="date" class="form-input" id="pf-deadline">
+      </div>
       <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="pf-estado"><option value="activo">Activo</option><option value="pausado">Pausado</option><option value="completado">Completado</option></select></div>
     </div>
     <div class="modal-footer"><button class="btn-cancel" onclick="cerrarModalProy()">Cancelar</button><button class="btn-save" onclick="guardarProyecto()">Guardar</button></div>
@@ -538,7 +542,13 @@ table.r-table tr:last-child td{border-bottom:none;}
         <div class="form-group"><label class="form-label">Estado</label><select class="form-select" id="ptf-estado"><option value="pendiente">Pendiente</option><option value="proceso">En proceso</option><option value="revision">En revisión</option><option value="aprobado">Aprobado</option></select></div>
         <div class="form-group"><label class="form-label">Prioridad</label><select class="form-select" id="ptf-prioridad2"><option value="urgente">Urgente</option><option value="normal" selected>Normal</option><option value="baja">Baja</option></select></div>
       </div>
-      <div class="form-group"><label class="form-label">Notas</label><textarea class="form-textarea" id="ptf-notas" placeholder="Instrucciones, referencias..."></textarea></div>
+      <div class="form-group"><label class="form-label">Descripción / brief</label><textarea class="form-textarea" id="ptf-notas" placeholder="Instrucciones, referencias..." oninput="schedulePTEstimate()"></textarea></div>
+      <!-- IA estimación -->
+      <div class="ia-box" id="pt-ia-box" style="display:none"><span class="ia-icon">🤖</span><div class="ia-text" id="pt-ia-text"><span class="ia-loading">Analizando...</span></div></div>
+      <div class="form-group" id="pt-horas-group" style="display:none">
+        <label class="form-label">Horas estimadas <span style="font-weight:400;color:var(--gray3)">(ajusta si es necesario)</span></label>
+        <div class="horas-wrap"><input type="number" class="form-input" id="ptf-horas" min="0.5" max="40" step="0.5" value="2"><span class="horas-hint" id="pt-horas-hint"></span></div>
+      </div>
     </div>
     <div class="modal-footer"><button class="btn-cancel" onclick="cerrarModalTareaProy()">Cancelar</button><button class="btn-save" onclick="guardarTareaProy()">Guardar</button></div>
   </div>
@@ -890,7 +900,21 @@ function renderProyectos(){
     const div=document.createElement('div');
     div.className=`proy-card ${p.estado||'activo'}`;
     div.onclick=()=>abrirDetalleProyecto(p.id);
-    const fechaMeta=p.fechaFin?`<span>📅 ${p.fechaFin}</span>`:'';
+    const alert=calcDeadlineAlert(p);
+    const hoyC=new Date();hoyC.setHours(0,0,0,0);
+    let fechaMeta='';
+    if(p.deadline){
+      const dl=new Date(p.deadline+'T00:00:00');
+      const dias=Math.round((dl-hoyC)/86400000);
+      const dStr=dias<0?`⚠ Venció hace ${-dias}d`:dias===0?'⚠ Vence hoy':dias<=3?`⚠ ${dias}d`:p.deadline;
+      const dColor=dias<=3?'var(--urgente)':'var(--gray3)';
+      fechaMeta=`<span style="color:${dColor};font-weight:${dias<=3?'700':'400'}">🎯 ${dStr}</span>`;
+    } else if(p.fechaFin){
+      fechaMeta=`<span>📅 ${p.fechaFin}</span>`;
+    }
+    if(alert&&!alert.ok){
+      fechaMeta+=`<span style="color:var(--urgente);font-size:9px;font-weight:700;">⚠ Riesgo</span>`;
+    }
     div.innerHTML=`<div class="proy-card-top"><div class="proy-card-nombre">${esc(p.nombre)}</div><span class="proy-estado-badge ${p.estado||'activo'}">${p.estado||'activo'}</span></div>
 <div class="proy-meta"><span>📋 ${ts.length} tarea${ts.length!==1?'s':''}</span><span>✓ ${aprobadas} completada${aprobadas!==1?'s':''}</span>${fechaMeta}</div>
 <div class="proy-progress-wrap"><div class="proy-progress-track"><div class="proy-progress-fill ${prog===100?'done':prog>70?'warn':''}" style="width:${prog}%"></div></div><div class="proy-progress-meta"><span>${prog}% completado</span><span>${aprobadas}/${ts.length}</span></div></div>
@@ -933,7 +957,23 @@ function renderDetalleProyecto(){
   const prog=progProyecto(p);
   document.getElementById('proy-prog-bar').style.width=prog+'%';
   document.getElementById('proy-prog-label').textContent=`${prog}% completado · ${ts.filter(t=>t.estado==='aprobado').length}/${ts.length} tareas`;
-  document.getElementById('proy-prog-fechas').textContent=p.fechaInicio&&p.fechaFin?`${p.fechaInicio} → ${p.fechaFin}`:'';
+  // Deadline alert
+  const alert=calcDeadlineAlert(p);
+  let deadlineHtml='';
+  if(p.deadline){
+    const hoy=new Date();hoy.setHours(0,0,0,0);
+    const dl=new Date(p.deadline+'T00:00:00');
+    const dias=Math.round((dl-hoy)/86400000);
+    const dStr=dias<0?`Venció hace ${-dias}d`:dias===0?'Vence hoy':dias===1?'Mañana':`${dias}d para el deadline`;
+    const dColor=dias<0?'var(--urgente)':dias<=3?'var(--warning)':'var(--verde)';
+    deadlineHtml=`<span style="font-size:11px;font-weight:700;color:${dColor};margin-left:0.75rem;">📅 ${dStr}</span>`;
+  }
+  if(alert){
+    const alertColor=alert.ok?'var(--verde)':'var(--urgente)';
+    const alertBg=alert.ok?'var(--verde-lt)':'var(--urgente-lt)';
+    deadlineHtml+=`<span style="font-size:10px;font-weight:600;color:${alertColor};background:${alertBg};padding:2px 8px;border-radius:10px;margin-left:0.5rem;">${alert.msg}</span>`;
+  }
+  document.getElementById('proy-prog-fechas').innerHTML=(p.fechaInicio&&p.fechaFin?`${p.fechaInicio} → ${p.fechaFin}`:'') + deadlineHtml;
 
   const lista=document.getElementById('proy-tareas-lista');lista.innerHTML='';
   if(!ts.length){lista.innerHTML='<div style="text-align:center;padding:3rem;color:var(--gray3);font-size:12px;">Sin tareas. Agrega la primera con el botón de arriba.</div>';return;}
@@ -1035,6 +1075,80 @@ function eliminarTareaProy(id,e){
   e.stopPropagation();
   const t=tareas.find(x=>x.id===id);if(!confirm(`¿Eliminar "${t?.titulo}"?`))return;
   tareas=tareas.filter(x=>x.id!==id);guardar();render();renderDetalleProyecto();toast('Tarea eliminada');
+}
+
+// ── IA ESTIMACIÓN TAREAS DE PROYECTO ────────────────────────────────────
+let ptEstimateTimer = null;
+function schedulePTEstimate(){
+  clearTimeout(ptEstimateTimer);
+  const titulo = document.getElementById('ptf-titulo').value.trim();
+  if(!titulo) return;
+  document.getElementById('pt-ia-box').style.display='flex';
+  document.getElementById('pt-ia-text').innerHTML='<span class="ia-loading">Analizando...</span>';
+  document.getElementById('pt-horas-group').style.display='none';
+  ptEstimateTimer = setTimeout(estimarIAPT, 900);
+}
+async function estimarIAPT(){
+  const titulo = document.getElementById('ptf-titulo').value.trim();
+  const tipo = 'otro';
+  const brief = document.getElementById('ptf-notas').value.trim();
+  if(!titulo) return;
+  const prompt=`Eres el asistente de planificación del equipo de Mercadeo de Kotowa Coffee House.
+Analiza esta tarea de campaña y estima las horas de trabajo realistas.
+Título: ${titulo}
+Brief: ${brief||'(sin brief)'}
+Contexto: tareas de campaña incluyen diseño, gestión, coordinación, fotografía, impresión, redes sociales.
+Responde SOLO JSON sin markdown: {"horas":número,"razon":"máx 12 palabras en español"}
+Rangos: simple 0.5-1h, media 2-4h, compleja 5-12h. Máx 16h.`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const parsed=JSON.parse(data.content[0].text.replace(/```json|```/g,'').trim());
+    const h=Math.max(0.5,Math.min(16,parseFloat(parsed.horas)||2));
+    document.getElementById('pt-ia-text').innerHTML=`<strong>Estimación: ${h}h</strong> — ${parsed.razon||''}`;
+    document.getElementById('ptf-horas').value=h;
+    document.getElementById('pt-horas-group').style.display='block';
+  }catch(e){
+    const h=3;
+    document.getElementById('pt-ia-text').innerHTML=`<strong>Estimación base: ${h}h</strong>`;
+    document.getElementById('ptf-horas').value=h;
+    document.getElementById('pt-horas-group').style.display='block';
+  }
+}
+
+// ── CÁLCULO DE VIABILIDAD DEL DEADLINE ───────────────────────────────────
+function calcDeadlineAlert(proy){
+  if(!proy.deadline) return null;
+  const ts = tareasProy(proy.id).filter(t=>t.estado!=='aprobado');
+  if(!ts.length) return {ok:true, msg:'Todas las tareas completadas ✓', horas:0};
+
+  // Calcular horas totales restantes por persona
+  const porPersona = {};
+  ts.forEach(t=>{
+    const r = t.responsable||'carolina';
+    porPersona[r] = (porPersona[r]||0) + (t.horas||0);
+  });
+
+  // Calcular cuándo terminaría la persona con más carga
+  const deadline = new Date(proy.deadline+'T23:59:59');
+  const hoy = new Date();
+  let maxEntrega = hoy;
+
+  Object.entries(porPersona).forEach(([resp, horas])=>{
+    const entrega = avanzarHoras(hoy, horas);
+    if(entrega > maxEntrega) maxEntrega = entrega;
+  });
+
+  const totalH = Object.values(porPersona).reduce((s,h)=>s+h,0);
+  const diasHasta = Math.round((deadline-hoy)/86400000);
+  const ok = maxEntrega <= deadline;
+
+  if(ok){
+    return {ok:true, msg:`✓ Viable · ${totalH.toFixed(0)}h restantes · Entrega est. ${maxEntrega.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`, totalH, maxEntrega};
+  } else {
+    const diasRetraso = Math.round((maxEntrega-deadline)/86400000);
+    return {ok:false, msg:`⚠ Riesgo · ${totalH.toFixed(0)}h restantes · Se completaría ${diasRetraso} día${diasRetraso>1?'s':''} después del deadline`, totalH, maxEntrega};
+  }
 }
 
 // GANTT
@@ -1206,7 +1320,7 @@ function editarProyecto(id,e){e&&e.stopPropagation();const p=proyectos.find(x=>x
 function cerrarModalProy(){document.getElementById('modal-proy').classList.remove('open');editandoProyId=null;}
 function guardarProyecto(){
   const nombre=document.getElementById('pf-nombre').value.trim();if(!nombre){document.getElementById('pf-nombre').focus();return;}
-  const datos={nombre,desc:document.getElementById('pf-desc').value.trim(),fechaInicio:document.getElementById('pf-inicio').value,fechaFin:document.getElementById('pf-fin').value,estado:document.getElementById('pf-estado').value};
+  const datos={nombre,desc:document.getElementById('pf-desc').value.trim(),fechaInicio:document.getElementById('pf-inicio').value,fechaFin:document.getElementById('pf-fin').value,deadline:document.getElementById('pf-deadline').value,estado:document.getElementById('pf-estado').value};
   if(editandoProyId){const idx=proyectos.findIndex(p=>p.id===editandoProyId);if(idx>-1)Object.assign(proyectos[idx],datos);toast('Proyecto actualizado');}
   else{proyectos.push({...datos,id:`p${Date.now()}`});toast('Proyecto creado');}
   guardarProy();cerrarModalProy();renderProyectos();
@@ -1222,6 +1336,9 @@ function abrirModalTareaProy(){
   document.getElementById('ptf-prioridad').value='normal';
   document.getElementById('ptf-estado').value='pendiente';
   document.getElementById('ptf-prioridad2').value='normal';
+  document.getElementById('ptf-horas').value='2';
+  document.getElementById('pt-ia-box').style.display='none';
+  document.getElementById('pt-horas-group').style.display='none';
   // Poblar select de dependencias
   const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';
   tareasProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});
@@ -1241,6 +1358,8 @@ function editarTareaProy(id,e){
   document.getElementById('ptf-notas').value=t.brief||'';
   document.getElementById('ptf-estado').value=t.estado||'pendiente';
   document.getElementById('ptf-prioridad2').value=t.prioridad||'normal';
+  if(t.horas){document.getElementById('ptf-horas').value=t.horas;document.getElementById('pt-ia-box').style.display='flex';document.getElementById('pt-ia-text').innerHTML=`<strong>Estimación guardada: ${t.horas}h</strong> — ajusta si cambió el alcance`;document.getElementById('pt-horas-group').style.display='block';}
+  else{document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-group').style.display='none';}
   const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';
   tareasProy().filter(x=>x.id!==id).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.titulo;if(x.id===t.depId)o.selected=true;sel.appendChild(o);});
   document.getElementById('modal-proy-tarea').classList.add('open');
@@ -1250,10 +1369,33 @@ function guardarTareaProy(){
   const titulo=document.getElementById('ptf-titulo').value.trim();if(!titulo){document.getElementById('ptf-titulo').focus();return;}
   const fechaFin=document.getElementById('ptf-fin').value;
   const nuevoEstadoPT=document.getElementById('ptf-estado').value;
-  const datos={titulo,responsable:document.getElementById('ptf-responsable').value,prioridad:document.getElementById('ptf-prioridad2').value,fechaInicio:document.getElementById('ptf-inicio').value,fechaFin,fecha:fechaFin,brief:document.getElementById('ptf-notas').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',estado:nuevoEstadoPT};
-  if(editandoPTId){const idx=tareas.findIndex(t=>t.id===editandoPTId);if(idx>-1){if(nuevoEstadoPT==='proceso'&&!tareas[idx].inicioProcess)datos.inicioProcess=Date.now();else datos.inicioProcess=tareas[idx].inicioProcess;if(nuevoEstadoPT==='aprobado'&&!tareas[idx].aprobadoEn)datos.aprobadoEn=Date.now();else datos.aprobadoEn=tareas[idx].aprobadoEn;Object.assign(tareas[idx],datos);}toast('Tarea actualizada');}
-  else{tareas.push({...datos,id:`t${Date.now()}`,estado:'pendiente',creadaEn:Date.now(),inicioProcess:null,aprobadoEn:null});toast('Tarea agregada al proyecto');}
-  guardar();cerrarModalTareaProy();render();renderDetalleProyecto();
+  const ptHoras=parseFloat(document.getElementById('ptf-horas')?.value)||null;
+  const datos={titulo,responsable:document.getElementById('ptf-responsable').value,prioridad:document.getElementById('ptf-prioridad2').value,fechaInicio:document.getElementById('ptf-inicio').value,fechaFin,fecha:fechaFin,brief:document.getElementById('ptf-notas').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',estado:nuevoEstadoPT,horas:ptHoras};
+  if(editandoPTId){
+    const idx=tareas.findIndex(t=>t.id===editandoPTId);
+    if(idx>-1){
+      if(nuevoEstadoPT==='proceso'&&!tareas[idx].inicioProcess)datos.inicioProcess=Date.now();
+      else datos.inicioProcess=tareas[idx].inicioProcess;
+      if(nuevoEstadoPT==='aprobado'&&!tareas[idx].aprobadoEn)datos.aprobadoEn=Date.now();
+      else datos.aprobadoEn=tareas[idx].aprobadoEn;
+      Object.assign(tareas[idx],datos);
+    }
+    toast('Tarea actualizada');
+  } else {
+    tareas.push({
+      ...datos,
+      id:'t'+Date.now(),
+      estado:nuevoEstadoPT||'pendiente',
+      creadaEn:Date.now(),
+      inicioProcess:nuevoEstadoPT==='proceso'?Date.now():null,
+      aprobadoEn:nuevoEstadoPT==='aprobado'?Date.now():null
+    });
+    toast('Tarea agregada al proyecto');
+  }
+  guardar();
+  cerrarModalTareaProy();
+  render();
+  if(proyActualId) renderDetalleProyecto();
 }
 
 // ── REPORTES ──────────────────────────────────────────────────────────────

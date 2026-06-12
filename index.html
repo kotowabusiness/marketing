@@ -558,7 +558,7 @@ table.r-table tr:last-child td{border-bottom:none;}
 
 <script>
 // ── CONSTANTES ──────────────────────────────────────────────────────────
-const SK='kotowa_tareas_v6', SPK='kotowa_proyectos_v3';
+const SK='kotowa_mkt_tareas_1', SPK='kotowa_mkt_proyectos_1';
 let tareas=[], proyectos=[], editandoId=null, estimateTimer=null;
 let filtros={prioridad:[],responsable:[],fecha:[],tipo:[]};
 let modoActual='kanban', kdsResp='all', periodoActivo='semana';
@@ -1445,38 +1445,56 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarModal();cerra
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 async function init(){
-  await cargar();
   document.getElementById('modo-toggle').style.display='flex';
-  // Primera visita: cargar solo proyecto Salted Caramel
-  const yaInit = await window.storage.get('kotowa_init_v3', true).catch(()=>null);
-  if(!yaInit){
-    await window.storage.set('kotowa_init_v3','1',true);
+
+  // Cargar datos desde claves definitivas
+  try{const r=await window.storage.get('kotowa_mkt_tareas_1',true);tareas=r?JSON.parse(r.value):[];}catch{tareas=[];}
+  try{const r=await window.storage.get('kotowa_mkt_proyectos_1',true);proyectos=r?JSON.parse(r.value):[];}catch{proyectos=[];}
+  
+  // Forzar Salted Caramel si el storage llegó con datos viejos sin el proyecto
+  const tieneP1=proyectos.some(p=>p.id==='p1');
+  if(!tieneP1){
+    // Limpiar todo y empezar fresco
+    tareas=tareas.filter(t=>!t.proyId||t.proyId!=='p1');
+    proyectos=proyectos.filter(p=>p.id!=='p1');
+  }
+
+  // Si no existe el proyecto Salted Caramel, crearlo
+  if(!proyectos.find(p=>p.id==='p1')){
     const hoy=new Date();
     const fmt=d=>d.toISOString().split('T')[0];
     const add=n=>{const d=new Date(hoy);d.setDate(hoy.getDate()+n);return fmt(d);};
+    proyectos=proyectos.filter(p=>p.id!=='p1'); // limpiar si hay duplicado raro
     proyectos.push({id:'p1',nombre:'Campaña Salted Caramel',desc:'Lanzamiento de bebidas de temporada.',fechaInicio:fmt(hoy),fechaFin:add(21),deadline:add(21),estado:'activo'});
-    const pts=[
-      {titulo:'Proponer y crear las bebidas con entrenadores',responsable:'carolina',prioridad:'urgente',fechaInicio:fmt(hoy),fechaFin:add(3)},
-      {titulo:'Degustar bebidas para aprobación',responsable:'carolina',prioridad:'urgente',fechaInicio:add(3),fechaFin:add(4)},
-      {titulo:'Propuesta formal para la JD',responsable:'carolina',prioridad:'normal',fechaInicio:add(4),fechaFin:add(6)},
-      {titulo:'Programar photoshoot de bebidas',responsable:'rafa',prioridad:'normal',fechaInicio:add(5),fechaFin:add(7)},
-      {titulo:'Crear arte master para aprobación',responsable:'amy',prioridad:'normal',fechaInicio:add(7),fechaFin:add(10)},
-      {titulo:'Adaptar arte en diferentes formatos',responsable:'amy',prioridad:'normal',fechaInicio:add(10),fechaFin:add(12)},
-      {titulo:'Mandar a imprimir',responsable:'rafa',prioridad:'normal',fechaInicio:add(12),fechaFin:add(13)},
-      {titulo:'Enviar material a las tiendas',responsable:'rafa',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
-      {titulo:'Correo informativo a tiendas y responsables',responsable:'carolina',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
-      {titulo:'Pedir a IT subir productos a Invu/Clau.ai',responsable:'rafa',prioridad:'normal',fechaInicio:add(6),fechaFin:add(8)},
-      {titulo:'Subir productos a PedidosYa y Ubereats',responsable:'rafa',prioridad:'normal',fechaInicio:add(8),fechaFin:add(9)},
-      {titulo:'Montar campaña en redes',responsable:'amy',prioridad:'normal',fechaInicio:add(14),fechaFin:add(21)},
-    ];
-    const ids=[];
-    pts.forEach((pt,i)=>{
-      const id='t_sc_'+i;ids.push(id);
-      tareas.push({...pt,id,tipo:'otro',estado:'pendiente',brief:'',proyId:'p1',
-        depId:i>0?ids[i-1]:null,fecha:pt.fechaFin,creadaEn:Date.now(),inicioProcess:null,aprobadoEn:null});
-    });
-    await guardar();await guardarProy();render();
+    // Solo agregar tareas de SC si no existen ya
+    const scExistentes=tareas.filter(t=>t.proyId==='p1');
+    if(!scExistentes.length){
+      const pts=[
+        {titulo:'Proponer y crear las bebidas con entrenadores',responsable:'carolina',prioridad:'urgente',fechaInicio:fmt(hoy),fechaFin:add(3)},
+        {titulo:'Degustar bebidas para aprobación',responsable:'carolina',prioridad:'urgente',fechaInicio:add(3),fechaFin:add(4)},
+        {titulo:'Propuesta formal para la JD',responsable:'carolina',prioridad:'normal',fechaInicio:add(4),fechaFin:add(6)},
+        {titulo:'Programar photoshoot de bebidas',responsable:'rafa',prioridad:'normal',fechaInicio:add(5),fechaFin:add(7)},
+        {titulo:'Crear arte master para aprobación',responsable:'amy',prioridad:'normal',fechaInicio:add(7),fechaFin:add(10)},
+        {titulo:'Adaptar arte en diferentes formatos',responsable:'amy',prioridad:'normal',fechaInicio:add(10),fechaFin:add(12)},
+        {titulo:'Mandar a imprimir',responsable:'rafa',prioridad:'normal',fechaInicio:add(12),fechaFin:add(13)},
+        {titulo:'Enviar material a las tiendas',responsable:'rafa',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
+        {titulo:'Correo informativo a tiendas y responsables',responsable:'carolina',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
+        {titulo:'Pedir a IT subir productos a Invu/Clau.ai',responsable:'rafa',prioridad:'normal',fechaInicio:add(6),fechaFin:add(8)},
+        {titulo:'Subir productos a PedidosYa y Ubereats',responsable:'rafa',prioridad:'normal',fechaInicio:add(8),fechaFin:add(9)},
+        {titulo:'Montar campaña en redes',responsable:'amy',prioridad:'normal',fechaInicio:add(14),fechaFin:add(21)},
+      ];
+      const ids=[];
+      pts.forEach((pt,i)=>{
+        const id='t_sc_'+i;ids.push(id);
+        tareas.push({...pt,id,tipo:'otro',estado:'pendiente',brief:'',proyId:'p1',
+          depId:i>0?ids[i-1]:null,fecha:pt.fechaFin,creadaEn:Date.now(),inicioProcess:null,aprobadoEn:null});
+      });
+    }
+    await window.storage.set('kotowa_mkt_tareas_1',JSON.stringify(tareas),true);
+    await window.storage.set('kotowa_mkt_proyectos_1',JSON.stringify(proyectos),true);
   }
+
+  render();
 }
 init();
 </script>

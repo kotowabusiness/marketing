@@ -355,6 +355,27 @@ table.rt tr:last-child td{border-bottom:none;}
 .loading-overlay{position:fixed;inset:0;background:var(--verde);display:flex;align-items:center;justify-content:center;z-index:999;}
 .loading-logo{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--white);letter-spacing:3px;text-transform:uppercase;animation:fade 1s ease-in-out infinite alternate;}
 @keyframes fade{from{opacity:.4}to{opacity:1}}
+/* CONFIGURACIÓN VISUAL */
+.config-section{background:var(--white);border-radius:6px;padding:1.25rem 1.5rem;box-shadow:0 1px 3px rgba(26,18,10,.07);margin-bottom:1.25rem;}
+.config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.25rem;margin-bottom:1.25rem;}
+.config-item{display:flex;flex-direction:column;gap:.5rem;}
+.config-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.8px;}
+.color-picker-wrap{display:flex;align-items:center;gap:.6rem;}
+.color-swatch{width:40px;height:40px;border-radius:6px;border:2px solid var(--gray2);cursor:pointer;flex-shrink:0;position:relative;overflow:hidden;}
+.color-swatch input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;border:none;padding:0;}
+.color-hex{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:600;color:var(--dark);width:90px;padding:6px 8px;border:1.5px solid var(--gray2);border-radius:3px;outline:none;text-transform:uppercase;}
+.color-hex:focus{border-color:var(--verde);}
+.font-btns{display:flex;flex-direction:column;gap:.4rem;}
+.font-btn{padding:8px 12px;border:1.5px solid var(--gray2);border-radius:4px;cursor:pointer;background:var(--white);color:var(--dark);font-size:13px;text-align:left;transition:all .15s;}
+.font-btn.active{border-color:var(--verde);background:var(--verde-lt);color:var(--verde);}
+.font-btn:hover:not(.active){border-color:var(--gold);}
+.config-preview{background:var(--linen);border-radius:8px;padding:1.5rem;border:1px solid var(--gray2);margin-top:1rem;}
+.config-preview-header{height:44px;border-radius:6px;display:flex;align-items:center;padding:0 1.25rem;justify-content:space-between;margin-bottom:.75rem;}
+.config-preview-title{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--white);}
+.config-preview-btn{font-size:10px;font-weight:700;padding:5px 12px;border:none;border-radius:2px;cursor:default;}
+.config-preview-card{background:var(--white);border-radius:4px;padding:.75rem;border-left:4px solid;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+.config-preview-card-title{font-size:12px;font-weight:600;margin-bottom:.35rem;}
+.config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--verde);color:var(--white);padding:9px 16px;border-radius:3px;border-left:3px solid var(--gold);font-size:12px;font-weight:500;z-index:300;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;max-width:300px;}
 .toast.show{opacity:1;transform:translateY(0);}
 @media(max-width:900px){.board{grid-template-columns:repeat(2,1fr);}.score-grid,.rsum-grid{grid-template-columns:repeat(2,1fr);}.proy-grid{grid-template-columns:1fr;}}
@@ -517,6 +538,78 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="admin-section-title">Departamentos</div>
       <div id="depts-list"></div>
       <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalDept()">+ Nuevo departamento</button></div>
+    </div>
+    <div class="admin-section" id="config-visual-section">
+      <div class="admin-section-title">&#127912; Personalización visual</div>
+      <div class="config-grid">
+        <div class="config-item">
+          <div class="config-label">Color principal</div>
+          <div class="color-picker-wrap">
+            <div class="color-swatch" id="swatch-primario"><input type="color" id="cp-primario" oninput="onColorChange('primario',this.value)"></div>
+            <input type="text" class="color-hex" id="hex-primario" maxlength="7" placeholder="#00614D" oninput="onHexChange('primario',this.value)">
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Color acento</div>
+          <div class="color-picker-wrap">
+            <div class="color-swatch" id="swatch-acento"><input type="color" id="cp-acento" oninput="onColorChange('acento',this.value)"></div>
+            <input type="text" class="color-hex" id="hex-acento" maxlength="7" placeholder="#C9A84C" oninput="onHexChange('acento',this.value)">
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Color de fondo</div>
+          <div class="color-picker-wrap">
+            <div class="color-swatch" id="swatch-fondo"><input type="color" id="cp-fondo" oninput="onColorChange('fondo',this.value)"></div>
+            <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FAF7F2" oninput="onHexChange('fondo',this.value)">
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Nombre de la app</div>
+          <input type="text" class="fi" id="config-nombre-app" placeholder="ej. Mercadeo" style="font-size:13px;" oninput="configDirty=true">
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+        <div class="config-item">
+          <div class="config-label">Tipografía de títulos</div>
+          <div class="font-btns" id="font-display-btns">
+            <button class="font-btn" style="font-family:'Libre Baskerville',serif;" onclick="setFont('display','Libre Baskerville',this)">Libre Baskerville</button>
+            <button class="font-btn" style="font-family:'Playfair Display',serif;" onclick="setFont('display','Playfair Display',this)">Playfair Display</button>
+            <button class="font-btn" style="font-family:'Merriweather',serif;" onclick="setFont('display','Merriweather',this)">Merriweather</button>
+            <button class="font-btn" style="font-family:'Georgia',serif;" onclick="setFont('display','Georgia',this)">Georgia</button>
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Tipografía de texto</div>
+          <div class="font-btns" id="font-body-btns">
+            <button class="font-btn" style="font-family:'Montserrat',sans-serif;" onclick="setFont('body','Montserrat',this)">Montserrat</button>
+            <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('body','Inter',this)">Inter</button>
+            <button class="font-btn" style="font-family:'DM Sans',sans-serif;" onclick="setFont('body','DM Sans',this)">DM Sans</button>
+            <button class="font-btn" style="font-family:'Nunito',sans-serif;" onclick="setFont('body','Nunito',this)">Nunito</button>
+          </div>
+        </div>
+      </div>
+      <!-- PREVIEW EN VIVO -->
+      <div class="config-label" style="margin-bottom:.6rem;">Vista previa</div>
+      <div class="config-preview">
+        <div class="config-preview-header" id="prev-header">
+          <span class="config-preview-title" id="prev-title">KOTOWA COFFEE HOUSE</span>
+          <span class="config-preview-btn" id="prev-btn">+ Nueva tarea</span>
+        </div>
+        <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+          <div class="config-preview-card" id="prev-card1" style="flex:1;">
+            <div class="config-preview-card-title" id="prev-card-title">Arte campaña Salted Caramel</div>
+            <span class="config-preview-badge" id="prev-badge">Urgente</span>
+          </div>
+          <div class="config-preview-card" id="prev-card2" style="flex:1;opacity:.6;">
+            <div class="config-preview-card-title">Planograma v0626</div>
+            <span class="config-preview-badge" style="background:var(--gray1);color:var(--gray3);">Normal</span>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;">
+        <button class="btn-cancel" onclick="resetConfig()">Restablecer</button>
+        <button class="btn-save" onclick="guardarConfig()">Guardar cambios</button>
+      </div>
     </div>
   </div>
 </div>
@@ -719,7 +812,7 @@ async function iniciarApp(user){
     document.getElementById('tab-matriz').style.display='none';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig()]);
   // Poblar filtros dinámicos
   poblarFiltros();
   // Render
@@ -1394,6 +1487,12 @@ async function renderAdmin(){
     row.innerHTML=`<span style="font-size:13px;font-weight:600;flex:1;">${esc(d.nombre)}</span><span style="font-size:11px;color:var(--gray3);">/${d.slug}</span>`;
     dl.appendChild(row);
   });
+  // Configuración visual — solo admin
+  const configSection=document.getElementById('config-visual-section');
+  if(configSection){
+    configSection.style.display=esAdmin?'':'none';
+    if(esAdmin) renderConfigPanel();
+  }
   // Poblar select de departamentos en modal usuario
   const sel=document.getElementById('uf-dept');sel.innerHTML='';
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});
@@ -1468,6 +1567,170 @@ async function crearDept(){
 function cerrarModal(id){document.getElementById(id).classList.remove('open');editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
 ['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+
+// ══════════════════════════════════════════════════════════
+// CONFIGURACIÓN VISUAL
+// ══════════════════════════════════════════════════════════
+let configData = {
+  color_primario:'#00614D', color_acento:'#C9A84C', color_fondo:'#FAF7F2',
+  font_display:'Libre Baskerville', font_body:'Montserrat', nombre_app:'Mercadeo'
+};
+let configDirty = false;
+
+async function cargarConfig(){
+  if(!DEPT_ID) return;
+  const{data}=await sb.from('configuracion').select('*').eq('departamento_id',DEPT_ID).single();
+  if(data){
+    configData={
+      color_primario:data.color_primario||'#00614D',
+      color_acento:data.color_acento||'#C9A84C',
+      color_fondo:data.color_fondo||'#FAF7F2',
+      font_display:data.font_display||'Libre Baskerville',
+      font_body:data.font_body||'Montserrat',
+      nombre_app:data.nombre_app||'Mercadeo',
+    };
+    aplicarConfig();
+  }
+}
+
+function aplicarConfig(){
+  const r=document.documentElement.style;
+  r.setProperty('--verde', configData.color_primario);
+  // Generar variantes del color primario
+  r.setProperty('--verde-dk', adjustColor(configData.color_primario, -20));
+  r.setProperty('--verde-lt', hexToLight(configData.color_primario));
+  r.setProperty('--gold', configData.color_acento);
+  r.setProperty('--gold-lt', hexToLight(configData.color_acento));
+  r.setProperty('--gold-mid', adjustColor(configData.color_acento, 20));
+  r.setProperty('--linen', configData.color_fondo);
+  // Tipografías
+  document.documentElement.style.setProperty('--font-display', `'${configData.font_display}', serif`);
+  document.documentElement.style.setProperty('--font-body', `'${configData.font_body}', sans-serif`);
+  // Aplicar fonts via import dinámico si es necesario
+  cargarFonts(configData.font_display, configData.font_body);
+}
+
+function hexToLight(hex){
+  // Convierte hex a versión muy clara (mix con blanco)
+  const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+  const lr=Math.round(r+(255-r)*.85),lg=Math.round(g+(255-g)*.85),lb=Math.round(b+(255-b)*.85);
+  return `#${lr.toString(16).padStart(2,'0')}${lg.toString(16).padStart(2,'0')}${lb.toString(16).padStart(2,'0')}`;
+}
+function adjustColor(hex, amount){
+  const r=Math.max(0,Math.min(255,parseInt(hex.slice(1,3),16)+amount));
+  const g=Math.max(0,Math.min(255,parseInt(hex.slice(3,5),16)+amount));
+  const b=Math.max(0,Math.min(255,parseInt(hex.slice(5,7),16)+amount));
+  return `#${r.toString(16).padStart(2,'0')}${g.toString(16).padStart(2,'0')}${b.toString(16).padStart(2,'0')}`;
+}
+function cargarFonts(display, body){
+  const fontsNecesarias=[display,body].filter(f=>!['Georgia'].includes(f));
+  if(!fontsNecesarias.length) return;
+  const existente=document.getElementById('dynamic-fonts');
+  if(existente) existente.remove();
+  const link=document.createElement('link');
+  link.id='dynamic-fonts';link.rel='stylesheet';
+  const query=fontsNecesarias.map(f=>`family=${f.replace(/ /g,'+')}:wght@400;600;700`).join('&');
+  link.href=`https://fonts.googleapis.com/css2?${query}&display=swap`;
+  document.head.appendChild(link);
+  // Aplicar a elementos
+  setTimeout(()=>{
+    document.querySelectorAll('.hbrand,.mttl,.proy-titulo,.rep-ttl,.sgrade,.kds-clock,.login-logo,.kbig-timer,.pdet-nom,.pcard-nom').forEach(el=>{el.style.fontFamily=`'${display}', serif`;});
+    document.querySelectorAll('body,.fi,.fs,.fta,.btn-new,.btn-save,.btn-cancel,.ba,.kbtn,.fbtn,.ntab,.mbtn').forEach(el=>{el.style.fontFamily=`'${body}', sans-serif`;});
+  },300);
+}
+
+function renderConfigPanel(){
+  // Colores
+  ['primario','acento','fondo'].forEach(k=>{
+    const val=configData[`color_${k}`];
+    document.getElementById(`cp-${k}`).value=val;
+    document.getElementById(`hex-${k}`).value=val.toUpperCase();
+    document.getElementById(`swatch-${k}`).style.background=val;
+  });
+  // Nombre
+  document.getElementById('config-nombre-app').value=configData.nombre_app||'';
+  // Fonts
+  actualizarFontBtns('display', configData.font_display);
+  actualizarFontBtns('body', configData.font_body);
+  // Preview
+  actualizarPreview();
+  configDirty=false;
+}
+
+function actualizarFontBtns(tipo, valor){
+  document.querySelectorAll(`#font-${tipo}-btns .font-btn`).forEach(b=>{
+    b.classList.toggle('active', b.textContent.trim()===valor);
+  });
+}
+
+function onColorChange(tipo, valor){
+  configData[`color_${tipo}`]=valor;
+  document.getElementById(`hex-${tipo}`).value=valor.toUpperCase();
+  document.getElementById(`swatch-${tipo}`).style.background=valor;
+  actualizarPreview();
+  configDirty=true;
+}
+function onHexChange(tipo, valor){
+  if(!/^#[0-9A-Fa-f]{6}$/.test(valor)) return;
+  configData[`color_${tipo}`]=valor;
+  document.getElementById(`cp-${tipo}`).value=valor;
+  document.getElementById(`swatch-${tipo}`).style.background=valor;
+  actualizarPreview();
+  configDirty=true;
+}
+function setFont(tipo, valor, btn){
+  configData[`font_${tipo}`]=valor;
+  actualizarFontBtns(tipo, valor);
+  actualizarPreview();
+  configDirty=true;
+}
+function actualizarPreview(){
+  const p=configData.color_primario, a=configData.color_acento, f=configData.color_fondo;
+  const hdr=document.getElementById('prev-header');
+  if(hdr){hdr.style.background=p;}
+  const btn=document.getElementById('prev-btn');
+  if(btn){btn.style.background=a;btn.style.color='#1A120A';}
+  const card1=document.getElementById('prev-card1');
+  if(card1){card1.style.borderLeftColor=p;}
+  const badge=document.getElementById('prev-badge');
+  if(badge){badge.style.background=hexToLight(p);badge.style.color=p;}
+  const title=document.getElementById('prev-card-title');
+  if(title){title.style.fontFamily=`'${configData.font_display}', serif`;}
+  const prev=document.querySelector('.config-preview');
+  if(prev){prev.style.background=f;}
+  const nombre=document.getElementById('config-nombre-app')?.value||configData.nombre_app;
+  const pt=document.getElementById('prev-title');
+  if(pt){pt.textContent=`KOTOWA — ${nombre.toUpperCase()}`;}
+}
+
+async function guardarConfig(){
+  const nombre=document.getElementById('config-nombre-app').value.trim();
+  if(nombre) configData.nombre_app=nombre;
+  const{error}=await sb.from('configuracion').upsert({
+    departamento_id:DEPT_ID,
+    color_primario:configData.color_primario,
+    color_acento:configData.color_acento,
+    color_fondo:configData.color_fondo,
+    font_display:configData.font_display,
+    font_body:configData.font_body,
+    nombre_app:configData.nombre_app,
+    updated_at:new Date().toISOString()
+  },{onConflict:'departamento_id'});
+  if(error){toast('Error: '+error.message);return;}
+  aplicarConfig();
+  configDirty=false;
+  toast('✓ Configuración guardada');
+  // Actualizar subtítulo del header
+  document.getElementById('h-dept').textContent=`${configData.nombre_app} · Panel de gestión`;
+}
+
+function resetConfig(){
+  if(!confirm('¿Restablecer la configuración por defecto?')) return;
+  configData={color_primario:'#00614D',color_acento:'#C9A84C',color_fondo:'#FAF7F2',font_display:'Libre Baskerville',font_body:'Montserrat',nombre_app:'Mercadeo'};
+  renderConfigPanel();
+  aplicarConfig();
+  configDirty=true;
+}
 
 // INIT
 (async()=>{

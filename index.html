@@ -558,7 +558,7 @@ table.r-table tr:last-child td{border-bottom:none;}
 
 <script>
 // ── CONSTANTES ──────────────────────────────────────────────────────────
-const SK='kotowa_tareas_v5', SPK='kotowa_proyectos_v2';
+const SK='kotowa_tareas_v6', SPK='kotowa_proyectos_v3';
 let tareas=[], proyectos=[], editandoId=null, estimateTimer=null;
 let filtros={prioridad:[],responsable:[],fecha:[],tipo:[]};
 let modoActual='kanban', kdsResp='all', periodoActivo='semana';
@@ -1448,9 +1448,9 @@ async function init(){
   await cargar();
   document.getElementById('modo-toggle').style.display='flex';
   // Primera visita: cargar solo proyecto Salted Caramel
-  const yaInit = await window.storage.get('kotowa_init_v2', true).catch(()=>null);
+  const yaInit = await window.storage.get('kotowa_init_v3', true).catch(()=>null);
   if(!yaInit){
-    await window.storage.set('kotowa_init_v2','1',true);
+    await window.storage.set('kotowa_init_v3','1',true);
     const hoy=new Date();
     const fmt=d=>d.toISOString().split('T')[0];
     const add=n=>{const d=new Date(hoy);d.setDate(hoy.getDate()+n);return fmt(d);};

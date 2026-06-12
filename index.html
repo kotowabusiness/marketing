@@ -558,7 +558,7 @@ table.r-table tr:last-child td{border-bottom:none;}
 
 <script>
 // ── CONSTANTES ──────────────────────────────────────────────────────────
-const SK='kotowa_tareas_v4', SPK='kotowa_proyectos_v1';
+const SK='kotowa_tareas_v5', SPK='kotowa_proyectos_v2';
 let tareas=[], proyectos=[], editandoId=null, estimateTimer=null;
 let filtros={prioridad:[],responsable:[],fecha:[],tipo:[]};
 let modoActual='kanban', kdsResp='all', periodoActivo='semana';
@@ -1447,30 +1447,34 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){cerrarModal();cerra
 async function init(){
   await cargar();
   document.getElementById('modo-toggle').style.display='flex';
-  if(!tareas.length&&!proyectos.length){
-    const hoy=new Date();const fmt=d=>d.toISOString().split('T')[0];const add=n=>{const d=new Date(hoy);d.setDate(hoy.getDate()+n);return fmt(d);};const hace=n=>Date.now()-n*3600000;
-    // Proyecto demo
-    proyectos.push({id:'p1',nombre:'Campaña Salted Caramel',desc:'Lanzamiento de bebidas de temporada otoño.',fechaInicio:fmt(hoy),fechaFin:add(21),estado:'activo'});
-    // Tareas del proyecto
+  // Primera visita: cargar solo proyecto Salted Caramel
+  const yaInit = await window.storage.get('kotowa_init_v2', true).catch(()=>null);
+  if(!yaInit){
+    await window.storage.set('kotowa_init_v2','1',true);
+    const hoy=new Date();
+    const fmt=d=>d.toISOString().split('T')[0];
+    const add=n=>{const d=new Date(hoy);d.setDate(hoy.getDate()+n);return fmt(d);};
+    proyectos.push({id:'p1',nombre:'Campaña Salted Caramel',desc:'Lanzamiento de bebidas de temporada.',fechaInicio:fmt(hoy),fechaFin:add(21),deadline:add(21),estado:'activo'});
     const pts=[
-      {titulo:'Proponer y crear las bebidas con entrenadores',responsable:'carolina',prioridad:'urgente',fechaInicio:fmt(hoy),fechaFin:add(3),depId:null},
-      {titulo:'Degustar bebidas para aprobación',responsable:'carolina',prioridad:'urgente',fechaInicio:add(3),fechaFin:add(4),depId:null},
-      {titulo:'Propuesta formal para la JD',responsable:'carolina',prioridad:'normal',fechaInicio:add(4),fechaFin:add(6),depId:null},
-      {titulo:'Programar photoshoot de bebidas',responsable:'rafa',prioridad:'normal',fechaInicio:add(5),fechaFin:add(7),depId:null},
-      {titulo:'Crear arte master para aprobación',responsable:'amy',prioridad:'normal',fechaInicio:add(7),fechaFin:add(10),depId:null},
-      {titulo:'Adaptar arte en diferentes formatos',responsable:'amy',prioridad:'normal',fechaInicio:add(10),fechaFin:add(12),depId:null},
-      {titulo:'Mandar a imprimir',responsable:'rafa',prioridad:'normal',fechaInicio:add(12),fechaFin:add(13),depId:null},
-      {titulo:'Enviar material a las tiendas',responsable:'rafa',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14),depId:null},
-      {titulo:'Correo informativo a tiendas y responsables',responsable:'carolina',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14),depId:null},
-      {titulo:'Pedir a IT subir productos a Invu/Clau.ai',responsable:'rafa',prioridad:'normal',fechaInicio:add(6),fechaFin:add(8),depId:null},
-      {titulo:'Subir productos a PedidosYa y Ubereats',responsable:'rafa',prioridad:'normal',fechaInicio:add(8),fechaFin:add(9),depId:null},
-      {titulo:'Montar campaña en redes',responsable:'amy',prioridad:'normal',fechaInicio:add(14),fechaFin:add(21),depId:null},
+      {titulo:'Proponer y crear las bebidas con entrenadores',responsable:'carolina',prioridad:'urgente',fechaInicio:fmt(hoy),fechaFin:add(3)},
+      {titulo:'Degustar bebidas para aprobación',responsable:'carolina',prioridad:'urgente',fechaInicio:add(3),fechaFin:add(4)},
+      {titulo:'Propuesta formal para la JD',responsable:'carolina',prioridad:'normal',fechaInicio:add(4),fechaFin:add(6)},
+      {titulo:'Programar photoshoot de bebidas',responsable:'rafa',prioridad:'normal',fechaInicio:add(5),fechaFin:add(7)},
+      {titulo:'Crear arte master para aprobación',responsable:'amy',prioridad:'normal',fechaInicio:add(7),fechaFin:add(10)},
+      {titulo:'Adaptar arte en diferentes formatos',responsable:'amy',prioridad:'normal',fechaInicio:add(10),fechaFin:add(12)},
+      {titulo:'Mandar a imprimir',responsable:'rafa',prioridad:'normal',fechaInicio:add(12),fechaFin:add(13)},
+      {titulo:'Enviar material a las tiendas',responsable:'rafa',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
+      {titulo:'Correo informativo a tiendas y responsables',responsable:'carolina',prioridad:'normal',fechaInicio:add(13),fechaFin:add(14)},
+      {titulo:'Pedir a IT subir productos a Invu/Clau.ai',responsable:'rafa',prioridad:'normal',fechaInicio:add(6),fechaFin:add(8)},
+      {titulo:'Subir productos a PedidosYa y Ubereats',responsable:'rafa',prioridad:'normal',fechaInicio:add(8),fechaFin:add(9)},
+      {titulo:'Montar campaña en redes',responsable:'amy',prioridad:'normal',fechaInicio:add(14),fechaFin:add(21)},
     ];
     const ids=[];
-    pts.forEach((pt,i)=>{const id=`t_sc_${i}`;ids.push(id);tareas.push({...pt,id,tipo:'otro',estado:'pendiente',brief:'',proyId:'p1',depId:i>0?ids[i-1]:null,fecha:pt.fechaFin,creadaEn:Date.now(),inicioProcess:null,aprobadoEn:null});});
-    // Tareas sueltas
-    tareas.push({id:'t1',titulo:'Arte campaña Mundial 2026 — Instagram',prioridad:'urgente',tipo:'diseno',responsable:'amy',fecha:add(1),brief:'Piezas feed y stories. La Roja Latte y La Roja Mocha.',estado:'proceso',horas:4,creadaEn:hace(8),inicioProcess:hace(3),aprobadoEn:null});
-    tareas.push({id:'t2',titulo:'Planograma de alimentos v0626 — imágenes',prioridad:'urgente',tipo:'presentacion',responsable:'amy',fecha:fmt(hoy),brief:'Insertar fotos en placeholders del PPTX.',estado:'pendiente',horas:3,creadaEn:hace(24),inicioProcess:null,aprobadoEn:null});
+    pts.forEach((pt,i)=>{
+      const id='t_sc_'+i;ids.push(id);
+      tareas.push({...pt,id,tipo:'otro',estado:'pendiente',brief:'',proyId:'p1',
+        depId:i>0?ids[i-1]:null,fecha:pt.fechaFin,creadaEn:Date.now(),inicioProcess:null,aprobadoEn:null});
+    });
     await guardar();await guardarProy();render();
   }
 }

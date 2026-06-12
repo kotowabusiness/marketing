@@ -392,7 +392,7 @@ table.rt tr:last-child td{border-bottom:none;}
 <div class="nav" style="align-items:center;padding-right:.75rem;">
   <button class="ntab active" onclick="setVista('tareas',this)">Tablero</button>
   <button class="ntab" onclick="setVista('proyectos',this)">Proyectos</button>
-  <button class="ntab" onclick="setVista('matriz',this)">Tiempos</button>
+  <button class="ntab" id="tab-matriz" onclick="setVista('matriz',this)">Tiempos</button>
   <button class="ntab" onclick="setVista('reportes',this)">Reportes</button>
   <button class="ntab admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)">&#9881; Admin</button>
   <div style="flex:1"></div>
@@ -714,6 +714,10 @@ async function iniciarApp(user){
   if(rolFinal==='admin'||rolFinal==='gerente'){
     document.getElementById('admin-tab').style.display='inline-block';
   }
+  // Ocultar pestaña Tiempos para colaboradores
+  if(rolFinal==='colaborador'){
+    document.getElementById('tab-matriz').style.display='none';
+  }
   // Cargar todos los datos
   await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts()]);
   // Poblar filtros dinámicos
@@ -784,8 +788,10 @@ async function cargarDepts(){
 // GUARDAR EN SUPABASE
 // ══════════════════════════════════════════════════════════
 async function sbGuardarTarea(datos,id=null){
+  // Si el usuario no tiene departamento asignado, usar mercadeo por defecto
+  const deptId = DEPT_ID || (departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id;
   const row={
-    departamento_id:DEPT_ID,
+    departamento_id:deptId,
     proyecto_id:datos.proyId||null,
     titulo:datos.titulo,
     brief:datos.brief||'',
@@ -805,7 +811,8 @@ async function sbGuardarTarea(datos,id=null){
   else{const{data,error}=await sb.from('tareas').insert(row).select().single();return{error,id:data?.id};}
 }
 async function sbGuardarProy(datos,id=null){
-  const row={departamento_id:DEPT_ID,nombre:datos.nombre,descripcion:datos.desc||'',deadline:datos.deadline||null,estado:datos.estado,updated_at:new Date().toISOString()};
+  const deptId2 = DEPT_ID || (departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id;
+  const row={departamento_id:deptId2,nombre:datos.nombre,descripcion:datos.desc||'',deadline:datos.deadline||null,estado:datos.estado,updated_at:new Date().toISOString()};
   if(id){const{error}=await sb.from('proyectos').update(row).eq('id',id);return{error};}
   else{const{data,error}=await sb.from('proyectos').insert({...row,created_by:USER.id}).select().single();return{error,id:data?.id};}
 }
@@ -819,8 +826,9 @@ async function sbGuardarMatriz(key,horas,id){
   return{error};
 }
 async function sbAgregarMatriz(nom,horas,desc){
+  const deptId3 = DEPT_ID || (departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id;
   const key='t'+Date.now();
-  const{error}=await sb.from('matriz').insert({departamento_id:DEPT_ID,key,nom,horas,descripcion:desc||''});
+  const{error}=await sb.from('matriz').insert({departamento_id:deptId3,key,nom,horas,descripcion:desc||''});
   return{error};
 }
 async function sbEliminarMatriz(id){return await sb.from('matriz').delete().eq('id',id);}
@@ -1323,16 +1331,26 @@ function renderReporte(){
   const act=tareas.filter(t=>t.estado==='pendiente'||t.estado==='proceso');
   const ven=tareas.filter(t=>t.fecha&&t.estado!=='aprobado'&&new Date(t.fecha+'T23:59:59')<new Date());
   const hT=act.reduce((s,t)=>s+(t.horas||0),0);
-  let html=`<div class="rsum-grid"><div class="rsum-card"><div class="rsum-n" style="color:var(--verde)">${apr.length}</div><div class="rsum-l">Completadas</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--gold)">${act.length}</div><div class="rsum-l">En progreso</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--urgente)">${ven.length}</div><div class="rsum-l">Vencidas</div></div><div class="rsum-card"><div class="rsum-n">${hT.toFixed(0)}</div><div class="rsum-l">Horas en cola</div></div></div>`;
+  const esColab=PERFIL?.rol==='colaborador';
+  // Colaborador solo ve sus propias tareas en los resúmenes
+  const tareasVis=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
+  const aprVis=tareasVis.filter(t=>t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
+  const actVis=tareasVis.filter(t=>t.estado==='pendiente'||t.estado==='proceso');
+  const venVis=tareasVis.filter(t=>t.fecha&&t.estado!=='aprobado'&&new Date(t.fecha+'T23:59:59')<new Date());
+  const hTVis=actVis.reduce((s,t)=>s+(t.horas||0),0);
+  let html=`<div class="rsum-grid"><div class="rsum-card"><div class="rsum-n" style="color:var(--verde)">${aprVis.length}</div><div class="rsum-l">Completadas</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--gold)">${actVis.length}</div><div class="rsum-l">En progreso</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--urgente)">${venVis.length}</div><div class="rsum-l">Vencidas</div></div><div class="rsum-card"><div class="rsum-n">${hTVis.toFixed(0)}</div><div class="rsum-l">Horas en cola</div></div></div>`;
   html+=`<div class="score-grid">`;
-  usuarios.forEach(u=>{
+  // Colaborador solo ve su propio score, gerente y admin ven todos
+  const usuariosReporte=esColab?usuarios.filter(u=>u.id===USER.id):usuarios;
+  usuariosReporte.forEach(u=>{
     const s=calcScore(u.id);
     if(!s){html+=`<div class="scard"><div class="snom">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray3);margin-top:.5rem">Sin tareas completadas en este periodo.</div></div>`;return;}
     const gc=s.pF>=90?'g':s.pF>=70?'w':'b',hc=s.pH>=90?'g':s.pH>=70?'w':'b';
     html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Cumplimiento fecha</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 60% fecha · 40% estimación</div></div>`;
   });
   html+=`</div>`;
-  const hist=tareas.filter(t=>t.aprobadoEn&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime()).sort((a,b)=>b.aprobadoEn-a.aprobadoEn);
+  const histBase=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
+  const hist=histBase.filter(t=>t.aprobadoEn&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime()).sort((a,b)=>b.aprobadoEn-a.aprobadoEn);
   html+=`<div class="rsec"><div class="rsec-ttl">Historial</div>`;
   if(!hist.length)html+=`<div class="r-empty">Sin tareas aprobadas en este periodo.</div>`;
   else{html+=`<table class="rt"><thead><tr><th>Tarea</th><th>Responsable</th><th>H. est.</th><th>H. reales</th><th>Deadline</th><th>Cumplimiento</th></tr></thead><tbody>`;hist.forEach(t=>{const rH=t.inicioProcess&&t.aprobadoEn?((t.aprobadoEn-t.inicioProcess)/3600000).toFixed(1):'-';let c='',cls='';if(t.fecha){const ok=t.aprobadoEn<=new Date(t.fecha+'T23:59:59').getTime();if(ok){c='A tiempo';cls='ok';}else{const d=Math.round((t.aprobadoEn-new Date(t.fecha+'T23:59:59').getTime())/86400000);c=`${d}d tarde`;cls='tarde';}}else{c='Sin fecha';cls='puntual';}html+=`<tr><td><strong>${esc(t.titulo)}</strong></td><td>${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</td><td>${t.horas||'-'}h</td><td>${rH}h</td><td style="color:var(--gray3);font-size:11px">${t.fecha||'—'}</td><td><span class="rb ${cls}">${c}</span></td></tr>`;});html+=`</tbody></table>`;}

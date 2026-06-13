@@ -521,6 +521,8 @@ table.rt tr:last-child td{border-bottom:none;}
 }
 .filter-mobile-wrap{display:none;padding:.5rem 1rem;background:var(--white);border-bottom:1px solid var(--gray2);gap:.5rem;overflow-x:auto;flex-shrink:0;}
 .filter-mobile-wrap::-webkit-scrollbar{display:none;}
+/* fselect visible en desktop dentro de .filters */
+.filters .fselect{border-radius:20px;font-size:11px;padding:4px 24px 4px 10px;}
 
 /* BOTTOM NAV mejorado */
 #bottom-nav{
@@ -645,7 +647,10 @@ table.rt tr:last-child td{border-bottom:none;}
 <!-- APP -->
 <div id="app-screen">
 <header>
-  <div><div class="hbrand">Kotowa Coffee House</div><div class="hsub" id="h-dept">Mercadeo &middot; Panel de gestión</div></div>
+  <div style="display:flex;align-items:center;gap:.65rem;">
+    <img src="logo_kotowa.png" alt="Kotowa" id="header-logo" style="height:36px;width:36px;object-fit:contain;border-radius:50%;display:none;" onerror="this.style.display='none'" onload="this.style.display='block'">
+    <div><div class="hbrand" id="h-brand-txt">Kotowa Coffee House</div><div class="hsub" id="h-dept">Mercadeo &middot; Panel de gestión</div></div>
+  </div>
   <div class="hright">
     <span class="huser" id="h-user"></span>
     <button class="btn-new" id="btn-new" onclick="abrirModal()">+ Nueva tarea</button>
@@ -723,7 +728,18 @@ table.rt tr:last-child td{border-bottom:none;}
     <div id="filter-tipo-btns"></div>
   </div>
   <div class="carga-bar" id="carga-bar"></div>
-  <div class="board-hdr"><div class="counter" id="counter">&mdash;</div></div>
+  <div class="board-hdr" style="display:flex;align-items:center;justify-content:space-between;padding-right:2rem;">
+    <div class="counter" id="counter">&mdash;</div>
+    <div style="display:flex;align-items:center;gap:.5rem;">
+      <span style="font-size:10px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Orden</span>
+      <select id="sort-select" style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;padding:4px 24px 4px 10px;border:1.5px solid var(--azul);border-radius:20px;background:var(--white);color:var(--azul);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232471A3'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 8px center;" onchange="setSortOrder(this.value)">
+        <option value="deadline">&#8593; Deadline</option>
+        <option value="prioridad">&#8593; Prioridad</option>
+        <option value="reciente">&#8593; M&#225;s reciente</option>
+        <option value="responsable">&#8593; Responsable</option>
+      </select>
+    </div>
+  </div>
   <div class="board">
     <div class="col col-pendiente" id="col-pendiente"><div class="col-hdr"><span class="col-ttl">Pendiente</span><span class="col-cnt" id="cnt-pendiente">0</span></div></div>
     <div class="col col-proceso" id="col-proceso"><div class="col-hdr"><span class="col-ttl">En proceso</span><span class="col-cnt" id="cnt-proceso">0</span></div></div>
@@ -1219,30 +1235,25 @@ async function sbEliminarMatriz(id){return await sb.from('matriz').delete().eq('
 // FILTROS DINÁMICOS
 // ══════════════════════════════════════════════════════════
 function poblarFiltros(){
-  // Responsables
-  const rb=document.getElementById('filter-resp-btns');rb.innerHTML='';
-  usuarios.forEach(u=>{
-    const b=document.createElement('button');b.className='fbtn';
-    b.textContent=u.nombre.split(' ')[0];
-    b.onclick=()=>setFilter('responsable',u.id,b);
-    rb.appendChild(b);
+  // Desktop selects — responsable
+  ['fd-responsable'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    sel.innerHTML='<option value="">Responsable</option>';
+    usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;sel.appendChild(o);});
   });
-  // Tipos
-  const tb=document.getElementById('filter-tipo-btns');tb.innerHTML='';
-  matrizData.forEach(m=>{
-    const b=document.createElement('button');b.className='fbtn';
-    b.textContent=m.nom;
-    b.onclick=()=>setFilter('tipo',m.key,b);
-    tb.appendChild(b);
+  // Desktop selects — tipo
+  ['fd-tipo'].forEach(id=>{
+    const sel=document.getElementById(id);if(!sel)return;
+    sel.innerHTML='<option value="">Tipo</option>';
+    matrizData.forEach(m=>{const o=document.createElement('option');o.value=m.key;o.textContent=m.nom;sel.appendChild(o);});
   });
   // KDS responsables
   const kb=document.getElementById('kds-resp-btns');
-  kb.innerHTML='<span class="flbl">Ver:</span>';
-  const all=document.createElement('button');all.className='fbtn active';all.id='kf-all';all.textContent='Todos';all.onclick=()=>setKDSResp('all',all);kb.appendChild(all);
-  usuarios.forEach(u=>{
-    const b=document.createElement('button');b.className='fbtn';b.id=`kf-${u.id}`;
-    b.textContent=u.nombre.split(' ')[0];b.onclick=()=>setKDSResp(u.id,b);kb.appendChild(b);
-  });
+  if(kb){
+    kb.innerHTML='<span class="flbl">Ver:</span>';
+    const all=document.createElement('button');all.className='fbtn active';all.id='kf-all';all.textContent='Todos';all.onclick=()=>setKDSResp('all',all);kb.appendChild(all);
+    usuarios.forEach(u=>{const b=document.createElement('button');b.className='fbtn';b.id=`kf-${u.id}`;b.textContent=u.nombre.split(' ')[0];b.onclick=()=>setKDSResp(u.id,b);kb.appendChild(b);});
+  }
   // Selects de modales
   poblarSelectResp('f-resp');poblarSelectResp('ptf-resp');
   poblarSelectTipo('f-tipo');
@@ -1543,6 +1554,13 @@ function sortTareas(a,b){
     default:
       return 0;
   }
+}
+function setFilterDesktop(grupo, sel){
+  const val=sel.value;
+  if(!val){filtros[grupo]=[];sel.classList.remove('activo');}
+  else{filtros[grupo]=[val];sel.classList.add('activo');}
+  const mobId=`fm-${grupo}`;const mob=document.getElementById(mobId);if(mob)mob.value=val;
+  render();
 }
 function setSortOrder(val){
   sortOrder=val;

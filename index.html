@@ -2,7 +2,13 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Kotowa">
+<meta name="theme-color" content="#00614D">
+<link rel="manifest" href="manifest.json">
 <title>Kotowa — Gestión</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -378,8 +384,126 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--verde);color:var(--white);padding:9px 16px;border-radius:3px;border-left:3px solid var(--gold);font-size:12px;font-weight:500;z-index:300;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;max-width:300px;}
 .toast.show{opacity:1;transform:translateY(0);}
-@media(max-width:900px){.board{grid-template-columns:repeat(2,1fr);}.score-grid,.rsum-grid{grid-template-columns:repeat(2,1fr);}.proy-grid{grid-template-columns:1fr;}}
-@media(max-width:560px){.board{grid-template-columns:1fr;padding:.5rem 1rem 2rem;}.filters,.board-hdr,.carga-bar,.proy-wrap,.rep-wrap,.matriz-wrap,.admin-wrap{padding-left:1rem;padding-right:1rem;}header{padding:0 1rem;}.score-grid{grid-template-columns:1fr;}}
+/* ── TABLET ── */
+@media(max-width:900px){
+  .board{grid-template-columns:repeat(2,1fr);}
+  .score-grid,.rsum-grid{grid-template-columns:repeat(2,1fr);}
+  .proy-grid{grid-template-columns:1fr;}
+  .config-grid{grid-template-columns:repeat(2,1fr);}
+}
+
+/* ── MOBILE ── */
+@media(max-width:640px){
+  /* Header compacto */
+  header{padding:0 1rem;height:52px;}
+  .hbrand{font-size:11px;letter-spacing:1px;}
+  .hsub{display:none;}
+  .hright{gap:.5rem;}
+  .huser{display:none;}
+  .btn-new{padding:6px 12px;font-size:11px;}
+  .btn-logout{padding:4px 8px;font-size:10px;}
+
+  /* Nav superior oculto — reemplazado por nav inferior */
+  .nav{display:none;}
+
+  /* Nav inferior fijo */
+  #bottom-nav{display:flex;}
+
+  /* Vistas con padding bottom para nav */
+  .vista.active{padding-bottom:70px;}
+
+  /* Tablero: una columna */
+  .board{grid-template-columns:1fr;padding:.5rem 1rem 1rem;gap:.75rem;}
+  .col{min-height:auto;}
+  .filters{padding:.5rem 1rem;gap:.3rem;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;}
+  .filters::-webkit-scrollbar{display:none;}
+  .fsep{display:none;}
+  .flbl{display:none;}
+  .carga-bar{padding:.5rem 1rem;gap:1rem;overflow-x:auto;flex-wrap:nowrap;}
+  .board-hdr{padding:.5rem 1rem .2rem;}
+
+  /* KDS mobile */
+  #kds-wrap{padding:.5rem 1rem 1rem;}
+  .kds-top{flex-direction:column;gap:.5rem;padding-bottom:.5rem;}
+  .kds-clock{font-size:20px;}
+  .kds-stats{gap:1rem;}
+  .kds-sn{font-size:18px;}
+  .kds-grid{grid-template-columns:1fr;}
+
+  /* Tarjetas */
+  .card{padding:.6rem .7rem;}
+  .card-ttl{font-size:11.5px;}
+
+  /* Proyectos */
+  .proy-wrap{padding:1rem;}
+  .proy-grid{grid-template-columns:1fr;}
+  .pdet-hdr{padding:.75rem 1rem;gap:.5rem;}
+  .pdet-nom{font-size:15px;}
+  .pvista-btns{margin-left:0;}
+  .pt-lista{padding:.75rem 1rem 1rem;}
+  .pt-grid{grid-template-columns:1fr;}
+  .pdet-prog-wrap{padding:.5rem 1rem;}
+
+  /* Reportes */
+  .rep-wrap{padding:1rem;}
+  .rsum-grid{grid-template-columns:repeat(2,1fr);gap:.5rem;}
+  .score-grid{grid-template-columns:1fr;}
+  .rsec{padding:.75rem 1rem;}
+
+  /* Matriz */
+  .matriz-wrap{padding:1rem;}
+  .matriz-grid{grid-template-columns:1fr;}
+
+  /* Admin */
+  .admin-wrap{padding:1rem;}
+  .users-grid{grid-template-columns:1fr;}
+  .config-grid{grid-template-columns:1fr;}
+
+  /* Modales full screen en mobile */
+  .modal-ov{padding:0;align-items:flex-end;}
+  .modal{border-radius:16px 16px 0 0;max-height:92vh;width:100%;max-width:100%;}
+  .mhdr{border-radius:16px 16px 0 0;}
+  .frow{grid-template-columns:1fr;}
+
+  /* Login */
+  .login-card{margin:1rem;border-radius:12px;}
+
+  /* Gantt scroll horizontal */
+  .gantt-wrap{padding:.75rem 1rem 1rem;}
+  .gantt-ctrl{flex-wrap:wrap;gap:.5rem;}
+}
+
+/* ── BOTTOM NAV ── */
+#bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:90;
+  background:var(--white);border-top:1px solid var(--gray2);
+  padding:0 0 env(safe-area-inset-bottom,0);
+  box-shadow:0 -2px 12px rgba(26,18,10,.08);
+}
+.bnav-inner{display:flex;align-items:stretch;}
+.bnav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:.55rem .25rem;gap:2px;background:none;border:none;cursor:pointer;color:var(--gray3);transition:color .15s;font-family:'Montserrat',sans-serif;min-height:54px;}
+.bnav-btn.active{color:var(--verde);}
+.bnav-btn:hover{color:var(--verde);}
+.bnav-icon{font-size:20px;line-height:1;}
+.bnav-lbl{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.bnav-btn.active .bnav-icon{transform:scale(1.1);}
+
+/* ── MODO KDS MOBILE ── */
+@media(max-width:640px){
+  .kcard{padding:.7rem .8rem .7rem 1rem;}
+  .kcard-ttl{font-size:12px;}
+  .kbig-timer{font-size:22px;letter-spacing:1px;}
+}
+
+/* Touch improvements */
+@media(hover:none){
+  .card:hover{transform:none;box-shadow:0 1px 2px rgba(26,18,10,.05);}
+  .ba:hover{background:var(--white);color:var(--dark);border-color:var(--gray2);}
+  .ba.avanzar:hover{background:var(--verde-lt);color:var(--verde);}
+  .btn-new:hover{background:var(--gold);}
+  .fbtn:hover:not(.active){border-color:var(--gray2);color:var(--dark);}
+}
 </style>
 
 </head>
@@ -387,6 +511,42 @@ table.rt tr:last-child td{border-bottom:none;}
 
 <!-- LOADING -->
 <div class="loading-overlay" id="loading"><div class="loading-logo">Kotowa</div></div>
+
+<!-- BOTTOM NAV MOBILE -->
+<div id="bottom-nav">
+  <div class="bnav-inner">
+    <button class="bnav-btn active" id="bnav-tareas" onclick="setVistaMobile('tareas',this)">
+      <span class="bnav-icon">&#9646;&#9646;</span>
+      <span class="bnav-lbl">Tablero</span>
+    </button>
+    <button class="bnav-btn" id="bnav-proyectos" onclick="setVistaMobile('proyectos',this)">
+      <span class="bnav-icon">&#128193;</span>
+      <span class="bnav-lbl">Proyectos</span>
+    </button>
+    <button class="bnav-btn bnav-center" id="bnav-new" onclick="abrirModal()" style="position:relative;">
+      <span class="bnav-icon" style="width:44px;height:44px;background:var(--verde);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--white);font-size:22px;margin-top:-16px;box-shadow:0 4px 12px rgba(0,97,77,.4);">+</span>
+      <span class="bnav-lbl">Nueva</span>
+    </button>
+    <button class="bnav-btn" id="bnav-reportes" onclick="setVistaMobile('reportes',this)">
+      <span class="bnav-icon">&#128202;</span>
+      <span class="bnav-lbl">Reportes</span>
+    </button>
+    <button class="bnav-btn" id="bnav-mas" onclick="toggleMobileMenu()">
+      <span class="bnav-icon">&#8943;</span>
+      <span class="bnav-lbl">Más</span>
+    </button>
+  </div>
+</div>
+
+<!-- MENU MÁS (mobile) -->
+<div id="mobile-menu" style="display:none;position:fixed;bottom:60px;left:0;right:0;z-index:89;background:var(--white);border-top:1px solid var(--gray2);box-shadow:0 -4px 16px rgba(26,18,10,.1);padding:.75rem 1rem;">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
+    <button onclick="setVistaMobile('matriz',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-matriz">&#9201; Tiempos</button>
+    <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-admin">&#9881; Admin</button>
+    <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);">&#9166; Salir</button>
+  </div>
+  <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--gray1);font-size:11px;color:var(--gray3);text-align:center;" id="mmenu-user"></div>
+</div>
 
 <!-- LOGIN -->
 <div id="login-screen" style="display:none;">
@@ -820,6 +980,7 @@ async function iniciarApp(user){
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
   document.getElementById('modo-toggle').style.display='flex';
+  checkMobileNav();
   render();
 }
 
@@ -1730,6 +1891,79 @@ function resetConfig(){
   renderConfigPanel();
   aplicarConfig();
   configDirty=true;
+}
+
+// ══════════════════════════════════════════════════════════
+// MOBILE NAV
+// ══════════════════════════════════════════════════════════
+function isMobile(){return window.innerWidth<=640;}
+
+function setVistaMobile(v, btn){
+  // Cerrar menú más si está abierto
+  document.getElementById('mobile-menu').style.display='none';
+  // Actualizar bottom nav
+  document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+  const bnavId=`bnav-${v}`;
+  const bnavBtn=document.getElementById(bnavId);
+  if(bnavBtn)bnavBtn.classList.add('active');
+  // Llamar setVista con el ntab correspondiente
+  const ntab=document.querySelector(`.ntab[onclick*="'${v}'"]`);
+  if(ntab)setVista(v,ntab);
+  else{
+    // Vista sin ntab (admin, matriz)
+    document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));
+    document.getElementById(`vista-${v}`)?.classList.add('active');
+    document.getElementById('btn-new').style.display='none';
+    document.getElementById('modo-toggle').style.display='none';
+    if(v==='reportes')renderReporte();
+    if(v==='proyectos')renderProyectos();
+    if(v==='matriz')renderMatriz();
+    if(v==='admin')renderAdmin();
+  }
+}
+
+function toggleMobileMenu(){
+  const menu=document.getElementById('mobile-menu');
+  const isOpen=menu.style.display!=='none';
+  menu.style.display=isOpen?'none':'block';
+  if(!isOpen){
+    document.getElementById('mmenu-user').textContent=`${PERFIL?.nombre||''} · ${PERFIL?.rol||''}`;
+    // Ocultar admin si no tiene permiso
+    const adminBtn=document.getElementById('mmenu-admin');
+    if(adminBtn)adminBtn.style.display=(PERFIL?.rol==='admin'||PERFIL?.rol==='gerente')?'':'none';
+    const matrizBtn=document.getElementById('mmenu-matriz');
+    if(matrizBtn)matrizBtn.style.display=PERFIL?.rol==='colaborador'?'none':'';
+  }
+}
+
+// Cerrar menú mobile al tocar fuera
+document.addEventListener('click', e=>{
+  const menu=document.getElementById('mobile-menu');
+  const bnavMas=document.getElementById('bnav-mas');
+  if(menu&&menu.style.display!=='none'&&!menu.contains(e.target)&&e.target!==bnavMas&&!bnavMas?.contains(e.target)){
+    menu.style.display='none';
+  }
+});
+
+// Mostrar bottom nav en mobile
+function checkMobileNav(){
+  const bn=document.getElementById('bottom-nav');
+  if(isMobile())bn.style.display='flex';
+  else bn.style.display='none';
+}
+window.addEventListener('resize', checkMobileNav);
+
+// ══════════════════════════════════════════════════════════
+// SERVICE WORKER (PWA)
+// ══════════════════════════════════════════════════════════
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').then(reg=>{
+      console.log('SW registrado:', reg.scope);
+    }).catch(err=>{
+      console.log('SW error:', err);
+    });
+  });
 }
 
 // INIT

@@ -139,7 +139,7 @@ header{background:var(--verde);border-bottom:3px solid var(--gold);padding:0 2re
 
 /* KDS */
 #kds-wrap{display:none;background:var(--linen);min-height:calc(100vh - 115px);padding:.75rem 1.5rem 1.5rem;}
-.kds-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid var(--gold);gap:1rem;}
+.kds-top{display:flex;flex-direction:column;gap:0;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid var(--gold);}
 .kds-clock{font-family:'Libre Baskerville',serif;font-size:26px;color:var(--dark);font-variant-numeric:tabular-nums;}
 .kds-date{font-size:11px;color:var(--gray3);margin-top:2px;}
 .kds-stats{display:flex;gap:0;flex:1;background:var(--white);border-radius:8px;border:1px solid var(--gray2);overflow:hidden;}
@@ -438,11 +438,8 @@ table.rt tr:last-child td{border-bottom:none;}
 
   /* KDS mobile */
   #kds-wrap{padding:.5rem 1rem 1rem;}
-  .kds-top{flex-direction:column;gap:.5rem;padding-bottom:.5rem;align-items:stretch;}
+  .kds-top{gap:0;}
   .kds-clock{font-size:20px;}
-  .kds-stats{gap:0;justify-content:space-around;background:var(--white);border-radius:8px;padding:.65rem .5rem;border:1px solid var(--gray2);}
-  .kds-stat{flex:1;text-align:center;border-right:1px solid var(--gray2);}
-  .kds-stat:last-child{border-right:none;}
   .kds-sn{font-size:20px;}
   .kds-sl{font-size:8px;}
   .kds-grid{grid-template-columns:1fr;}
@@ -749,16 +746,21 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div id="kds-wrap">
     <div class="kds-top">
-      <div><div class="kds-clock" id="kds-clock">--:--:--</div><div class="kds-date" id="kds-date"></div></div>
-      <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
-        <div class="kds-stats">
+      <!-- Fila 1: reloj + stats -->
+      <div style="display:flex;align-items:center;gap:1rem;width:100%;">
+        <div style="flex-shrink:0;">
+          <div class="kds-clock" id="kds-clock">--:--:--</div>
+          <div class="kds-date" id="kds-date"></div>
+        </div>
+        <div class="kds-stats" style="flex:1;">
           <div class="kds-stat"><div class="kds-sn urg" id="kn-urg">0</div><div class="kds-sl">Urgentes</div></div>
           <div class="kds-stat"><div class="kds-sn mid" id="kn-proc">0</div><div class="kds-sl">En proceso</div></div>
           <div class="kds-stat"><div class="kds-sn ok" id="kn-rev">0</div><div class="kds-sl">En revisi&oacute;n</div></div>
           <div class="kds-stat"><div class="kds-sn" id="kn-tot" style="color:var(--dark)">0</div><div class="kds-sl">Total activas</div></div>
         </div>
-        <div style="display:flex;gap:.35rem;align-items:center;flex-wrap:wrap;" id="kds-resp-btns"></div>
       </div>
+      <!-- Fila 2: filtro responsable -->
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;width:100%;padding-top:.5rem;" id="kds-resp-btns"></div>
     </div>
     <div class="kds-grid" id="kds-grid"></div>
   </div>

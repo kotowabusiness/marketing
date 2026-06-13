@@ -139,11 +139,14 @@ header{background:var(--verde);border-bottom:3px solid var(--gold);padding:0 2re
 
 /* KDS */
 #kds-wrap{display:none;background:var(--linen);min-height:calc(100vh - 115px);padding:.75rem 1.5rem 1.5rem;}
-.kds-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid var(--gold);flex-wrap:wrap;gap:.75rem;}
+.kds-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px solid var(--gold);gap:1rem;}
 .kds-clock{font-family:'Libre Baskerville',serif;font-size:26px;color:var(--dark);font-variant-numeric:tabular-nums;}
 .kds-date{font-size:11px;color:var(--gray3);margin-top:2px;}
-.kds-stats{display:flex;gap:1.5rem;}
-.kds-stat{text-align:center;}.kds-sn{font-size:22px;font-weight:700;font-family:'Libre Baskerville',serif;line-height:1;color:var(--dark);}.kds-sl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--gray3);margin-top:2px;}
+.kds-stats{display:flex;gap:0;flex:1;background:var(--white);border-radius:8px;border:1px solid var(--gray2);overflow:hidden;}
+.kds-stat{flex:1;text-align:center;padding:.65rem .5rem;border-right:1px solid var(--gray2);}
+.kds-stat:last-child{border-right:none;}
+.kds-sn{font-size:22px;font-weight:700;font-family:'Libre Baskerville',serif;line-height:1;color:var(--dark);}
+.kds-sl{font-size:9px;text-transform:uppercase;letter-spacing:.8px;color:var(--gray3);margin-top:3px;}
 .kds-sn.urg{color:var(--urgente);}.kds-sn.ok{color:var(--verde);}.kds-sn.mid{color:#b37b00;}
 .kds-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
 .kcard{background:var(--white);border-radius:6px;padding:.75rem .85rem .75rem 1.05rem;position:relative;overflow:hidden;border:1px solid var(--gray2);box-shadow:0 2px 8px rgba(26,18,10,.08);transition:transform .1s;}
@@ -730,10 +733,11 @@ table.rt tr:last-child td{border-bottom:none;}
     <div style="display:flex;align-items:center;gap:.5rem;">
       <span style="font-size:10px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Orden</span>
       <select id="sort-select" style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;padding:4px 24px 4px 10px;border:1.5px solid var(--azul);border-radius:20px;background:var(--white);color:var(--azul);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232471A3'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 8px center;" onchange="setSortOrder(this.value)">
-        <option value="deadline">&#8593; Deadline</option>
-        <option value="prioridad">&#8593; Prioridad</option>
-        <option value="reciente">&#8593; M&#225;s reciente</option>
-        <option value="responsable">&#8593; Responsable</option>
+        <option value="deadline">↑ Deadline (próximo)</option>
+        <option value="deadline_desc">↓ Deadline (lejano)</option>
+        <option value="prioridad">↑ Prioridad (urgente)</option>
+        <option value="reciente">↑ Más reciente</option>
+        <option value="responsable">↑ Responsable A-Z</option>
       </select>
     </div>
   </div>
@@ -1492,18 +1496,21 @@ function mkKCard(t){
   const btnCls=t.estado==='proceso'?'av gold':'av';
   let timerH='',progH='';
   if(t.fecha){
-    // Countdown al deadline
-    const dl=new Date(t.fecha+'T23:59:59');
+    // Deadline al final del día local
+    const [fy,fm,fd]=t.fecha.split('-').map(Number);
+    const dl=new Date(fy,fm-1,fd,23,59,59,999);
     const msLeft=dl-Date.now();
     const isOver=msLeft<0;
     const absMins=Math.floor(Math.abs(msLeft)/60000);
     const dias=Math.floor(absMins/1440),horas=Math.floor((absMins%1440)/60),mins=absMins%60;
     let countStr='',cls='ok';
-    if(isOver){cls='over';countStr=`Venció hace ${dias>0?dias+'d ':''}`+`${horas>0?horas+'h ':''}`+`${mins}m`;}
+    if(isOver){cls='over';countStr=`Venció ${dias>0?dias+'d ':''}`+`${horas>0?horas+'h ':''}`+`${mins}m`;}
+    else if(absMins<60){cls='over';countStr=`${mins}m restantes`;}
     else if(absMins<120){cls='over';countStr=`${horas}h ${String(mins).padStart(2,'0')}m`;}
-    else if(absMins<1440){cls='warn';countStr=`${horas}h ${String(mins).padStart(2,'0')}m`;}
-    else{cls=dias<=2?'warn':'ok';countStr=`${dias}d ${horas}h`;}
-    timerH=`<div class="ktimer-blk"><div class="kbig-timer ${cls}" data-kdl="${dl.getTime()}">${countStr}</div><div class="ktimer-sub">${isOver?'Vencido':'Para el deadline'}</div></div>`;
+    else if(absMins<1440){cls='warn';countStr=`Hoy ${horas}h ${String(mins).padStart(2,'0')}m`;}
+    else if(absMins<2880){cls='warn';countStr=`Mañana ${horas%24}h`;}
+    else{cls=dias<=3?'warn':'ok';countStr=`${dias}d ${horas%24}h`;}
+    timerH=`<div class="ktimer-blk"><div class="kbig-timer ${cls}" data-kdl="${dl.getTime()}">${countStr}</div><div class="ktimer-sub">${isOver?'Vencido':'Tiempo restante'}</div></div>`;
     // Barra de progreso vs horas estimadas
     if(t.estado==='proceso'&&t.inicioProcess&&t.horas){
       const tr=(Date.now()-t.inicioProcess)/3600000,pct=Math.min(100,Math.round(tr/t.horas*100)),pcls=pct>90?'over':pct>70?'warn':'ok';
@@ -1534,11 +1541,16 @@ function sortTareas(a,b){
   const bD=b.fecha?new Date(b.fecha+'T23:59:59'):null;
   switch(sortOrder){
     case 'deadline':
-      // Urgentes primero, luego por deadline más próximo
       if(po[a.prioridad]!==po[b.prioridad])return po[a.prioridad]-po[b.prioridad];
-      if(aD&&bD)return aD-bD;
+      if(aD&&bD)return aD-bD;   // más próximo primero
       if(aD&&!bD)return -1;
       if(!aD&&bD)return 1;
+      return(a.creadaEn||0)-(b.creadaEn||0);
+    case 'deadline_desc':
+      if(po[a.prioridad]!==po[b.prioridad])return po[a.prioridad]-po[b.prioridad];
+      if(aD&&bD)return bD-aD;   // más lejano primero
+      if(aD&&!bD)return 1;
+      if(!aD&&bD)return -1;
       return(a.creadaEn||0)-(b.creadaEn||0);
     case 'prioridad':
       if(po[a.prioridad]!==po[b.prioridad])return po[a.prioridad]-po[b.prioridad];
@@ -1546,12 +1558,13 @@ function sortTareas(a,b){
       return(a.creadaEn||0)-(b.creadaEn||0);
     case 'reciente':
       return(b.creadaEn||0)-(a.creadaEn||0);
-    case 'responsable':
+    case 'responsable':{
       const na=getUsuarioNombre(a.responsable)||'';
       const nb=getUsuarioNombre(b.responsable)||'';
       if(na!==nb)return na.localeCompare(nb);
       if(aD&&bD)return aD-bD;
       return 0;
+    }
     default:
       return 0;
   }
@@ -1565,10 +1578,26 @@ function setFilterDesktop(grupo, sel){
 }
 function setSortOrder(val){
   sortOrder=val;
-  // Sync ambos selects
-  ['sort-select','fm-sort'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=val;});
+  // Sync todos los selects de sort
+  ['sort-select'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=val;});
+  // Actualizar labels con dirección
+  actualizarSortLabels(val);
   render();
   if(modoActual==='kds')renderKDS();
+}
+function actualizarSortLabels(val){
+  const opts={
+    deadline:  {asc:'↑ Deadline (próximo primero)', desc:'↓ Deadline (lejano primero)'},
+    prioridad: {asc:'↑ Prioridad (urgente primero)', desc:'↓ Prioridad (baja primero)'},
+    reciente:  {asc:'↑ Más reciente', desc:'↓ Más antiguo'},
+    responsable:{asc:'↑ Responsable A-Z', desc:'↓ Responsable Z-A'},
+  };
+  document.querySelectorAll('[id="sort-select"]').forEach(sel=>{
+    [...sel.options].forEach(o=>{
+      const base=o.value;
+      if(opts[base])o.textContent=opts[base].asc;
+    });
+  });
 }
 function setFilter(grupo,val,btn){if(val==='all'){filtros={prioridad:[],responsable:[],fecha:[],tipo:[]};document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));document.querySelector('[data-val="all"]').classList.add('active');}else{const arr=filtros[grupo],idx=arr.indexOf(val);if(idx>-1)arr.splice(idx,1);else arr.push(val);btn.classList.toggle('active',arr.includes(val));const hay=Object.values(filtros).some(a=>a.length>0);document.querySelector('[data-val="all"]').classList.toggle('active',!hay);}render();}
 

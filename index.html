@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -23,7 +23,8 @@
   --azul:#2471A3;--azul-lt:#EAF2FB;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Montserrat',sans-serif;background:var(--linen);color:var(--dark);min-height:100vh;}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+body{font-family:'Montserrat',sans-serif;background:var(--linen);color:var(--dark);min-height:100vh;-webkit-tap-highlight-color:transparent;}
 
 /* ── LOGIN ── */
 #login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--verde);}
@@ -759,7 +760,7 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="kds-stat"><div class="kds-sn" id="kn-tot" style="color:var(--dark)">0</div><div class="kds-sl">Total activas</div></div>
       </div>
       <!-- Fila 3: filtro responsable -->
-      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;" id="kds-resp-btns"></div>
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;padding-top:.5rem;border-top:1px solid var(--gray2);margin-top:.15rem;" id="kds-resp-btns"></div>
     </div>
     <div class="kds-grid" id="kds-grid"></div>
   </div>
@@ -1127,7 +1128,14 @@ async function iniciarApp(user){
   document.getElementById('app-screen').style.display='block';
   document.getElementById('modo-toggle').style.display='flex';
   checkMobileNav();
-  render();
+  // Restaurar sección activa al hacer refresh
+  const vistaGuardada=localStorage.getItem('ktw_vista')||'tareas';
+  const ntab=document.querySelector(`.ntab[onclick*="'${vistaGuardada}'"]`);
+  if(ntab) setVista(vistaGuardada,ntab);
+  else render();
+  // Sync bottom nav
+  const bnavBtn=document.getElementById(`bnav-${vistaGuardada}`);
+  if(bnavBtn){document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));bnavBtn.classList.add('active');}
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1533,7 +1541,7 @@ function setKDSResp(r,btn){kdsResp=r;document.querySelectorAll('[id^="kf-"]').fo
 setInterval(()=>{if(modoActual!=='kds')return;document.querySelectorAll('.kbig-timer[data-ki]').forEach(el=>{const d=(Date.now()-parseInt(el.dataset.ki))/1000,h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=Math.floor(d%60);el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;const pct=Math.min(100,(d/3600)/parseFloat(el.dataset.kh)*100);el.className=`kbig-timer ${pct>90?'over':pct>70?'warn':'ok'}`;});document.querySelectorAll('.kprog-fill[data-kp]').forEach(bar=>{const t=tareas.find(x=>x.id===bar.dataset.kp);if(!t||!t.inicioProcess||!t.horas)return;const pct=Math.min(100,Math.round(((Date.now()-t.inicioProcess)/3600000)/t.horas*100));bar.style.width=pct+'%';bar.className=`kprog-fill ${pct>90?'over':pct>70?'warn':'ok'}`;});},1000);
 
 // VISTAS
-function setVista(v,btn){document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
 function sortTareas(a,b){
   const po={urgente:0,normal:1,baja:2};
   const hoy=new Date();

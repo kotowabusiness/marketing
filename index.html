@@ -696,36 +696,33 @@ table.rt tr:last-child td{border-bottom:none;}
     <button class="fselect" onclick="limpiarFiltrosMobile()" style="background:var(--urgente-lt);border-color:var(--urgente);color:var(--urgente);cursor:pointer;white-space:nowrap;">✕ Limpiar</button>
   </div>
 
-  <!-- SORT mobile -->
-  <select class="fselect" id="fm-sort" onchange="setSortOrder(this.value)" style="border-color:var(--azul);color:var(--azul);">
-    <option value="deadline">↑ Deadline</option>
-    <option value="prioridad">↑ Prioridad</option>
-    <option value="reciente">↑ Más reciente</option>
-    <option value="responsable">↑ Responsable</option>
-  </select>
   <!-- MODO KDS mobile (botón en mobile) -->
   <div style="display:none;" id="kds-toggle-mobile" class="filter-mobile-wrap">
     <button class="fselect" id="kds-toggle-btn" onclick="toggleKDSMobile()" style="cursor:pointer;">▶ Ver en KDS</button>
   </div>
 
   <div class="filters">
-    <span class="flbl">Prioridad</span>
-    <button class="fbtn active" data-val="all" onclick="setFilter(null,'all',this)">Todas</button>
-    <button class="fbtn" onclick="setFilter('prioridad','urgente',this)">Urgente</button>
-    <button class="fbtn" onclick="setFilter('prioridad','normal',this)">Normal</button>
-    <button class="fbtn" onclick="setFilter('prioridad','baja',this)">Baja</button>
-    <div class="fsep"></div>
-    <span class="flbl">Responsable</span>
-    <div id="filter-resp-btns"></div>
-    <div class="fsep"></div>
-    <span class="flbl">Fecha</span>
-    <button class="fbtn" onclick="setFilter('fecha','hoy',this)">Hoy</button>
-    <button class="fbtn" onclick="setFilter('fecha','semana',this)">Esta semana</button>
-    <button class="fbtn" onclick="setFilter('fecha','mes',this)">Este mes</button>
-    <button class="fbtn" onclick="setFilter('fecha','vencidas',this)">Vencidas</button>
-    <div class="fsep"></div>
-    <span class="flbl">Tipo</span>
-    <div id="filter-tipo-btns"></div>
+    <span class="flbl">Filtros</span>
+    <select class="fselect" id="fd-prioridad" onchange="setFilterDesktop('prioridad',this)">
+      <option value="">Prioridad</option>
+      <option value="urgente">Urgente</option>
+      <option value="normal">Normal</option>
+      <option value="baja">Baja</option>
+    </select>
+    <select class="fselect" id="fd-responsable" onchange="setFilterDesktop('responsable',this)">
+      <option value="">Responsable</option>
+    </select>
+    <select class="fselect" id="fd-fecha" onchange="setFilterDesktop('fecha',this)">
+      <option value="">Fecha</option>
+      <option value="hoy">Hoy</option>
+      <option value="semana">Esta semana</option>
+      <option value="mes">Este mes</option>
+      <option value="vencidas">Vencidas</option>
+    </select>
+    <select class="fselect" id="fd-tipo" onchange="setFilterDesktop('tipo',this)">
+      <option value="">Tipo</option>
+    </select>
+    <button onclick="limpiarFiltros()" style="font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid var(--urgente);background:var(--urgente-lt);color:var(--urgente);cursor:pointer;white-space:nowrap;">&#215; Limpiar</button>
   </div>
   <div class="carga-bar" id="carga-bar"></div>
   <div class="board-hdr" style="display:flex;align-items:center;justify-content:space-between;padding-right:2rem;">
@@ -1235,17 +1232,21 @@ async function sbEliminarMatriz(id){return await sb.from('matriz').delete().eq('
 // FILTROS DINÁMICOS
 // ══════════════════════════════════════════════════════════
 function poblarFiltros(){
-  // Desktop selects — responsable
-  ['fd-responsable'].forEach(id=>{
+  // Desktop selects — responsable (desktop + mobile)
+  ['fd-responsable','fm-responsable'].forEach(id=>{
     const sel=document.getElementById(id);if(!sel)return;
+    const cur=sel.value;
     sel.innerHTML='<option value="">Responsable</option>';
     usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;sel.appendChild(o);});
+    sel.value=cur;
   });
-  // Desktop selects — tipo
-  ['fd-tipo'].forEach(id=>{
+  // Desktop + mobile selects — tipo
+  ['fd-tipo','fm-tipo'].forEach(id=>{
     const sel=document.getElementById(id);if(!sel)return;
+    const cur=sel.value;
     sel.innerHTML='<option value="">Tipo</option>';
     matrizData.forEach(m=>{const o=document.createElement('option');o.value=m.key;o.textContent=m.nom;sel.appendChild(o);});
+    sel.value=cur;
   });
   // KDS responsables
   const kb=document.getElementById('kds-resp-btns');

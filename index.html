@@ -746,21 +746,20 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div id="kds-wrap">
     <div class="kds-top">
-      <!-- Fila 1: reloj + stats -->
-      <div style="display:flex;align-items:center;gap:1rem;width:100%;">
-        <div style="flex-shrink:0;">
-          <div class="kds-clock" id="kds-clock">--:--:--</div>
-          <div class="kds-date" id="kds-date"></div>
-        </div>
-        <div class="kds-stats" style="flex:1;">
-          <div class="kds-stat"><div class="kds-sn urg" id="kn-urg">0</div><div class="kds-sl">Urgentes</div></div>
-          <div class="kds-stat"><div class="kds-sn mid" id="kn-proc">0</div><div class="kds-sl">En proceso</div></div>
-          <div class="kds-stat"><div class="kds-sn ok" id="kn-rev">0</div><div class="kds-sl">En revisi&oacute;n</div></div>
-          <div class="kds-stat"><div class="kds-sn" id="kn-tot" style="color:var(--dark)">0</div><div class="kds-sl">Total activas</div></div>
-        </div>
+      <!-- Fila 1: reloj -->
+      <div>
+        <div class="kds-clock" id="kds-clock">--:--:--</div>
+        <div class="kds-date" id="kds-date"></div>
       </div>
-      <!-- Fila 2: filtro responsable -->
-      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;width:100%;padding-top:.5rem;" id="kds-resp-btns"></div>
+      <!-- Fila 2: stats -->
+      <div class="kds-stats">
+        <div class="kds-stat"><div class="kds-sn urg" id="kn-urg">0</div><div class="kds-sl">Urgentes</div></div>
+        <div class="kds-stat"><div class="kds-sn mid" id="kn-proc">0</div><div class="kds-sl">En proceso</div></div>
+        <div class="kds-stat"><div class="kds-sn ok" id="kn-rev">0</div><div class="kds-sl">En revisi&oacute;n</div></div>
+        <div class="kds-stat"><div class="kds-sn" id="kn-tot" style="color:var(--dark)">0</div><div class="kds-sl">Total activas</div></div>
+      </div>
+      <!-- Fila 3: filtro responsable -->
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;" id="kds-resp-btns"></div>
     </div>
     <div class="kds-grid" id="kds-grid"></div>
   </div>

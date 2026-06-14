@@ -1412,6 +1412,7 @@ async function cargarTareas(){
   // Colaborador solo ve sus propias tareas
   if(PERFIL?.rol==='colaborador')q.eq('responsable_id',USER.id);
   const{data}=await q.order('created_at',{ascending:false});
+  const corregidas=[]; // ids con estado inválido que hay que arreglar en Supabase
   tareas=(data||[]).map(t=>{
     // Parsear links del brief
     let brief=t.brief||'', links=[];
@@ -1421,8 +1422,13 @@ async function cargarTareas(){
       brief=brief.slice(0,sep);
     }
     if(links.length)tareasLinks[t.id]=links;
+    let estado=t.estado;
+    if(!ESTADOS.includes(estado)){
+      corregidas.push(t.id);
+      estado='pendiente';
+    }
     return{
-      ...t,brief,links,
+      ...t,brief,links,estado,
       responsable:t.responsable_id,
       responsable_nombre:t.responsable_nombre,
       proyId:t.proyecto_id,
@@ -1434,6 +1440,13 @@ async function cargarTareas(){
       dia_fijado:t.dia_fijado||null,
     };
   });
+  // Persistir la corrección en Supabase silenciosamente
+  if(corregidas.length){
+    for(const id of corregidas){
+      await sb.from('tareas').update({estado:'pendiente'}).eq('id',id);
+    }
+    console.log(`Corregidos ${corregidas.length} pendiente(s) con estado inválido -> 'pendiente'`);
+  }
 }
 async function cargarProyectos(){
   const q=sb.from('proyectos').select('*');
@@ -3504,20 +3517,52 @@ function initKanbanDnD(){
     col.addEventListener('drop',e=>{
       e.preventDefault();col.style.background='';
       if(!dragKanbanId)return;
-      const estado=col.id.replace('col-','');
-      cambiarEstadoKanban(dragKanbanId,estado);
+      const colDestino=col.id.replace('col-','');
+      moverAColumna(dragKanbanId,colDestino);
     });
   });
 }
 
-async function cambiarEstadoKanban(id,nuevoEstado){
-  const t=tareas.find(x=>x.id===id);if(!t||t.estado===nuevoEstado)return;
-  if(nuevoEstado==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();
-  if(nuevoEstado==='aprobado')t.aprobadoEn=Date.now();
-  t.estado=nuevoEstado;
-  await sbGuardarTarea({...t},id);
+// Mover una tarjeta arrastrándola a una columna VISUAL (pendientes/hoy/revision/aprobado).
+// Las columnas "pendientes" y "hoy" no son estados reales en BD — son una clasificación
+// derivada del plan del motor. Soltar en una u otra ajusta dia_fijado para forzar/quitar
+// la asignación manual, en vez de escribir un "estado" inválido.
+async function moverAColumna(id,colDestino){
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  const colActual=columnaDe(t);
+  if(colActual===colDestino)return;
+
+  if(colDestino==='hoy'){
+    if(t.estado!=='pendiente'&&t.estado!=='proceso'){toast('Solo pendientes activos pueden moverse a Hoy');return;}
+    // Fijar manualmente para hoy — el motor respeta esta asignación y recalcula el resto
+    t.dia_fijado=hoyStr();
+    await sbGuardarTarea({...t},id);
+    toast(`"${t.titulo}" → asignado a Hoy`);
+  } else if(colDestino==='pendientes'){
+    if(t.estado!=='pendiente'&&t.estado!=='proceso'){toast('Solo se puede devolver a Pendientes desde Hoy');return;}
+    // Quitar la fijación manual — vuelve a la cola normal, el motor decide
+    t.dia_fijado=null;
+    await sbGuardarTarea({...t},id);
+    toast(`"${t.titulo}" → de vuelta a Pendientes`);
+  } else if(colDestino==='revision'){
+    if(colActual!=='hoy'){toast('Solo lo que está en Hoy puede pasar a Revisión');return;}
+    if(!t.inicioProcess)t.inicioProcess=Date.now();
+    t.estado='revision';
+    await sbGuardarTarea({...t},id);
+    toast(`"${t.titulo}" → En revisión`);
+    await notificarRevision(t);
+  } else if(colDestino==='aprobado'){
+    if(colActual!=='revision'){toast('Solo lo que está En revisión puede pasar a Culminado');return;}
+    t.estado='aprobado';
+    t.aprobadoEn=Date.now();
+    await sbGuardarTarea({...t},id);
+    toast(`"${t.titulo}" → Culminado`);
+  } else {
+    return;
+  }
+
   render();if(proyActualId)renderDetalle();
-  toast(`"${t.titulo}" → ${EL[nuevoEstado]}`);
+  if(modoActual==='calendario')renderCal();
 }
 
 // SERVICE WORKER (PWA)

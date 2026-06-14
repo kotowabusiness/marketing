@@ -95,10 +95,14 @@ header > *{padding-bottom:.65rem;}
 .col-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:.5rem;border-bottom:2px solid var(--gray2);margin-bottom:.1rem;}
 .col-ttl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;}
 .col-cnt{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:var(--gray2);color:var(--dark);}
-.col-pendiente .col-hdr{border-color:var(--gray3);}.col-pendiente .col-ttl{color:var(--gray3);}
-.col-proceso .col-hdr{border-color:var(--gold);}.col-proceso .col-ttl{color:var(--gold);}
+.col-pendientes .col-hdr{border-color:var(--gray3);}.col-pendientes .col-ttl{color:var(--gray3);}
+.col-hoy .col-hdr{border-color:var(--gold);}.col-hoy .col-ttl{color:var(--gold);}
 .col-revision .col-hdr{border-color:var(--azul);}.col-revision .col-ttl{color:var(--azul);}
 .col-aprobado .col-hdr{border-color:var(--verde);}.col-aprobado .col-ttl{color:var(--verde);}
+/* Tarjetas "apagadas" en columna Pendientes — no son de hoy */
+.col-pendientes .card{opacity:.55;}
+.col-pendientes .card:hover{opacity:.85;}
+.ba-apagado{flex:1;text-align:center;font-size:10px;font-weight:600;color:var(--gray3);padding:6px 8px;background:var(--gray1);border-radius:4px;text-transform:uppercase;letter-spacing:.5px;}
 .empty-col{text-align:center;padding:2rem 1rem;color:var(--gray3);font-size:11px;line-height:1.7;opacity:.7;}
 
 /* TARJETA */
@@ -879,10 +883,10 @@ table.rt tr:last-child td{border-bottom:none;}
     </div>
   </div>
   <div class="board">
-    <div class="col col-pendiente" id="col-pendiente"><div class="col-hdr"><span class="col-ttl">Pendiente</span><span class="col-cnt" id="cnt-pendiente">0</span></div></div>
-    <div class="col col-proceso" id="col-proceso"><div class="col-hdr"><span class="col-ttl">En proceso</span><span class="col-cnt" id="cnt-proceso">0</span></div></div>
+    <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></div></div>
+    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy</span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></div></div>
-    <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl">Aprobado</span><span class="col-cnt" id="cnt-aprobado">0</span></div></div>
+    <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></div></div>
   </div>
   <div id="kds-wrap">
     <div class="kds-top">
@@ -1263,9 +1267,43 @@ let proyActualId=null, proyVista='lista';
 let editTareaId=null, editProyId=null, editPTId=null;
 let estTimer=null, ptEstTimer=null;
 
-const ESTADOS=['pendiente','proceso','revision','aprobado'];
-const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Aprobado'};
+// Estados reales de una tarea en BD: pendiente, proceso, revision, aprobado
+// Columnas visuales del Tablero: pendientes / hoy / revision / aprobado
+// "pendientes" y "hoy" son una clasificación derivada del plan del motor sobre
+// tareas con estado pendiente/proceso — NO son estados nuevos en BD.
+const ESTADOS=['pendiente','proceso','revision','aprobado']; // se mantiene para compat (KDS, reportes, etc.)
+const COLUMNAS=['pendientes','hoy','revision','aprobado'];
+const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Aprobado',pendientes:'Pendientes',hoy:'Hoy',culminado:'Culminado'};
 const EN={pendiente:'proceso',proceso:'revision',revision:'aprobado',aprobado:null};
+
+// Cache del plan por persona durante un ciclo de render — evita recalcular
+// planificarPersona() una vez por cada tarea (N llamadas -> 1 por persona).
+let _planCache={};
+function clearPlanCache(){_planCache={};}
+function getPlanPersona(resp){
+  if(!_planCache[resp])_planCache[resp]=planificarPersona(resp);
+  return _planCache[resp];
+}
+
+// ¿Esta tarea está en el plan del motor para HOY? (columna "Hoy" del tablero)
+function esDeHoy(t){
+  if(t.estado!=='pendiente'&&t.estado!=='proceso')return false;
+  if(!t.responsable)return false;
+  const{plan}=getPlanPersona(t.responsable);
+  const hp=plan[hoyStr()];
+  if(!hp)return false;
+  return hp.bloques.some(b=>b.tareaId===t.id);
+}
+
+// Columna visual donde cae una tarea
+function columnaDe(t){
+  if(t.estado==='revision')return 'revision';
+  if(t.estado==='aprobado')return 'aprobado';
+  if(t.estado==='pendiente'||t.estado==='proceso'){
+    return esDeHoy(t)?'hoy':'pendientes';
+  }
+  return 'pendientes';
+}
 const HORARIO={1:9,2:9,3:9,4:9,5:9,6:4,0:0};
 const H0=8;
 
@@ -1689,6 +1727,27 @@ function proximoDiaConEspacio(resp, horas, excluirId=null, desde=null){
 // ──────────────────────────────────────────────────────────
 function checkViabilidadModal(resp, horas, fecha, excluirId=null, diaFijado=null){
   if(!resp||!horas||!fecha)return null;
+
+  // ¿El deadline ya pasó? Es un caso distinto a sobrecarga — no hay día "sobrecargado",
+  // simplemente ya no hay tiempo. No tiene sentido calcular reparto de horas.
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const deadlineDate=fechaLocal(fecha);
+  if(deadlineDate<hoy){
+    return{
+      viable:false,
+      sobrecarga:false,
+      vencido:true,
+      dias:[],
+      diasSobrecarga:[],
+      diasNecesarios:Math.ceil(horas/HORAS_DIA),
+      hCompTotal:horasComprometidas(resp,excluirId)+horas,
+      proximoDia:proximoDiaConEspacio(resp,horas,excluirId),
+      horasDia:0,
+      capacidad:horasDia(deadlineDate),
+      tareasEseDia:0,
+    };
+  }
+
   const tareaSim={
     id:excluirId||'__sim__', responsable:resp, estado:'pendiente',
     fecha, horas, depId:null, dia_fijado:diaFijado||null,
@@ -1706,6 +1765,7 @@ function checkViabilidadModal(resp, horas, fecha, excluirId=null, diaFijado=null
   return{
     viable: info.viable && diasSobrecarga.length===0,
     sobrecarga: !info.viable || diasSobrecarga.length>0,
+    vencido:false,
     dias: info.dias||[],
     diasSobrecarga,
     diasNecesarios: info.diasNecesarios,
@@ -1777,20 +1837,27 @@ function recalcEntrega(){
   if(h&&fecha&&resp){
     const v=checkViabilidadModal(resp,h,fecha,editTareaId);
     const nombre=getUsuarioNombre(resp).split(' ')[0];
-    if(v.viable){
+    if(v.vencido){
+      document.getElementById('eval').innerHTML=`&#9888; Esta fecha ya pasó — no es un deadline válido para planificar`;
+      document.getElementById('eval').style.color='var(--urgente)';
+      document.getElementById('edet').textContent='Ajusta la fecha de entrega a hoy o una fecha futura';
+      document.getElementById('cola-info').textContent=`${v.hCompTotal-h}h comprometidas actualmente`;
+    } else if(v.viable){
       document.getElementById('eval').innerHTML=`✓ Viable — ${nombre} tiene capacidad ese día (${v.horasDia}h de ${v.capacidad}h)`;
       document.getElementById('eval').style.color='var(--verde)';
+      document.getElementById('edet').textContent=`${v.tareasEseDia} tarea${v.tareasEseDia!==1?'s':''} ya asignadas ese día`;
+      document.getElementById('cola-info').textContent=`${v.hCompTotal}h comprometidas en total`;
     } else {
-      let msg=`⚠ Sobrecarga — ${nombre} ya tiene ${v.horasDia-h}h ese día (máx ${v.capacidad}h)`;
+      let msg=`⚠ Sobrecarga — ${nombre} ya tiene ${v.horasDia}h ese día (máx ${v.capacidad}h)`;
       if(v.proximoDia){
         const fmt=v.proximoDia.toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'});
         msg+=`. Próximo día libre: ${fmt}`;
       }
       document.getElementById('eval').innerHTML=msg;
       document.getElementById('eval').style.color='var(--urgente)';
+      document.getElementById('edet').textContent=`${v.tareasEseDia} tarea${v.tareasEseDia!==1?'s':''} ya asignadas ese día`;
+      document.getElementById('cola-info').textContent=`${v.hCompTotal}h comprometidas en total`;
     }
-    document.getElementById('edet').textContent=`${v.tareasEseDia} tarea${v.tareasEseDia!==1?'s':''} ya asignadas ese día`;
-    document.getElementById('cola-info').textContent=`${v.hCompTotal}h comprometidas en total`;
   } else if(fecha){
     document.getElementById('eval').innerHTML=`Deadline: ${fecha}`;
     document.getElementById('eval').style.color='var(--dark)';
@@ -1991,17 +2058,18 @@ function renderMiDia(){
 }
 
 function render(){
+  clearPlanCache();
   const lista=filtradas();
   const urg=lista.filter(t=>t.prioridad==='urgente'&&t.estado!=='aprobado').length;
   document.getElementById('counter').innerHTML=`<strong>${lista.length}</strong> tarea${lista.length!==1?'s':''}${urg?` &nbsp;&middot;&nbsp; <span class="urg">${urg} urgente${urg>1?'s':''}</span>`:''}`;
-  ESTADOS.forEach(estado=>{
-    const col=document.getElementById(`col-${estado}`);
+  COLUMNAS.forEach(colId=>{
+    const col=document.getElementById(`col-${colId}`);
     [...col.children].forEach(el=>{if(!el.classList.contains('col-hdr'))el.remove();});
-    const cards=lista.filter(t=>t.estado===estado).sort((a,b)=>sortTareas(a,b));
-    document.getElementById(`cnt-${estado}`).textContent=cards.length;
+    const cards=lista.filter(t=>columnaDe(t)===colId).sort((a,b)=>sortTareas(a,b));
+    document.getElementById(`cnt-${colId}`).textContent=cards.length;
     if(!cards.length){const el=document.createElement('div');el.className='empty-col';el.textContent='Sin tareas';col.appendChild(el);return;}
     cards.forEach(t=>{
-      const card=mkCard(t);
+      const card=mkCard(t,colId);
       card.addEventListener('dragstart',e=>{
         dragKanbanId=t.id;
         card.classList.add('dragging');
@@ -2014,10 +2082,10 @@ function render(){
     });
   });
   renderCarga();
-  if(modoActual==='kds')renderKDS();
   if(!isMobile())initKanbanDnD();
 }
-function mkCard(t){
+function mkCard(t,colId){
+  colId=colId||columnaDe(t);
   const div=document.createElement('div');
   const bloq=esBloqueada(t);
   div.className=`card ${t.prioridad}${bloq?' bloqueada':''}`;
@@ -2034,20 +2102,56 @@ function mkCard(t){
   }
   const tmHtml=t.inicioProcess?`<span class="timer" data-inicio="${t.inicioProcess}">--:--</span>`:'';
   const overloadHtml=buildTimeHtml(t);
-  const next=EN[t.estado];
-  const btnA=!bloq&&next?`<button class="ba avanzar" onclick="avanzar('${t.id}',event)">${EL[next]} &rarr;</button>`:`<button class="ba done" disabled>${bloq?'🔒':'&#10003;'}</button>`;
+  const puedeEditar=PERFIL?.rol!=='colaborador';
+  // Botón de acción según columna:
+  // - "Hoy": botón único "Listo →" pasa directo a Revisión
+  // - "Pendientes": sin botón de avanzar (apagado, no es de hoy todavía)
+  // - "Revisión"/"Culminado": sin botón de avanzar para el colaborador (lo aprueba el gerente)
+  let btnA='';
+  if(colId==='hoy'&&!bloq){
+    btnA=`<button class="ba avanzar" onclick="marcarListo('${t.id}',event)">Listo &rarr;</button>`;
+  } else if(colId==='pendientes'){
+    btnA=`<span class="ba-apagado">En cola</span>`;
+  } else if(colId==='revision'){
+    btnA=`<span class="ba-apagado">Esperando aprobaci&oacute;n</span>`;
+  } else if(colId==='aprobado'){
+    btnA=`<button class="ba done" disabled>&#10003;</button>`;
+  } else if(bloq){
+    btnA=`<button class="ba done" disabled>🔒</button>`;
+  }
   const rHtml=t.responsable?`<span class="br">${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span>`:'';
   const pHtml=t.proyId?`<span class="bproy" onclick="abrirDetalle('${t.proyId}',event)">${esc((proyectos.find(p=>p.id===t.proyId)||{}).nombre||'Proyecto')}</span>`:'';
   const blHtml=bloq?`<span class="bblq">&#128274;</span>`:'';
   const depHtml=t.depId?(()=>{const dep=tareas.find(x=>x.id===t.depId);return dep?`<div class="card-dep">&#8627; ${esc(dep.titulo)}</div>`:''})():'';
   const linksT=tareasLinks[t.id]||(t.links||[]);
   const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(url=>{try{const h=new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${h}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
+  const editBtns=puedeEditar?`<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button>`:'';
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
 <div class="card-footer">${fHtml}${tmHtml}</div>
-<div class="card-actions">${btnA}<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button></div>`;
+<div class="card-actions">${btnA}${editBtns}</div>`;
   return div;
+}
+
+// Notificación al aprobador — implementación completa en Fase 2.
+// Por ahora, stub seguro que no rompe el flujo si la tabla aún no existe.
+async function notificarRevision(t){
+  try{
+    if(typeof crearNotificacion==='function')await crearNotificacion(t);
+  }catch(err){console.log('notificarRevision (pendiente Fase 2):',err);}
+}
+
+// "Listo" — desde la columna Hoy pasa directo a Revisión (sin estado intermedio visible)
+async function marcarListo(id,e){
+  e.stopPropagation();
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  if(!t.inicioProcess)t.inicioProcess=Date.now();
+  t.estado='revision';
+  await sbGuardarTarea({...t,inicioProcess:t.inicioProcess},id);
+  render();if(proyActualId)renderDetalle();
+  toast(`"${t.titulo}" → En revisión`);
+  await notificarRevision(t);
 }
 setInterval(()=>{document.querySelectorAll('.timer[data-inicio]').forEach(el=>{const d=Math.floor((Date.now()-parseInt(el.dataset.inicio))/1000),h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=d%60;el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;});},1000);
 

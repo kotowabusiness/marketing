@@ -129,6 +129,14 @@ header > *{padding-bottom:.65rem;}
 .card-footer{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
 .card-date{font-size:10px;font-weight:600;color:var(--gray3);}
 .card-date.vencida{color:var(--urgente);}.card-date.hoy{color:var(--gold);}
+.card-overload{font-size:10px;font-weight:700;color:var(--urgente);background:var(--urgente-lt);border-radius:3px;padding:.3rem .5rem;margin-bottom:.4rem;cursor:help;}
+.sobrecarga-opt{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem .8rem;border:1.5px solid var(--gray2);border-radius:6px;background:var(--white);cursor:pointer;text-align:left;font-family:'Montserrat',sans-serif;transition:all .12s;}
+.sobrecarga-opt:hover{border-color:var(--verde);background:var(--verde-lt);}
+.sobrecarga-opt-icon{font-size:18px;flex-shrink:0;line-height:1.3;}
+.sobrecarga-opt-txt{flex:1;}
+.sobrecarga-opt-ttl{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:2px;}
+.sobrecarga-opt-sub{font-size:11px;color:var(--gray3);line-height:1.4;}
+.sobrecarga-opt.danger:hover{border-color:var(--urgente);background:var(--urgente-lt);}
 .timer{font-size:10px;font-weight:700;color:var(--gray3);background:var(--gray1);padding:2px 6px;border-radius:3px;font-variant-numeric:tabular-nums;}
 .timer.ut{color:var(--urgente);background:var(--urgente-lt);}
 .card-actions{display:flex;gap:.25rem;padding-top:.4rem;border-top:1px solid var(--gray1);}
@@ -312,6 +320,38 @@ table.rt tr:last-child td{border-bottom:none;}
 .rb{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;white-space:nowrap;}
 .rb.ok{background:var(--verde-lt);color:var(--verde);}.rb.tarde{background:var(--urgente-lt);color:var(--urgente);}.rb.puntual{background:var(--gold-lt);color:var(--dark);}
 .r-empty{text-align:center;padding:3rem 1rem;color:var(--gray3);font-size:12px;line-height:1.8;}
+/* MI DÍA */
+.midia-wrap{padding:1.5rem 2rem 2rem;max-width:780px;}
+.midia-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:.75rem;}
+.midia-titulo{font-family:'Libre Baskerville',serif;font-size:24px;color:var(--dark);}
+.midia-fecha{font-size:12px;color:var(--gray3);text-transform:capitalize;margin-top:2px;}
+.midia-dia{margin-bottom:1.5rem;}
+.midia-dia-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;padding-bottom:.4rem;border-bottom:2px solid var(--gold);}
+.midia-dia-lbl{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--dark);text-transform:capitalize;}
+.midia-dia.apagado .midia-dia-hdr{border-bottom-color:var(--gray2);}
+.midia-dia.apagado .midia-dia-lbl{color:var(--gray3);}
+.midia-dia-cap{font-size:11px;color:var(--gray3);font-weight:600;}
+.midia-dia-cap.over{color:var(--urgente);}
+.midia-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:6px;background:var(--white);border:1px solid var(--gray2);margin-bottom:.4rem;transition:all .12s;cursor:pointer;}
+.midia-item:hover{border-color:var(--verde);box-shadow:0 1px 4px rgba(0,97,77,.08);}
+.midia-dia.apagado .midia-item{opacity:.45;background:var(--linen);}
+.midia-dia.apagado .midia-item.activable{opacity:1;background:var(--gold-lt);border-color:var(--gold);}
+.midia-icon{font-size:15px;flex-shrink:0;width:20px;text-align:center;}
+.midia-icon.done{color:var(--verde);}
+.midia-icon.proceso{color:var(--gold);}
+.midia-txt{flex:1;min-width:0;}
+.midia-ttl{font-size:12.5px;font-weight:600;color:var(--dark);line-height:1.3;}
+.midia-item.done .midia-ttl{text-decoration:line-through;color:var(--gray3);}
+.midia-sub{font-size:10px;color:var(--gray3);margin-top:1px;}
+.midia-horas{font-size:10px;font-weight:700;color:var(--verde);background:var(--verde-lt);padding:2px 8px;border-radius:10px;flex-shrink:0;white-space:nowrap;}
+.midia-dia.apagado .midia-horas{color:var(--gray3);background:var(--gray1);}
+.midia-empty{text-align:center;color:var(--gray3);font-size:12px;padding:1rem;}
+.midia-resumen{display:flex;gap:.5rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+.midia-resumen-card{flex:1;min-width:90px;background:var(--white);border:1px solid var(--gray2);border-radius:6px;padding:.6rem .75rem;text-align:center;}
+.midia-resumen-n{font-family:'Libre Baskerville',serif;font-size:20px;color:var(--dark);}
+.midia-resumen-n.ok{color:var(--verde);}.midia-resumen-n.mid{color:#b37b00;}
+.midia-resumen-lbl{font-size:9px;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-top:2px;}
+
 /* DRAG AND DROP KANBAN (desktop only) */
 @media(hover:hover){
   .card{cursor:grab;}
@@ -667,7 +707,13 @@ table.rt tr:last-child td{border-bottom:none;}
 <!-- BOTTOM NAV MOBILE -->
 <div id="bottom-nav">
   <div class="bnav-inner">
-    <button class="bnav-btn active" id="bnav-tareas" onclick="setVistaMobile('tareas',this)">
+    <button class="bnav-btn active" id="bnav-miDia" onclick="setVistaMobile('miDia',this)">
+      <span class="bnav-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </span>
+      <span class="bnav-lbl">Mi d&iacute;a</span>
+    </button>
+    <button class="bnav-btn" id="bnav-tareas" onclick="setVistaMobile('tareas',this)">
       <span class="bnav-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="11"/><rect x="14" y="18" width="7" height="3"/></svg>
       </span>
@@ -734,12 +780,12 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </header>
 <div class="nav" style="align-items:center;padding-right:.75rem;">
-  <button class="ntab active" onclick="setVista('tareas',this)">Tablero</button>
+  <button class="ntab active" onclick="setVista('miDia',this)">Mi d&iacute;a</button>
+  <button class="ntab" onclick="setVista('tareas',this)">Tablero</button>
   <button class="ntab" onclick="setVista('proyectos',this)">Proyectos</button>
-  <button class="ntab" onclick="setVista('calendario',this)">Calendario</button>
+  <button class="ntab" id="tab-calendario" onclick="setVista('calendario',this)">Calendario</button>
   <button class="ntab" id="tab-matriz" onclick="setVista('matriz',this)">Tiempos</button>
   <button class="ntab" onclick="setVista('reportes',this)">Reportes</button>
-  <button class="ntab" id="tab-calendario" onclick="setVista('calendario',this)">Calendario</button>
   <button class="ntab admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)">&#9881; Admin</button>
   <div style="flex:1"></div>
   <div class="modo-toggle" id="modo-toggle">
@@ -748,8 +794,24 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- MI DÍA -->
+<div class="vista active" id="vista-miDia">
+  <div class="midia-wrap">
+    <div class="midia-hdr">
+      <div>
+        <div class="midia-titulo" id="midia-titulo">Mi d&iacute;a</div>
+        <div class="midia-fecha" id="midia-fecha">&mdash;</div>
+      </div>
+      <select class="fselect" id="midia-resp-sel" onchange="renderMiDia()" style="display:none;">
+        <option value="">Todos</option>
+      </select>
+    </div>
+    <div id="midia-content"></div>
+  </div>
+</div>
+
 <!-- TABLERO -->
-<div class="vista active" id="vista-tareas">
+<div class="vista" id="vista-tareas">
   <!-- FILTROS MOBILE — dropdowns -->
   <div class="filter-mobile-wrap" id="filter-mobile-wrap">
     <select class="fselect" id="fm-prioridad" onchange="setFilterMobile('prioridad',this)">
@@ -1039,6 +1101,17 @@ table.rt tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- MODAL TAREA -->
+<!-- MODAL ALERTA SOBRECARGA -->
+<div class="modal-ov" id="modal-sobrecarga">
+  <div class="modal" style="max-width:480px;">
+    <div class="mhdr"><span class="mttl">&#9888; Sobrecarga detectada</span><button class="mclose" onclick="cerrarModalSobrecarga()">&#215;</button></div>
+    <div class="mbody">
+      <div id="sobrecarga-msg" style="font-size:13px;color:var(--dark);line-height:1.6;margin-bottom:1rem;"></div>
+      <div id="sobrecarga-opciones" style="display:flex;flex-direction:column;gap:.5rem;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="modal-ov" id="modal-tarea">
   <div class="modal">
     <div class="mhdr"><span class="mttl" id="mt-ttl">Nueva tarea</span><button class="mclose" onclick="cerrarModal('modal-tarea')">&#215;</button></div>
@@ -1265,7 +1338,7 @@ async function iniciarApp(user){
   document.getElementById('modo-toggle').style.display='flex';
   checkMobileNav();
   // Restaurar sección activa al hacer refresh
-  const vistaGuardada=localStorage.getItem('ktw_vista')||'tareas';
+  const vistaGuardada=localStorage.getItem('ktw_vista')||'miDia';
   const ntab=document.querySelector(`.ntab[onclick*="'${vistaGuardada}'"]`);
   if(ntab) setVista(vistaGuardada,ntab);
   else render();
@@ -1320,6 +1393,7 @@ async function cargarTareas(){
       aprobadoEn:t.aprobado_en,
       creadaEn:new Date(t.created_at).getTime(),
       horas:t.horas?parseFloat(t.horas):null,
+      dia_fijado:t.dia_fijado||null,
     };
   });
 }
@@ -1364,6 +1438,7 @@ async function sbGuardarTarea(datos,id=null){
     dep_id:datos.depId||null,
     inicio_process:datos.inicioProcess||null,
     aprobado_en:datos.aprobadoEn||null,
+    dia_fijado:datos.dia_fijado||null,
     updated_at:new Date().toISOString(),
   };
   if(id){const{error}=await sb.from('tareas').update(row).eq('id',id);return{error,id};}
@@ -1436,11 +1511,14 @@ function poblarSelectTipo(id){
 
 // ══════════════════════════════════════════════════════════
 // SISTEMA DE PLANIFICACIÓN POR DÍA
-// Lógica: deadline por fecha, horas para calcular carga/viabilidad
-// Día laboral = 7h. Pendientes ordenados por deadline más próximo.
+// Lógica: cada persona tiene capacidad diaria (7h lun-vie, 4h sáb, 0h dom).
+// Los pendientes activos (pendiente/proceso) se ordenan por deadline más próximo
+// y el motor reparte sus horas estimadas día por día, hacia atrás desde el deadline,
+// llenando la capacidad de cada día. Si un pendiente tiene "dia_fijado" (asignado
+// manualmente por el gerente), ese día se respeta tal cual y el resto se reparte
+// alrededor (replanificación dinámica).
 // ══════════════════════════════════════════════════════════
 const HORAS_DIA = 7;
-const DIAS_LAB = [1,2,3,4,5,6]; // lun-sab (sab=4h)
 const HORAS_DIA_SAB = 4;
 
 function esBloqueada(t){
@@ -1468,47 +1546,116 @@ function fechaLocal(str){
   const[y,m,d]=str.split('-').map(Number);
   return new Date(y,m-1,d);
 }
+function fechaStr(date){
+  const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${d}`;
+}
+function hoyStr(){const h=new Date();h.setHours(0,0,0,0);return fechaStr(h);}
 
-// Calcula carga de trabajo por día para un responsable
-// Retorna: {[fechaStr]: {horas, tareas[], sobrecarsa}}
-function calcCargaDiaria(resp, excluirId=null){
-  const activas=tareas.filter(t=>
+// ──────────────────────────────────────────────────────────
+// MOTOR: planificarPersona
+// Reparte las horas de cada pendiente activo de `resp` en días.
+// Devuelve:
+//   plan: {[fechaStr]: {horas, capacidad, sobrecarga, bloques:[{tareaId,horas,esFijado}]}}
+//   porTarea: {[tareaId]: {dias:[fechaStr,...], viable:bool, diasNecesarios, diasDisponibles}}
+// extra: tarea hipotética adicional a incluir en la simulación (para checkViabilidadModal)
+// ──────────────────────────────────────────────────────────
+function planificarPersona(resp, excluirId=null, extra=null){
+  let activas=tareas.filter(t=>
     t.responsable===resp &&
     (t.estado==='pendiente'||t.estado==='proceso') &&
     t.id!==excluirId &&
-    t.fecha &&
-    t.horas &&
+    t.fecha && t.horas &&
     !esBloqueada(t)
-  ).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+  );
+  if(extra)activas=[...activas,extra];
 
-  const carga={};
-  activas.forEach(t=>{
-    const f=t.fecha;
-    if(!carga[f])carga[f]={horas:0,tareas:[],sobrecarga:false};
-    carga[f].horas+=t.horas;
-    carga[f].tareas.push(t);
+  // Separar fijadas (dia_fijado) de las que el motor debe ordenar
+  const fijadas=activas.filter(t=>t.dia_fijado);
+  const libres=activas.filter(t=>!t.dia_fijado)
+    .sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)); // deadline más próximo primero
+
+  const plan={}; // fechaStr -> {horas, capacidad, sobrecarga, bloques:[]}
+  function addBloque(fecha,tareaId,horas,esFijado){
+    if(!plan[fecha]){
+      const dt=fechaLocal(fecha);
+      plan[fecha]={horas:0,capacidad:horasDia(dt),sobrecarga:false,bloques:[]};
+    }
+    plan[fecha].horas+=horas;
+    plan[fecha].bloques.push({tareaId,horas,esFijado});
+  }
+
+  const porTarea={};
+
+  // 1. Colocar primero las fijadas tal cual (pueden sobrecargar el día — eso se detecta después)
+  fijadas.forEach(t=>{
+    addBloque(t.dia_fijado,t.id,t.horas,true);
+    porTarea[t.id]={dias:[t.dia_fijado],viable:true,diasNecesarios:1,diasDisponibles:1};
   });
 
-  // Marcar sobrecarga
-  Object.entries(carga).forEach(([f,v])=>{
-    const dt=fechaLocal(f);
-    const max=horasDia(dt);
-    v.sobrecarga=v.horas>max;
-    v.capacidad=max;
+  // 2. Repartir las libres día por día desde HOY, hacia el deadline, llenando capacidad
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  libres.forEach(t=>{
+    let restante=t.horas;
+    const dias=[];
+    const deadline=fechaLocal(t.fecha);
+    let cursor=new Date(hoy);
+    let diasDisponibles=0;
+    // Buscar desde hoy hasta el deadline (inclusive), días laborales con espacio libre
+    while(restante>0){
+      const fStr=fechaStr(cursor);
+      const cap=horasDia(cursor);
+      if(cap>0){
+        const usado=plan[fStr]?.horas||0;
+        const libre=cap-usado;
+        if(cursor<=deadline)diasDisponibles++;
+        if(libre>0){
+          const asignar=Math.min(restante,libre);
+          addBloque(fStr,t.id,asignar,false);
+          if(!dias.includes(fStr))dias.push(fStr);
+          restante-=asignar;
+        }
+      }
+      if(cursor>deadline && restante>0){
+        // Ya pasamos el deadline y sigue sin caber — seguir buscando espacio
+        // pero ya es inviable
+      }
+      if(cursor>addDias(deadline,60))break; // límite de seguridad
+      cursor=addDias(cursor,1);
+    }
+    const diasNecesarios=Math.ceil(t.horas/HORAS_DIA); // aproximado, para mostrar
+    const viable=dias.every(f=>fechaLocal(f)<=deadline) && restante<=0;
+    porTarea[t.id]={dias,viable,diasNecesarios,diasDisponibles};
+  });
+
+  // Marcar sobrecarga por día
+  Object.entries(plan).forEach(([f,v])=>{ v.sobrecarga = v.horas > v.capacidad; });
+
+  return{plan,porTarea};
+}
+
+// Calcula carga de trabajo por día para un responsable (compat con calendario/UI)
+// Retorna: {[fechaStr]: {horas, tareas[], sobrecarga, capacidad}}
+function calcCargaDiaria(resp, excluirId=null){
+  const{plan}=planificarPersona(resp, excluirId);
+  const carga={};
+  Object.entries(plan).forEach(([f,v])=>{
+    carga[f]={
+      horas:v.horas,
+      capacidad:v.capacidad,
+      sobrecarga:v.sobrecarga,
+      tareas:v.bloques.map(b=>tareas.find(x=>x.id===b.tareaId)).filter(Boolean),
+    };
   });
   return carga;
 }
 
-// Para una tarea dada: ¿es viable para su deadline?
+// Para una tarea dada: ¿el motor logra ubicar todas sus horas antes del deadline?
 function esViable(t){
   if(!t.horas||!t.fecha)return null;
   if(t.estado==='aprobado'||t.estado==='revision')return true;
-  const carga=calcCargaDiaria(t.responsable);
-  const diaT=carga[t.fecha];
-  if(!diaT)return true; // única tarea ese día
-  const dt=fechaLocal(t.fecha);
-  const max=horasDia(dt);
-  return diaT.horas<=max;
+  const{porTarea}=planificarPersona(t.responsable);
+  return porTarea[t.id]?.viable ?? true;
 }
 
 // Horas totales comprometidas para un responsable en tareas activas
@@ -1520,40 +1667,54 @@ function horasComprometidas(resp, excluirId=null){
   ).reduce((s,t)=>s+(t.horas||0),0);
 }
 
-// ¿Cuándo es el día más próximo disponible para X horas?
-function proximoDiaDisponible(resp, horas, excluirId=null){
-  const carga=calcCargaDiaria(resp, excluirId);
-  const hoy=new Date();hoy.setHours(0,0,0,0);
-  for(let i=0;i<30;i++){
-    const d=addDias(hoy,i);
-    if(!esDiaLaboral(d))continue;
-    const f=d.toISOString().split('T')[0];
-    const usado=(carga[f]?.horas)||0;
-    const max=horasDia(d);
-    if(usado+horas<=max)return d;
+// ¿Cuándo es el día más próximo disponible para X horas? (para sugerencias)
+function proximoDiaConEspacio(resp, horas, excluirId=null, desde=null){
+  const{plan}=planificarPersona(resp, excluirId);
+  let cursor=desde?new Date(desde):new Date();cursor.setHours(0,0,0,0);
+  for(let i=0;i<60;i++){
+    const cap=horasDia(cursor);
+    if(cap>0){
+      const f=fechaStr(cursor);
+      const usado=plan[f]?.horas||0;
+      if(usado+horas<=cap)return new Date(cursor);
+    }
+    cursor=addDias(cursor,1);
   }
   return null;
 }
 
-// Check viabilidad al crear tarea (para el modal)
-function checkViabilidadModal(resp, horas, fecha, excluirId=null){
+// ──────────────────────────────────────────────────────────
+// checkViabilidadModal: simula agregar/editar una tarea y dice si encaja
+// Devuelve info para el modal de sobrecarga (4 opciones)
+// ──────────────────────────────────────────────────────────
+function checkViabilidadModal(resp, horas, fecha, excluirId=null, diaFijado=null){
   if(!resp||!horas||!fecha)return null;
-  const carga=calcCargaDiaria(resp, excluirId);
-  const diaObj=carga[fecha]||{horas:0,tareas:[]};
-  const dt=fechaLocal(fecha);
-  const max=horasDia(dt);
-  const total=diaObj.horas+horas;
-  const hComp=horasComprometidas(resp, excluirId);
-  const proxDia=proximoDiaDisponible(resp, horas, excluirId);
+  const tareaSim={
+    id:excluirId||'__sim__', responsable:resp, estado:'pendiente',
+    fecha, horas, depId:null, dia_fijado:diaFijado||null,
+  };
+  const{plan,porTarea}=planificarPersona(resp, excluirId, tareaSim);
+  const info=porTarea[tareaSim.id]||{viable:true,dias:[],diasNecesarios:1,diasDisponibles:1};
+
+  // Días sobrecargados que afecta esta tarea
+  const diasSobrecarga=(info.dias||[]).filter(f=>plan[f]?.sobrecarga)
+    .map(f=>({fecha:f,horas:plan[f].horas,capacidad:plan[f].capacidad}));
+
+  const hComp=horasComprometidas(resp, excluirId)+horas;
+  const proxDia=info.viable?null:proximoDiaConEspacio(resp,horas,excluirId);
+
   return{
-    viable: total<=max,
-    horasDia: total,
-    capacidad: max,
-    sobrecarga: total>max,
-    exceso: Math.max(0,total-max),
+    viable: info.viable && diasSobrecarga.length===0,
+    sobrecarga: !info.viable || diasSobrecarga.length>0,
+    dias: info.dias||[],
+    diasSobrecarga,
+    diasNecesarios: info.diasNecesarios,
     hCompTotal: hComp,
     proximoDia: proxDia,
-    tareasEseDia: diaObj.tareas.length,
+    // compat con UI anterior
+    horasDia: diasSobrecarga[0]?.horas ?? (plan[fecha]?.horas||0),
+    capacidad: diasSobrecarga[0]?.capacidad ?? horasDia(fechaLocal(fecha)),
+    tareasEseDia: plan[fecha]?.bloques?.length||0,
   };
 }
 
@@ -1646,32 +1807,19 @@ function recalcEntrega(){
 // ══════════════════════════════════════════════════════════
 // RENDER TABLERO
 // ══════════════════════════════════════════════════════════
+// Retorna SOLO la alerta de sobrecarga (chip rojo), si aplica. La fecha de entrega
+// y el resto de metadata las maneja mkCard para evitar duplicación.
 function buildTimeHtml(t){
-  if(t.estado==='aprobado')return '';
-  let html='';
-  if(t.fecha){
-    const hoy=new Date();hoy.setHours(0,0,0,0);
-    const[fy,fm,fd]=t.fecha.split('-').map(Number);
-    const dl=new Date(fy,fm-1,fd);
-    const diff=Math.round((dl-hoy)/86400000);
-    let cls='ok',lbl='';
-    if(diff<0){cls='vencida';lbl=`Venció hace ${-diff}d`;}
-    else if(diff===0){cls='hoy';lbl='Vence hoy';}
-    else if(diff===1){lbl='Mañana';}
-    else{lbl=dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}
-    // Alerta sobrecarga: ¿ese día ya está lleno?
-    let alertHtml='';
-    if(t.horas&&t.responsable&&(t.estado==='pendiente'||t.estado==='proceso')){
-      const v=checkViabilidadModal(t.responsable,t.horas,t.fecha,t.id);
-      if(v&&v.sobrecarga){
-        alertHtml=` <span style="font-size:9px;color:var(--urgente);font-weight:700;cursor:help;" title="Sobrecarga: ${v.horasDia}h asignadas, máx ${v.capacidad}h">⚠ Sobrecarga</span>`;
-      }
-    }
-    html+=`<div class="card-time"><div class="card-time-est">&#128197;${t.horas?` <span style="color:var(--gray3);font-size:9px;">${t.horas}h</span>`:''}${alertHtml}</div><div class="card-entrega ${cls}"><small>Entrega</small>${lbl}</div></div>`;
-  } else if(t.horas){
-    html+=`<div class="card-time"><div class="card-time-est">&#9201; <span>${t.horas}h est.</span></div><div style="font-size:10px;color:var(--gray3);">Sin deadline</div></div>`;
+  if(t.estado==='aprobado'||t.estado==='revision')return '';
+  if(!t.horas||!t.responsable||!t.fecha)return '';
+  if(t.estado!=='pendiente'&&t.estado!=='proceso')return '';
+  const v=checkViabilidadModal(t.responsable,t.horas,t.fecha,t.id,t.dia_fijado);
+  if(v&&v.sobrecarga){
+    const dia=v.diasSobrecarga?.[0];
+    const detalle=dia?` (${dia.horas}h de ${dia.capacidad}h)`:'';
+    return `<div class="card-overload" title="Ese día ya está sobrecargado${detalle}">⚠ Sobrecarga</div>`;
   }
-  return html;
+  return '';
 }
 function filtradas(){
   const hoy=new Date();hoy.setHours(0,0,0,0);
@@ -1710,6 +1858,138 @@ function renderCarga(){
     </div>`;
   }).join('');
 }
+// ══════════════════════════════════════════════════════════
+// MI DÍA — pantalla inicial
+// Muestra el plan de hoy (completado/proceso/pendiente) y los próximos
+// días "apagados" que se activan si el trabajo de hoy ya está completo.
+// ══════════════════════════════════════════════════════════
+function poblarMiDiaResp(){
+  const sel=document.getElementById('midia-resp-sel');if(!sel)return;
+  if(PERFIL?.rol==='colaborador'){sel.style.display='none';return;}
+  const val=sel.value;
+  sel.innerHTML='<option value="">Mi vista</option>';
+  usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;if(u.id===val)o.selected=true;sel.appendChild(o);});
+  sel.style.display='';
+  if(!sel.value)sel.value=USER.id;
+}
+
+function midiaIcono(t){
+  if(t.estado==='aprobado'||t.estado==='revision')return{cls:'done',icon:'&#10003;'};
+  if(t.estado==='proceso')return{cls:'proceso',icon:'&#9658;'};
+  return{cls:'',icon:'&#9675;'};
+}
+
+function renderMiDia(){
+  const sel=document.getElementById('midia-resp-sel');
+  poblarMiDiaResp();
+  const resp=(PERFIL?.rol==='colaborador')?USER.id:(sel?.value||USER.id);
+  if(!resp){document.getElementById('midia-content').innerHTML='<div class="midia-empty">Selecciona una persona.</div>';return;}
+
+  const nombre=getUsuarioNombre(resp).split(' ')[0];
+  document.getElementById('midia-titulo').textContent=resp===USER.id?'Mi día':`Día de ${nombre}`;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  document.getElementById('midia-fecha').textContent=hoy.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'});
+
+  const{plan}=planificarPersona(resp);
+  const hStr=hoyStr();
+  const hoyPlan=plan[hStr]||{horas:0,capacidad:horasDia(hoy),bloques:[]};
+
+  // Tareas de hoy: completadas, en proceso, pendientes — según el plan + tareas activas con fecha=hoy
+  const idsHoy=new Set(hoyPlan.bloques.map(b=>b.tareaId));
+  // También incluir tareas con deadline hoy que ya están en revisión/aprobado (se completaron)
+  tareas.forEach(t=>{
+    if(t.responsable===resp&&t.fecha===hStr&&(t.estado==='revision'||t.estado==='aprobado'))idsHoy.add(t.id);
+  });
+  const tareasHoy=[...idsHoy].map(id=>tareas.find(t=>t.id===id)).filter(Boolean);
+
+  const completadas=tareasHoy.filter(t=>t.estado==='revision'||t.estado==='aprobado');
+  const enProceso=tareasHoy.filter(t=>t.estado==='proceso');
+  const pendientesHoy=tareasHoy.filter(t=>t.estado==='pendiente');
+
+  // ¿Terminó el trabajo de hoy? (no quedan pendientes ni en proceso para hoy)
+  const trabajoHoyCompleto=pendientesHoy.length===0&&enProceso.length===0&&tareasHoy.length>0;
+
+  // Resumen
+  const totalHoyH=hoyPlan.horas;
+  const capHoyH=hoyPlan.capacidad;
+  let html=`<div class="midia-resumen">
+    <div class="midia-resumen-card"><div class="midia-resumen-n ok">${completadas.length}</div><div class="midia-resumen-lbl">Completadas</div></div>
+    <div class="midia-resumen-card"><div class="midia-resumen-n mid">${enProceso.length}</div><div class="midia-resumen-lbl">En proceso</div></div>
+    <div class="midia-resumen-card"><div class="midia-resumen-n">${pendientesHoy.length}</div><div class="midia-resumen-lbl">Por hacer hoy</div></div>
+    <div class="midia-resumen-card"><div class="midia-resumen-n ${totalHoyH>capHoyH?'mid':''}">${totalHoyH}h / ${capHoyH}h</div><div class="midia-resumen-lbl">Carga de hoy</div></div>
+  </div>`;
+
+  // ── HOY ──
+  html+=`<div class="midia-dia">
+    <div class="midia-dia-hdr"><span class="midia-dia-lbl">Hoy</span></div>`;
+  if(!tareasHoy.length){
+    html+=`<div class="midia-empty">Sin pendientes para hoy. ¡Buen momento para revisar lo de mañana!</div>`;
+  } else {
+    // Orden: en proceso primero, luego pendientes (por deadline, ya viene ordenado del motor), luego completadas
+    [...enProceso,...pendientesHoy,...completadas].forEach(t=>{
+      const ic=midiaIcono(t);
+      const bloque=hoyPlan.bloques.find(b=>b.tareaId===t.id);
+      const hLbl=bloque?`${bloque.horas}h`:(t.horas?`${t.horas}h`:'');
+      const fijadoTag=t.dia_fijado?' &#128204;':'';
+      html+=`<div class="midia-item ${ic.cls}" onclick="editarTarea('${t.id}',event)">
+        <span class="midia-icon ${ic.cls}">${ic.icon}</span>
+        <div class="midia-txt">
+          <div class="midia-ttl">${esc(t.titulo)}${fijadoTag}</div>
+          <div class="midia-sub">${esc(getTipoLabel(t.tipo))}${t.proyId?` · ${esc((proyectos.find(p=>p.id===t.proyId)||{}).nombre||'')}`:''}</div>
+        </div>
+        ${hLbl?`<span class="midia-horas">${hLbl}</span>`:''}
+      </div>`;
+    });
+  }
+  html+=`</div>`;
+
+  // ── DÍAS FUTUROS (apagados, se activan si hoy ya se completó) ──
+  let cursor=addDias(hoy,1);
+  let diasMostrados=0;
+  while(diasMostrados<4){
+    const cap=horasDia(cursor);
+    if(cap<=0){cursor=addDias(cursor,1);continue;} // saltar domingos
+    const fStr=fechaStr(cursor);
+    const diaPlan=plan[fStr]||{horas:0,capacidad:cap,bloques:[]};
+    const esMañana=diasMostrados===0;
+    const activo=esMañana&&trabajoHoyCompleto;
+    const lbl=cursor.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
+    const over=diaPlan.horas>diaPlan.capacidad;
+
+    html+=`<div class="midia-dia${activo?'':' apagado'}">
+      <div class="midia-dia-hdr">
+        <span class="midia-dia-lbl">${esMañana?'Mañana':''} ${lbl}</span>
+        <span class="midia-dia-cap${over?' over':''}">${diaPlan.horas}h / ${diaPlan.capacidad}h${over?' ⚠':''}</span>
+      </div>`;
+
+    if(!diaPlan.bloques.length){
+      html+=`<div class="midia-empty">Sin pendientes asignados.</div>`;
+    } else {
+      diaPlan.bloques.forEach(b=>{
+        const t=tareas.find(x=>x.id===b.tareaId);if(!t)return;
+        const fijadoTag=b.esFijado?' &#128204;':'';
+        html+=`<div class="midia-item${activo?' activable':''}" onclick="editarTarea('${t.id}',event)">
+          <span class="midia-icon">&#9675;</span>
+          <div class="midia-txt">
+            <div class="midia-ttl">${esc(t.titulo)}${fijadoTag}</div>
+            <div class="midia-sub">${esc(getTipoLabel(t.tipo))} · Entrega ${fechaLocal(t.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'})}</div>
+          </div>
+          <span class="midia-horas">${b.horas}h</span>
+        </div>`;
+      });
+    }
+    if(activo){
+      html+=`<div style="font-size:10px;color:var(--gold);font-weight:700;text-align:center;padding:.4rem;">&#10024; Terminaste lo de hoy — puedes adelantar esto</div>`;
+    }
+    html+=`</div>`;
+
+    cursor=addDias(cursor,1);
+    diasMostrados++;
+  }
+
+  document.getElementById('midia-content').innerHTML=html;
+}
+
 function render(){
   const lista=filtradas();
   const urg=lista.filter(t=>t.prioridad==='urgente'&&t.estado!=='aprobado').length;
@@ -1720,7 +2000,18 @@ function render(){
     const cards=lista.filter(t=>t.estado===estado).sort((a,b)=>sortTareas(a,b));
     document.getElementById(`cnt-${estado}`).textContent=cards.length;
     if(!cards.length){const el=document.createElement('div');el.className='empty-col';el.textContent='Sin tareas';col.appendChild(el);return;}
-    cards.forEach(t=>col.appendChild(mkCard(t)));
+    cards.forEach(t=>{
+      const card=mkCard(t);
+      card.addEventListener('dragstart',e=>{
+        dragKanbanId=t.id;
+        card.classList.add('dragging');
+      });
+      card.addEventListener('dragend',()=>{
+        card.classList.remove('dragging');
+        dragKanbanId=null;
+      });
+      col.appendChild(card);
+    });
   });
   renderCarga();
   if(modoActual==='kds')renderKDS();
@@ -1732,11 +2023,17 @@ function mkCard(t){
   div.className=`card ${t.prioridad}${bloq?' bloqueada':''}`;
   div.dataset.tid=t.id;
   div.draggable=true;
-  const hoy=new Date();hoy.setHours(0,0,0,0);
+  // Fecha de entrega — una sola vez, simple
   let fHtml='';
-  if(t.fecha){const d=new Date(t.fecha+'T00:00:00'),diff=Math.round((d-hoy)/86400000);let cls='',lbl='';if(diff<0){cls='vencida';lbl=`Venció hace ${-diff}d`;}else if(diff===0){cls='hoy';lbl='Vence hoy';}else if(diff===1){lbl='Mañana';}else{lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}fHtml=`<span class="card-date ${cls}">&#128197; ${lbl}</span>`;}
-  const tmHtml=t.inicioProcess?`<span class="timer${t.prioridad==='urgente'?' ut':''}" data-inicio="${t.inicioProcess}">--:--</span>`:'';
-  const tHtml=buildTimeHtml(t);
+  if(t.fecha){
+    const d=new Date(t.fecha+'T00:00:00');
+    const lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
+    const hoy=new Date();hoy.setHours(0,0,0,0);
+    const cls=d<hoy?'vencida':'';
+    fHtml=`<span class="card-date ${cls}">&#128197; Entrega: ${lbl}</span>`;
+  }
+  const tmHtml=t.inicioProcess?`<span class="timer" data-inicio="${t.inicioProcess}">--:--</span>`:'';
+  const overloadHtml=buildTimeHtml(t);
   const next=EN[t.estado];
   const btnA=!bloq&&next?`<button class="ba avanzar" onclick="avanzar('${t.id}',event)">${EL[next]} &rarr;</button>`:`<button class="ba done" disabled>${bloq?'🔒':'&#10003;'}</button>`;
   const rHtml=t.responsable?`<span class="br">${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span>`:'';
@@ -1745,9 +2042,9 @@ function mkCard(t){
   const depHtml=t.depId?(()=>{const dep=tareas.find(x=>x.id===t.depId);return dep?`<div class="card-dep">&#8627; ${esc(dep.titulo)}</div>`:''})():'';
   const linksT=tareasLinks[t.id]||(t.links||[]);
   const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(url=>{try{const h=new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${h}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
-  div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div><span class="bp ${t.prioridad}">${t.prioridad}</span></div>
+  div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
-${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${tHtml}
+${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
 <div class="card-footer">${fHtml}${tmHtml}</div>
 <div class="card-actions">${btnA}<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button></div>`;
   return div;
@@ -1812,7 +2109,7 @@ function setKDSResp(r,btn){kdsResp=r;document.querySelectorAll('[id^="kf-"]').fo
 setInterval(()=>{if(modoActual!=='kds')return;document.querySelectorAll('.kbig-timer[data-ki]').forEach(el=>{const d=(Date.now()-parseInt(el.dataset.ki))/1000,h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=Math.floor(d%60);el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;const pct=Math.min(100,(d/3600)/parseFloat(el.dataset.kh)*100);el.className=`kbig-timer ${pct>90?'over':pct>70?'warn':'ok'}`;});document.querySelectorAll('.kprog-fill[data-kp]').forEach(bar=>{const t=tareas.find(x=>x.id===bar.dataset.kp);if(!t||!t.inicioProcess||!t.horas)return;const pct=Math.min(100,Math.round(((Date.now()-t.inicioProcess)/3600000)/t.horas*100));bar.style.width=pct+'%';bar.className=`kprog-fill ${pct>90?'over':pct>70?'warn':'ok'}`;});},1000);
 
 // VISTAS
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='miDia'){renderMiDia();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
 function sortTareas(a,b){
   const po={urgente:0,normal:1,baja:2};
   const hoy=new Date();
@@ -1975,6 +2272,8 @@ function renderModalLinks(){
 }
 function quitarLink(i){modalLinks.splice(i,1);renderModalLinks();}
 
+let pendienteGuardar=null; // datos en espera de resolución de sobrecarga
+
 async function guardarTarea(){
   const titulo=document.getElementById('f-titulo').value.trim();if(!titulo){document.getElementById('f-titulo').focus();return;}
   const est=document.getElementById('f-estado').value;
@@ -1983,7 +2282,22 @@ async function guardarTarea(){
   if(editTareaId){const t=tareas.find(x=>x.id===editTareaId);ip=t?.inicioProcess;ae=t?.aprobadoEn;}
   if(est==='proceso'&&!ip)ip=Date.now();
   if(est==='aprobado'&&!ae)ae=Date.now();
-  const datos={titulo,prioridad:document.getElementById('f-prioridad').value,tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:document.getElementById('f-fecha').value||null,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,proyId:editTareaId?tareas.find(x=>x.id===editTareaId)?.proyId:null,depId:editTareaId?tareas.find(x=>x.id===editTareaId)?.depId:null,links:modalLinks.length?[...modalLinks]:null};
+  const tAnterior=editTareaId?tareas.find(x=>x.id===editTareaId):null;
+  const datos={titulo,prioridad:document.getElementById('f-prioridad').value,tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:document.getElementById('f-fecha').value||null,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,dia_fijado:tAnterior?.dia_fijado||null};
+
+  // Solo chequear sobrecarga para tareas activas con horas y fecha
+  if(horas&&datos.fecha&&datos.responsable&&(est==='pendiente'||est==='proceso')){
+    const v=checkViabilidadModal(datos.responsable,horas,datos.fecha,editTareaId,datos.dia_fijado);
+    if(v&&v.sobrecarga){
+      pendienteGuardar=datos;
+      mostrarModalSobrecarga(v,datos);
+      return; // no guardar todavía — esperar decisión
+    }
+  }
+  await ejecutarGuardado(datos);
+}
+
+async function ejecutarGuardado(datos){
   const{error,id}=await sbGuardarTarea(datos,editTareaId);
   if(error){toast('Error al guardar: '+error.message);return;}
   if(editTareaId){const idx=tareas.findIndex(t=>t.id===editTareaId);if(idx>-1)Object.assign(tareas[idx],{...datos,id:editTareaId,links:[...modalLinks]});toast('Tarea actualizada');}
@@ -1991,20 +2305,121 @@ async function guardarTarea(){
   // Persistir links
   if(id||editTareaId){const tid=editTareaId||id;if(tid){tareasLinks[tid]=[...modalLinks];}}
   cerrarModal('modal-tarea');render();if(proyActualId)renderDetalle();
+  if(modoActual==='calendario')renderCal();
+}
+
+// ══════════════════════════════════════════════════════════
+// MODAL DE SOBRECARGA — 4 opciones
+// ══════════════════════════════════════════════════════════
+function fmtFechaCorta(fStr){
+  return fechaLocal(fStr).toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'});
+}
+
+function mostrarModalSobrecarga(v,datos){
+  const nombre=getUsuarioNombre(datos.responsable).split(' ')[0];
+  const dia=v.diasSobrecarga?.[0];
+  const fechaProb=dia?dia.fecha:datos.fecha;
+  const msg=dia
+    ? `Con este pendiente, <strong>${nombre}</strong> tendría <strong>${dia.horas}h</strong> asignadas el ${fmtFechaCorta(fechaProb)} (máx ${dia.capacidad}h). Esto no es viable antes del ${fmtFechaCorta(datos.fecha)}.`
+    : `Las ${datos.horas}h de este pendiente no caben antes del ${fmtFechaCorta(datos.fecha)} para <strong>${nombre}</strong>.`;
+  document.getElementById('sobrecarga-msg').innerHTML=msg;
+
+  const opts=document.getElementById('sobrecarga-opciones');
+  opts.innerHTML='';
+
+  // OPCIÓN 1: mover el deadline del pendiente nuevo
+  if(v.proximoDia){
+    const fmt=v.proximoDia.toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'});
+    opts.innerHTML+=`<button class="sobrecarga-opt" onclick="resolverSobrecarga('mover_deadline','${fechaStr(v.proximoDia)}')">
+      <div class="sobrecarga-opt-icon">&#128197;</div>
+      <div class="sobrecarga-opt-txt"><div class="sobrecarga-opt-ttl">Mover el deadline a ${fmt}</div><div class="sobrecarga-opt-sub">Próximo día con espacio disponible para ${nombre}</div></div>
+    </button>`;
+  }
+
+  // OPCIÓN 2: mover otro pendiente menos urgente de esa persona
+  const otrosEseDia=(dia? (planificarPersona(datos.responsable, editTareaId).plan[dia.fecha]?.bloques||[]) : [])
+    .map(b=>tareas.find(t=>t.id===b.tareaId)).filter(Boolean)
+    .filter(t=>t.id!==editTareaId)
+    .sort((a,b)=>new Date(b.fecha)-new Date(a.fecha)); // el de deadline más lejano = menos urgente
+  if(otrosEseDia.length){
+    const otro=otrosEseDia[0];
+    const proxLibre=proximoDiaConEspacio(datos.responsable,otro.horas,otro.id,fechaLocal(datos.fecha));
+    if(proxLibre){
+      const fmt=proxLibre.toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'});
+      opts.innerHTML+=`<button class="sobrecarga-opt" onclick="resolverSobrecarga('mover_otro','${otro.id}|${fechaStr(proxLibre)}')">
+        <div class="sobrecarga-opt-icon">&#128260;</div>
+        <div class="sobrecarga-opt-txt"><div class="sobrecarga-opt-ttl">Mover "${esc(otro.titulo)}" a ${fmt}</div><div class="sobrecarga-opt-sub">Tiene deadline más lejano (${fmtFechaCorta(otro.fecha)}) — hace espacio para este pendiente</div></div>
+      </button>`;
+    }
+  }
+
+  // OPCIÓN 3: reasignar a otra persona con espacio
+  const otrasPersonas=usuarios.filter(u=>u.id!==datos.responsable&&u.rol!=='admin');
+  let mejorPersona=null;
+  for(const u of otrasPersonas){
+    const vOtro=checkViabilidadModal(u.id,datos.horas,datos.fecha,null,null);
+    if(vOtro&&!vOtro.sobrecarga){mejorPersona=u;break;}
+  }
+  if(mejorPersona){
+    opts.innerHTML+=`<button class="sobrecarga-opt" onclick="resolverSobrecarga('reasignar','${mejorPersona.id}')">
+      <div class="sobrecarga-opt-icon">&#128100;</div>
+      <div class="sobrecarga-opt-txt"><div class="sobrecarga-opt-ttl">Reasignar a ${esc(mejorPersona.nombre.split(' ')[0])}</div><div class="sobrecarga-opt-sub">Tiene capacidad disponible para esta fecha</div></div>
+    </button>`;
+  }
+
+  // OPCIÓN 4: aceptar la sobrecarga igual
+  opts.innerHTML+=`<button class="sobrecarga-opt danger" onclick="resolverSobrecarga('aceptar')">
+    <div class="sobrecarga-opt-icon">&#9888;</div>
+    <div class="sobrecarga-opt-txt"><div class="sobrecarga-opt-ttl">Aceptar la sobrecarga</div><div class="sobrecarga-opt-sub">Guardar de todas formas — ${nombre} tendrá más trabajo del que cabe ese día</div></div>
+  </button>`;
+
+  document.getElementById('modal-sobrecarga').classList.add('open');
+}
+
+function cerrarModalSobrecarga(){
+  document.getElementById('modal-sobrecarga').classList.remove('open');
+  pendienteGuardar=null;
+}
+
+async function resolverSobrecarga(accion,param){
+  if(!pendienteGuardar)return;
+  const datos={...pendienteGuardar};
+
+  if(accion==='mover_deadline'){
+    datos.fecha=param;
+    toast(`Deadline ajustado a ${fmtFechaCorta(param)}`);
+  } else if(accion==='mover_otro'){
+    const[otroId,nuevaFecha]=param.split('|');
+    const otro=tareas.find(t=>t.id===otroId);
+    if(otro){
+      otro.fecha=nuevaFecha;
+      await sbGuardarTarea({...otro},otroId);
+      toast(`"${otro.titulo}" movido a ${fmtFechaCorta(nuevaFecha)}`);
+    }
+  } else if(accion==='reasignar'){
+    datos.responsable=param;
+    toast(`Reasignado a ${getUsuarioNombre(param).split(' ')[0]}`);
+  } else if(accion==='aceptar'){
+    toast('Guardado con sobrecarga');
+  }
+
+  document.getElementById('modal-sobrecarga').classList.remove('open');
+  pendienteGuardar=null;
+  await ejecutarGuardado(datos);
 }
 
 // PROYECTOS
 function tareasDeProy(id=proyActualId){return tareas.filter(t=>t.proyId===id);}
 function progProy(p){const ts=tareasDeProy(p.id);if(!ts.length)return 0;return Math.round(ts.filter(t=>t.estado==='aprobado').length/ts.length*100);}
+// Viabilidad del proyecto: ¿todos sus pendientes son viables según el motor?
 function calcDLAlerta(p){
   if(!p.deadline)return null;
-  const ts=tareasDeProy(p.id).filter(t=>t.estado!=='aprobado');if(!ts.length)return{ok:true,msg:'✓ Todo completado'};
-  const dl=new Date(p.deadline+'T23:59:59'),hoy=new Date();
-  const porP={};ts.forEach(t=>{const r=t.responsable||'';porP[r]=(porP[r]||0)+(t.horas||0);});
-  let maxE=hoy;Object.entries(porP).forEach(([r,h])=>{const e=avanzarHoras(hoy,h);if(e>maxE)maxE=e;});
-  const totalH=Object.values(porP).reduce((s,h)=>s+h,0),ok=maxE<=dl,dias=Math.round((dl-hoy)/86400000);
-  if(ok)return{ok:true,msg:`✓ Viable · ${totalH.toFixed(0)}h · ${maxE.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`};
-  const ret=Math.round((maxE-dl)/86400000);return{ok:false,warn:dias<=3&&dias>=0,msg:`⚠ ${totalH.toFixed(0)}h · ${ret}d tarde`};
+  const ts=tareasDeProy(p.id).filter(t=>t.estado!=='aprobado');
+  if(!ts.length)return{ok:true,msg:'✓ Todo completado'};
+  const totalH=ts.reduce((s,t)=>s+(t.horas||0),0);
+  const inviables=ts.filter(t=>t.fecha&&t.horas&&esViable(t)===false);
+  if(!inviables.length)return{ok:true,msg:`✓ Viable · ${totalH.toFixed(0)}h estimadas`};
+  return{ok:false,warn:inviables.length<=2,msg:`⚠ ${inviables.length} pendiente${inviables.length>1?'s':''} con sobrecarga · ${totalH.toFixed(0)}h totales`};
 }
 function renderProyectos(){
   const grid=document.getElementById('proy-grid');grid.innerHTML='';
@@ -2362,8 +2777,9 @@ async function crearDept(){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('modal-sobrecarga').classList.contains('open')){cerrarModalSobrecarga();return;}['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
 ['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.getElementById('modal-sobrecarga').addEventListener('click',e=>{if(e.target===document.getElementById('modal-sobrecarga'))cerrarModalSobrecarga();});
 
 // ══════════════════════════════════════════════════════════
 // CONFIGURACIÓN VISUAL
@@ -2556,6 +2972,7 @@ function setVistaMobile(v, btn){
     if(v==='calendario')renderCal();
     if(v==='matriz')renderMatriz();
     if(v==='admin')renderAdmin();
+    if(v==='miDia')renderMiDia();
   }
 }
 
@@ -2690,6 +3107,26 @@ function tareasDelDia(fechaStr, respFiltro=''){
   });
 }
 
+// Sobrecarga es POR PERSONA, no del equipo completo.
+// Si respFiltro está vacío ("Todos"), un día está sobrecargado si CUALQUIER persona
+// individual excede su capacidad diaria ese día.
+function diaSobrecargado(fechaStr, respFiltro=''){
+  const dt=fechaLocal(fechaStr);
+  const max=horasDia(dt);
+  if(max<=0)return false;
+  if(respFiltro){
+    const carga=calcCargaDiaria(respFiltro);
+    return !!carga[fechaStr]?.sobrecarga;
+  }
+  // Todos: revisar cada persona con tareas ese día
+  const personas=[...new Set(tareasDelDia(fechaStr).map(t=>t.responsable).filter(Boolean))];
+  return personas.some(p=>{
+    const carga=calcCargaDiaria(p);
+    return !!carga[fechaStr]?.sobrecarga;
+  });
+}
+
+// Mantener compat: horas a mostrar en el chip del día (suma visible, informativa)
 function cargaDia(fechaStr, respFiltro=''){
   const ts=tareasDelDia(fechaStr, respFiltro).filter(t=>t.estado!=='aprobado'&&t.estado!=='revision');
   return ts.reduce((s,t)=>s+(t.horas||0),0);
@@ -2731,8 +3168,7 @@ function renderCalMes(resp){
     const esDom=cur.getDay()===0;
     const tsDelDia=tareasDelDia(fechaStr, resp);
     const hDia=cargaDia(fechaStr, resp);
-    const maxH=esDom?0:cur.getDay()===6?4:7;
-    const sobrecarga=maxH>0&&hDia>maxH;
+    const sobrecarga=diaSobrecargado(fechaStr, resp);
 
     const div=document.createElement('div');
     let cls='cal-dia';
@@ -2795,9 +3231,9 @@ function renderCalSemana(resp){
     const fechaStr=d.toISOString().split('T')[0];
     const esHoy=d.getTime()===hoy.getTime();
     const esDom=d.getDay()===0;
-    const maxH=esDom?0:d.getDay()===6?4:7;
+    const maxH=horasDia(d);
     const hDia=cargaDia(fechaStr, resp);
-    const sobrecarga=maxH>0&&hDia>maxH;
+    const sobrecarga=diaSobrecargado(fechaStr, resp);
     const tsDelDia=tareasDelDia(fechaStr, resp).sort((a,b)=>{
       const o={proceso:0,pendiente:1,revision:2,aprobado:3};
       return(o[a.estado]||0)-(o[b.estado]||0);
@@ -2814,8 +3250,12 @@ function renderCalSemana(resp){
     const hdr=document.createElement('div');hdr.className='sem-hdr';
     hdr.innerHTML=`<div class="sem-dow">${DIAS_SEMANA[d.getDay()]}</div><div class="sem-num">${d.getDate()}</div>`;
     if(maxH>0){
-      const hCls=hDia>maxH?'over':hDia>maxH*.8?'warn':'ok';
-      hdr.innerHTML+=`<div class="sem-horas ${hCls}">${hDia}h / ${maxH}h</div>`;
+      if(resp){
+        const hCls=hDia>maxH?'over':hDia>maxH*.8?'warn':'ok';
+        hdr.innerHTML+=`<div class="sem-horas ${hCls}">${hDia}h / ${maxH}h</div>`;
+      } else if(sobrecarga){
+        hdr.innerHTML+=`<div class="sem-horas over">⚠ Sobrecarga</div>`;
+      }
     }
     col.appendChild(hdr);
 
@@ -2872,11 +3312,24 @@ function abrirModalDia(fechaStr, resp=''){
   document.getElementById('modal-dia-ttl').textContent=lbl;
   const ts=tareasDelDia(fechaStr,resp);
   const hDia=cargaDia(fechaStr,resp);
-  const esDom=dt.getDay()===0;
-  const maxH=esDom?0:dt.getDay()===6?4:7;
-  const sobrecarga=maxH>0&&hDia>maxH;
+  const maxH=horasDia(dt);
+  const sobrecarga=diaSobrecargado(fechaStr,resp);
   let html='';
-  if(sobrecarga) html+=`<div class="cal-sobrecarga-banner">⚠ Sobrecarga: ${hDia}h asignadas, máximo ${maxH}h laborales</div>`;
+  if(sobrecarga){
+    if(resp){
+      html+=`<div class="cal-sobrecarga-banner">⚠ Sobrecarga: ${hDia}h asignadas, máximo ${maxH}h laborales</div>`;
+    } else {
+      // Desglose por persona sobrecargada ese día
+      const personas=[...new Set(ts.map(t=>t.responsable).filter(Boolean))];
+      const detalle=personas.map(p=>{
+        const carga=calcCargaDiaria(p);
+        const d=carga[fechaStr];
+        if(!d||!d.sobrecarga)return null;
+        return `${getUsuarioNombre(p).split(' ')[0]}: ${d.horas}h de ${d.capacidad}h`;
+      }).filter(Boolean);
+      if(detalle.length)html+=`<div class="cal-sobrecarga-banner">⚠ Sobrecarga — ${detalle.join(' · ')}</div>`;
+    }
+  }
   if(!ts.length){html+='<div class="r-empty">Sin pendientes este día.</div>';}
   else{
     ts.sort((a,b)=>{const o={proceso:0,pendiente:1,revision:2,aprobado:3};return(o[a.estado]||0)-(o[b.estado]||0);})
@@ -2940,6 +3393,8 @@ let dragKanbanId=null;
 
 function initKanbanDnD(){
   document.querySelectorAll('.col').forEach(col=>{
+    if(col.dataset.dndInit)return; // evitar listeners duplicados en cada render
+    col.dataset.dndInit='1';
     col.addEventListener('dragover',e=>{e.preventDefault();col.style.background='var(--gold-lt)';});
     col.addEventListener('dragleave',()=>col.style.background='');
     col.addEventListener('drop',e=>{

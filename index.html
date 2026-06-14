@@ -312,6 +312,70 @@ table.rt tr:last-child td{border-bottom:none;}
 .rb{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;white-space:nowrap;}
 .rb.ok{background:var(--verde-lt);color:var(--verde);}.rb.tarde{background:var(--urgente-lt);color:var(--urgente);}.rb.puntual{background:var(--gold-lt);color:var(--dark);}
 .r-empty{text-align:center;padding:3rem 1rem;color:var(--gray3);font-size:12px;line-height:1.8;}
+/* CALENDARIO */
+.cal-wrap{padding:1.5rem 2rem 2rem;}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:.75rem;}
+.cal-nav{display:flex;align-items:center;gap:.75rem;}
+.cal-nav-btn{background:var(--white);border:1px solid var(--gray2);border-radius:4px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--dark);transition:all .12s;}
+.cal-nav-btn:hover{background:var(--verde);color:var(--white);border-color:var(--verde);}
+.cal-title{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--dark);min-width:180px;text-align:center;text-transform:capitalize;}
+.cal-view-btns{display:flex;gap:.4rem;}
+.cal-vbtn{padding:5px 14px;border-radius:20px;border:1px solid var(--gray2);background:var(--white);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);transition:all .15s;}
+.cal-vbtn.active{background:var(--verde);color:var(--white);border-color:var(--verde);}
+.cal-today-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--gold);background:var(--gold-lt);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:700;cursor:pointer;color:var(--dark);}
+
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-dow{font-size:10px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.8px;text-align:center;padding:.5rem 0;}
+.cal-day{background:var(--white);border-radius:6px;border:1px solid var(--gray2);min-height:90px;padding:.4rem;display:flex;flex-direction:column;gap:2px;cursor:pointer;transition:all .12s;position:relative;}
+.cal-day:hover{border-color:var(--verde);box-shadow:0 2px 8px rgba(0,97,77,.1);}
+.cal-day.other-month{opacity:.35;}
+.cal-day.today{border-color:var(--gold);border-width:2px;background:var(--gold-lt);}
+.cal-day.weekend{background:var(--linen);}
+.cal-day.sobrecarga{background:var(--urgente-lt);}
+.cal-day.dragover{border-color:var(--verde);border-width:2px;background:var(--verde-lt);}
+.cal-day-num{font-size:12px;font-weight:700;color:var(--dark);}
+.cal-day.sobrecarga .cal-day-num{color:var(--urgente);}
+.cal-day-chips{display:flex;flex-direction:column;gap:2px;overflow:hidden;flex:1;}
+.cal-chip{font-size:9px;padding:2px 5px;border-radius:3px;background:var(--verde-lt);color:var(--verde);border-left:2px solid var(--verde);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:grab;}
+.cal-chip.urgente{background:var(--urgente-lt);color:var(--urgente);border-left-color:var(--urgente);}
+.cal-chip.normal{background:var(--gold-lt);color:var(--dark);border-left-color:var(--gold);}
+.cal-chip:active{cursor:grabbing;}
+.cal-chip.dragging{opacity:.4;}
+.cal-more{font-size:9px;color:var(--gray3);font-weight:600;padding:1px 5px;}
+.cal-day-alert{position:absolute;top:2px;right:2px;font-size:10px;}
+
+/* Vista semanal */
+.cal-week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+.cal-week-day{background:var(--white);border-radius:6px;border:1px solid var(--gray2);min-height:300px;padding:.5rem;display:flex;flex-direction:column;gap:.35rem;}
+.cal-week-day.today{border-color:var(--gold);border-width:2px;}
+.cal-week-day.weekend{background:var(--linen);}
+.cal-week-day.sobrecarga{background:var(--urgente-lt);}
+.cal-week-hdr{text-align:center;padding-bottom:.4rem;border-bottom:1px solid var(--gray2);margin-bottom:.3rem;}
+.cal-week-dow{font-size:9px;font-weight:700;color:var(--gray3);text-transform:uppercase;}
+.cal-week-num{font-size:16px;font-weight:700;color:var(--dark);font-family:'Libre Baskerville',serif;}
+.cal-week-cap{font-size:9px;color:var(--gray3);margin-top:2px;}
+.cal-week-day.sobrecarga .cal-week-cap{color:var(--urgente);font-weight:700;}
+
+/* Modal día */
+.cal-day-modal-list{display:flex;flex-direction:column;gap:.5rem;}
+.cal-day-modal-item{background:var(--linen);border-radius:5px;padding:.6rem .75rem;border-left:3px solid var(--gray2);cursor:pointer;transition:all .12s;}
+.cal-day-modal-item:hover{background:var(--gray1);}
+.cal-day-modal-item.urgente{border-left-color:var(--urgente);}
+.cal-day-modal-item.normal{border-left-color:var(--gold);}
+.cal-day-modal-item.baja{border-left-color:var(--verde);}
+.cal-day-modal-ttl{font-size:12px;font-weight:600;color:var(--dark);}
+.cal-day-modal-meta{font-size:10px;color:var(--gray3);margin-top:2px;display:flex;gap:.5rem;}
+.cal-day-cap-bar{height:6px;background:var(--gray2);border-radius:3px;overflow:hidden;margin:.5rem 0 1rem;}
+.cal-day-cap-fill{height:100%;border-radius:3px;background:var(--verde);}
+.cal-day-cap-fill.over{background:var(--urgente);}
+
+/* DRAG AND DROP KANBAN (desktop only) */
+@media(hover:hover){
+  .card{cursor:grab;}
+  .card.dragging{opacity:.4;cursor:grabbing;}
+  .col.dragover{background:var(--verde-lt);border:2px dashed var(--verde);}
+}
+
 /* ADMIN */
 .admin-wrap{padding:1.5rem 2rem 2rem;}
 .admin-section{background:var(--white);border-radius:6px;padding:1.25rem 1.5rem;box-shadow:0 1px 3px rgba(26,18,10,.07);margin-bottom:1.25rem;}
@@ -397,6 +461,72 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-preview-card{background:var(--white);border-radius:4px;padding:.75rem;border-left:4px solid;box-shadow:0 1px 3px rgba(0,0,0,.08);}
 .config-preview-card-title{font-size:12px;font-weight:600;margin-bottom:.35rem;}
 .config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
+/* ── CALENDARIO ── */
+.cal-wrap{padding:1.25rem 2rem 2rem;}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.75rem;}
+.cal-nav{display:flex;align-items:center;gap:.75rem;}
+.cal-mes{font-family:'Libre Baskerville',serif;font-size:18px;color:var(--dark);min-width:200px;text-align:center;}
+.cal-nav-btn{background:none;border:1.5px solid var(--gray2);border-radius:4px;padding:5px 12px;cursor:pointer;font-size:14px;color:var(--dark);font-family:'Montserrat',sans-serif;font-weight:600;transition:all .12s;}
+.cal-nav-btn:hover{background:var(--verde);color:var(--white);border-color:var(--verde);}
+.cal-vista-btns{display:flex;gap:.4rem;}
+.cal-vista-btn{padding:5px 16px;border-radius:20px;border:1px solid var(--gray2);background:var(--white);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);transition:all .15s;}
+.cal-vista-btn.active{background:var(--verde);color:var(--white);border-color:var(--verde);}
+.cal-filtro{display:flex;align-items:center;gap:.5rem;}
+/* GRID MES */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;background:var(--gray2);border-radius:6px;overflow:hidden;border:1px solid var(--gray2);}
+.cal-dow{background:var(--verde-dk);color:var(--white);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;padding:6px 4px;}
+.cal-dia{background:var(--white);min-height:90px;padding:5px;cursor:pointer;transition:background .12s;position:relative;display:flex;flex-direction:column;gap:2px;}
+.cal-dia:hover{background:var(--verde-lt);}
+.cal-dia.otro-mes{background:var(--gray1);opacity:.5;}
+.cal-dia.domingo{background:#fdf5f5;}
+.cal-dia.hoy .cal-dia-num{background:var(--verde);color:var(--white);border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.cal-dia-num{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:2px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;}
+.cal-dia.sobrecarga{background:#fff5f5;}
+.cal-dia.sobrecarga .cal-dia-num{color:var(--urgente);}
+.cal-dia-warn{font-size:8px;color:var(--urgente);font-weight:700;position:absolute;top:4px;right:4px;}
+.cal-chip{font-size:9px;font-weight:600;padding:2px 5px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;cursor:grab;transition:opacity .12s;}
+.cal-chip:hover{opacity:.8;}
+.cal-chip.dragging{opacity:.4;}
+.cal-chip.proceso{background:#FEF5EC;color:#b37b00;border-left:2px solid #b37b00;}
+.cal-chip.pendiente{background:var(--gray1);color:var(--gray3);border-left:2px solid var(--gray3);}
+.cal-chip.revision{background:var(--azul-lt);color:var(--azul);border-left:2px solid var(--azul);}
+.cal-chip.aprobado{background:var(--verde-lt);color:var(--verde);border-left:2px solid var(--verde);}
+.cal-mas{font-size:9px;color:var(--gray3);font-weight:600;padding:1px 4px;}
+/* DRAG OVER */
+.cal-dia.drag-over{background:var(--gold-lt)!important;outline:2px dashed var(--gold);}
+/* GRID SEMANA */
+.sem-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.sem-col{background:var(--white);border-radius:5px;border:1px solid var(--gray2);min-height:400px;display:flex;flex-direction:column;}
+.sem-col.hoy-col{border-color:var(--verde);border-width:2px;}
+.sem-col.domingo-col{background:var(--gray1);opacity:.6;}
+.sem-hdr{padding:.5rem .6rem;border-bottom:1px solid var(--gray2);text-align:center;}
+.sem-dow{font-size:9px;font-weight:700;text-transform:uppercase;color:var(--gray3);letter-spacing:.8px;}
+.sem-num{font-size:16px;font-weight:700;font-family:'Libre Baskerville',serif;color:var(--dark);}
+.sem-col.hoy-col .sem-num{color:var(--verde);}
+.sem-col.sobrecarga-col{background:#fff5f5;}
+.sem-col.sobrecarga-col .sem-hdr{background:#fee;}
+.sem-horas{font-size:9px;font-weight:600;text-align:center;padding:2px;}
+.sem-horas.ok{color:var(--verde);}.sem-horas.warn{color:var(--warning);}.sem-horas.over{color:var(--urgente);}
+.sem-chips{padding:.4rem .4rem;display:flex;flex-direction:column;gap:3px;flex:1;}
+.sem-chip{font-size:10px;font-weight:600;padding:4px 7px;border-radius:4px;cursor:grab;border-left:3px solid;line-height:1.3;}
+.sem-chip:hover{opacity:.85;}
+.sem-chip.proceso{background:#FEF5EC;color:#b37b00;border-color:#b37b00;}
+.sem-chip.pendiente{background:var(--gray1);color:var(--dark);border-color:var(--gray3);}
+.sem-chip.revision{background:var(--azul-lt);color:var(--azul);border-color:var(--azul);}
+.sem-chip.aprobado{background:var(--verde-lt);color:var(--verde);border-color:var(--verde);}
+.sem-col.drag-over{background:var(--gold-lt)!important;outline:2px dashed var(--gold);}
+/* MODAL DÍA */
+.modal-dia-lista{display:flex;flex-direction:column;gap:.5rem;max-height:60vh;overflow-y:auto;}
+.mdia-card{background:var(--linen);border-radius:5px;padding:.7rem .85rem;border-left:3px solid var(--gray2);}
+.mdia-card.proceso{border-left-color:#b37b00;}
+.mdia-card.pendiente{border-left-color:var(--gray3);}
+.mdia-card.revision{border-left-color:var(--azul);}
+.mdia-card.aprobado{border-left-color:var(--verde);}
+.mdia-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;}
+.mdia-ttl{font-size:12px;font-weight:700;color:var(--dark);flex:1;}
+.mdia-estado{font-size:9px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.mdia-meta{font-size:10px;color:var(--gray3);}
+.cal-sobrecarga-banner{background:var(--urgente-lt);border:1px solid var(--urgente);border-radius:4px;padding:.5rem .75rem;font-size:11px;color:var(--urgente);font-weight:600;margin-bottom:.75rem;}
 .toast{position:fixed;bottom:1.5rem;right:1.5rem;background:var(--verde);color:var(--white);padding:9px 16px;border-radius:3px;border-left:3px solid var(--gold);font-size:12px;font-weight:500;z-index:300;opacity:0;transform:translateY(6px);transition:all .2s;pointer-events:none;max-width:300px;}
 .toast.show{opacity:1;transform:translateY(0);}
 /* ── TABLET ── */
@@ -627,6 +757,7 @@ table.rt tr:last-child td{border-bottom:none;}
 <!-- MENU MÁS (mobile) -->
 <div id="mobile-menu" style="display:none;position:fixed;bottom:60px;left:0;right:0;z-index:89;background:var(--white);border-top:1px solid var(--gray2);box-shadow:0 -4px 16px rgba(26,18,10,.1);padding:.75rem 1rem;">
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
+    <button onclick="setVistaMobile('calendario',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#128197; Calendario</button>
     <button onclick="setVistaMobile('matriz',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-matriz">&#9201; Tiempos</button>
     <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-admin">&#9881; Admin</button>
     <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);">&#9166; Salir</button>
@@ -662,8 +793,10 @@ table.rt tr:last-child td{border-bottom:none;}
 <div class="nav" style="align-items:center;padding-right:.75rem;">
   <button class="ntab active" onclick="setVista('tareas',this)">Tablero</button>
   <button class="ntab" onclick="setVista('proyectos',this)">Proyectos</button>
+  <button class="ntab" onclick="setVista('calendario',this)">Calendario</button>
   <button class="ntab" id="tab-matriz" onclick="setVista('matriz',this)">Tiempos</button>
   <button class="ntab" onclick="setVista('reportes',this)">Reportes</button>
+  <button class="ntab" id="tab-calendario" onclick="setVista('calendario',this)">Calendario</button>
   <button class="ntab admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)">&#9881; Admin</button>
   <div style="flex:1"></div>
   <div class="modo-toggle" id="modo-toggle">
@@ -791,6 +924,48 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- CALENDARIO -->
+<div class="vista" id="vista-calendario">
+  <div class="cal-wrap">
+    <div class="cal-top">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calNav(-1)">&#8249;</button>
+        <div class="cal-title" id="cal-title">&mdash;</div>
+        <button class="cal-nav-btn" onclick="calNav(1)">&#8250;</button>
+        <button class="cal-today-btn" onclick="calHoy()">Hoy</button>
+      </div>
+      <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;">
+        <select class="fselect" id="cal-filter-resp" onchange="renderCalendario()" style="display:none;">
+          <option value="">Todos</option>
+        </select>
+        <div class="cal-view-btns">
+          <button class="cal-vbtn active" id="cal-vbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
+          <button class="cal-vbtn" id="cal-vbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
+        </div>
+      </div>
+    </div>
+    <div id="cal-mes-view">
+      <div class="cal-grid" id="cal-dow-row"></div>
+      <div class="cal-grid" id="cal-grid" style="margin-top:4px;"></div>
+    </div>
+    <div id="cal-semana-view" style="display:none;">
+      <div class="cal-week-grid" id="cal-week-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DÍA CALENDARIO -->
+<div class="modal-ov" id="modal-cal-day">
+  <div class="modal">
+    <div class="mhdr"><span class="mttl" id="cal-day-modal-title">&mdash;</span><button class="mclose" onclick="cerrarModal('modal-cal-day')">&#215;</button></div>
+    <div class="mbody">
+      <div id="cal-day-cap-info"></div>
+      <div class="cal-day-modal-list" id="cal-day-modal-list"></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-cal-day')">Cerrar</button></div>
+  </div>
+</div>
+
 <!-- TIEMPOS -->
 <div class="vista" id="vista-matriz">
   <div class="matriz-wrap">
@@ -805,6 +980,42 @@ table.rt tr:last-child td{border-bottom:none;}
         <button class="btn-save" style="padding:8px 18px;" onclick="agregarTipo()">Agregar</button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- CALENDARIO -->
+<div class="vista" id="vista-calendario">
+  <div class="cal-wrap">
+    <div class="cal-top">
+      <div class="cal-nav">
+        <button class="cal-nav-btn" onclick="calNav(-1)">&#8592;</button>
+        <div class="cal-mes" id="cal-mes-lbl">&mdash;</div>
+        <button class="cal-nav-btn" onclick="calNav(1)">&#8594;</button>
+        <button class="cal-nav-btn" onclick="calHoy()" style="font-size:11px;padding:5px 10px;">Hoy</button>
+      </div>
+      <div class="cal-vista-btns">
+        <button class="cal-vista-btn active" id="cvbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
+        <button class="cal-vista-btn" id="cvbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
+      </div>
+      <div class="cal-filtro">
+        <span class="flbl">Ver</span>
+        <select class="fselect" id="cal-filtro-resp" onchange="renderCal()">
+          <option value="">Todos</option>
+        </select>
+      </div>
+    </div>
+    <div id="cal-container"></div>
+  </div>
+</div>
+
+<!-- MODAL DÍA CALENDARIO -->
+<div class="modal-ov" id="modal-dia">
+  <div class="modal" style="max-width:480px;">
+    <div class="mhdr"><span class="mttl" id="modal-dia-ttl">Pendientes del d&iacute;a</span><button class="mclose" onclick="cerrarModal('modal-dia')">&#215;</button></div>
+    <div class="mbody" style="padding:1rem 1.25rem;">
+      <div id="modal-dia-content"></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-dia')">Cerrar</button><button class="btn-save" onclick="abrirModalDesdeCal()">+ Nueva tarea este d&iacute;a</button></div>
   </div>
 </div>
 
@@ -837,6 +1048,20 @@ table.rt tr:last-child td{border-bottom:none;}
       <div id="depts-list"></div>
       <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalDept()">+ Nuevo departamento</button></div>
     </div>
+    <div class="admin-section" id="admin-tipos-section">
+      <div class="admin-section-title">&#9201; Tipos de tarea</div>
+      <div class="matriz-grid" id="admin-matriz-grid"></div>
+      <div style="background:var(--linen);border-radius:6px;padding:.85rem 1rem;border:1px solid var(--gray2);">
+        <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tipo</div>
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
+          <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="admin-tipo-nom" placeholder="ej. Fotografía"></div>
+          <div class="fg"><label class="flabel">Horas base</label><input type="number" class="fi" id="admin-tipo-h" min=".5" max="40" step=".5" value="2" style="width:75px;"></div>
+          <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Descripción</label><input type="text" class="fi" id="admin-tipo-desc" placeholder="Breve descripción"></div>
+          <button class="btn-save" style="padding:7px 16px;" onclick="adminAgregarTipo()">+ Agregar</button>
+        </div>
+      </div>
+    </div>
+
     <div class="admin-section" id="config-visual-section">
       <div class="admin-section-title">&#127912; Personalización visual</div>
       <div class="config-grid">
@@ -1309,63 +1534,136 @@ function poblarSelectTipo(id){
 }
 
 // ══════════════════════════════════════════════════════════
-// HORARIO Y COLA UNIFICADA
+// SISTEMA DE PLANIFICACIÓN POR DÍA
+// Lógica: deadline por fecha, horas para calcular carga/viabilidad
+// Día laboral = 7h. Pendientes ordenados por deadline más próximo.
 // ══════════════════════════════════════════════════════════
-function avanzarHoras(desde,h){
-  if(h<=0)return new Date(desde);
-  let dt=new Date(desde),rest=h;
-  while(rest>0){
-    const dia=dt.getDay(),hDia=HORARIO[dia];
-    if(!hDia){dt.setDate(dt.getDate()+1);dt.setHours(H0,0,0,0);continue;}
-    const hFin=H0+hDia,hAct=dt.getHours()+dt.getMinutes()/60;
-    if(hAct>=hFin){dt.setDate(dt.getDate()+1);dt.setHours(H0,0,0,0);continue;}
-    if(hAct<H0)dt.setHours(H0,0,0,0);
-    const disp=hFin-Math.max(hAct,H0);
-    if(rest<=disp){const hf=Math.max(hAct,H0)+rest;dt.setHours(Math.floor(hf),Math.round((hf%1)*60),0,0);rest=0;}
-    else{rest-=disp;dt.setDate(dt.getDate()+1);dt.setHours(H0,0,0,0);}
-  }
-  return dt;
-}
+const HORAS_DIA = 7;
+const DIAS_LAB = [1,2,3,4,5,6]; // lun-sab (sab=4h)
+const HORAS_DIA_SAB = 4;
+
 function esBloqueada(t){
   if(!t.depId)return false;
   const dep=tareas.find(x=>x.id===t.depId);
   return !!(dep&&dep.estado!=='aprobado');
 }
-function getColaPer(resp,excluir=null){
-  return tareas.filter(t=>t.responsable===resp&&(t.estado==='pendiente'||t.estado==='proceso')&&t.id!==excluir&&t.horas&&!esBloqueada(t))
-    .sort((a,b)=>{
-      const po={urgente:0,normal:1,baja:2};
-      if(po[a.prioridad]!==po[b.prioridad])return po[a.prioridad]-po[b.prioridad];
-      const eo={proceso:0,pendiente:1};
-      if((eo[a.estado]||1)!==(eo[b.estado]||1))return(eo[a.estado]||1)-(eo[b.estado]||1);
-      if(a.fecha&&b.fecha)return new Date(a.fecha)-new Date(b.fecha);
-      return(a.creadaEn||0)-(b.creadaEn||0);
-    });
+
+function horasDia(fecha){
+  // Retorna horas disponibles en un día (fecha=Date)
+  const d=fecha.getDay();
+  if(d===0)return 0; // domingo
+  if(d===6)return HORAS_DIA_SAB; // sábado
+  return HORAS_DIA;
 }
-function calcEntregaTarea(t){
-  if(!t.horas||t.estado==='aprobado'||t.estado==='revision')return null;
-  if(esBloqueada(t))return null;
-  const cola=getColaPer(t.responsable);
-  const idx=cola.findIndex(x=>x.id===t.id);if(idx===-1)return null;
-  const horasAntes=cola.slice(0,idx).reduce((s,x)=>s+(x.horas||0),0);
-  return avanzarHoras(avanzarHoras(new Date(),horasAntes),t.horas);
+
+function esDiaLaboral(fecha){return horasDia(fecha)>0;}
+
+function addDias(fecha,n){
+  const d=new Date(fecha);d.setDate(d.getDate()+n);return d;
 }
-function calcEntregaNueva(resp,horas,prio,excluir=null){
-  const cola=getColaPer(resp,excluir);
-  const horasAntes=prio==='urgente'?cola.filter(t=>t.estado==='proceso').reduce((s,t)=>s+(t.horas||0),0):cola.reduce((s,t)=>s+(t.horas||0),0);
-  const base=avanzarHoras(new Date(),horasAntes);
-  return{entrega:avanzarHoras(base,horas),horasCola:cola.reduce((s,t)=>s+(t.horas||0),0),numTareas:cola.length};
+
+function fechaLocal(str){
+  // Convertir 'YYYY-MM-DD' a Date en hora local (no UTC)
+  const[y,m,d]=str.split('-').map(Number);
+  return new Date(y,m-1,d);
 }
-function cumpleDeadline(entrega,deadline){if(!deadline||!entrega)return null;return entrega<=new Date(deadline+'T23:59:59');}
-function fmtEntrega(dt){
+
+// Calcula carga de trabajo por día para un responsable
+// Retorna: {[fechaStr]: {horas, tareas[], sobrecarsa}}
+function calcCargaDiaria(resp, excluirId=null){
+  const activas=tareas.filter(t=>
+    t.responsable===resp &&
+    (t.estado==='pendiente'||t.estado==='proceso') &&
+    t.id!==excluirId &&
+    t.fecha &&
+    t.horas &&
+    !esBloqueada(t)
+  ).sort((a,b)=>new Date(a.fecha)-new Date(b.fecha));
+
+  const carga={};
+  activas.forEach(t=>{
+    const f=t.fecha;
+    if(!carga[f])carga[f]={horas:0,tareas:[],sobrecarga:false};
+    carga[f].horas+=t.horas;
+    carga[f].tareas.push(t);
+  });
+
+  // Marcar sobrecarga
+  Object.entries(carga).forEach(([f,v])=>{
+    const dt=fechaLocal(f);
+    const max=horasDia(dt);
+    v.sobrecarga=v.horas>max;
+    v.capacidad=max;
+  });
+  return carga;
+}
+
+// Para una tarea dada: ¿es viable para su deadline?
+function esViable(t){
+  if(!t.horas||!t.fecha)return null;
+  if(t.estado==='aprobado'||t.estado==='revision')return true;
+  const carga=calcCargaDiaria(t.responsable);
+  const diaT=carga[t.fecha];
+  if(!diaT)return true; // única tarea ese día
+  const dt=fechaLocal(t.fecha);
+  const max=horasDia(dt);
+  return diaT.horas<=max;
+}
+
+// Horas totales comprometidas para un responsable en tareas activas
+function horasComprometidas(resp, excluirId=null){
+  return tareas.filter(t=>
+    t.responsable===resp &&
+    (t.estado==='pendiente'||t.estado==='proceso') &&
+    t.id!==excluirId && t.horas
+  ).reduce((s,t)=>s+(t.horas||0),0);
+}
+
+// ¿Cuándo es el día más próximo disponible para X horas?
+function proximoDiaDisponible(resp, horas, excluirId=null){
+  const carga=calcCargaDiaria(resp, excluirId);
   const hoy=new Date();hoy.setHours(0,0,0,0);
-  const man=new Date(hoy);man.setDate(hoy.getDate()+1);
-  const d=new Date(dt);d.setHours(0,0,0,0);
-  const hr=dt.toLocaleTimeString('es-PA',{hour:'2-digit',minute:'2-digit'});
-  if(d.getTime()===hoy.getTime())return{label:'Hoy '+hr,cls:'hoy'};
-  if(d.getTime()===man.getTime())return{label:'Mañana '+hr,cls:'ok'};
-  return{label:dt.toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'})+' '+hr,cls:'ok'};
+  for(let i=0;i<30;i++){
+    const d=addDias(hoy,i);
+    if(!esDiaLaboral(d))continue;
+    const f=d.toISOString().split('T')[0];
+    const usado=(carga[f]?.horas)||0;
+    const max=horasDia(d);
+    if(usado+horas<=max)return d;
+  }
+  return null;
 }
+
+// Check viabilidad al crear tarea (para el modal)
+function checkViabilidadModal(resp, horas, fecha, excluirId=null){
+  if(!resp||!horas||!fecha)return null;
+  const carga=calcCargaDiaria(resp, excluirId);
+  const diaObj=carga[fecha]||{horas:0,tareas:[]};
+  const dt=fechaLocal(fecha);
+  const max=horasDia(dt);
+  const total=diaObj.horas+horas;
+  const hComp=horasComprometidas(resp, excluirId);
+  const proxDia=proximoDiaDisponible(resp, horas, excluirId);
+  return{
+    viable: total<=max,
+    horasDia: total,
+    capacidad: max,
+    sobrecarga: total>max,
+    exceso: Math.max(0,total-max),
+    hCompTotal: hComp,
+    proximoDia: proxDia,
+    tareasEseDia: diaObj.tareas.length,
+  };
+}
+
+// Compatibilidad — funciones legacy que siguen siendo llamadas
+function calcEntregaTarea(t){return null;} // Ya no se usa
+function calcEntregaNueva(resp,horas,prio,excluir){
+  const hComp=horasComprometidas(resp,excluir);
+  return{entrega:null,horasCola:hComp,numTareas:tareas.filter(x=>x.responsable===resp&&(x.estado==='pendiente'||x.estado==='proceso')&&x.id!==excluir).length};
+}
+function cumpleDeadline(e,d){return true;}
+function fmtEntrega(dt){return{label:'',cls:'ok'};}
 
 // ══════════════════════════════════════════════════════════
 // IA ESTIMACIÓN
@@ -1410,28 +1708,38 @@ function schedulePTEst(){
 function recalcEntrega(){
   const h=parseFloat(document.getElementById('f-horas')?.value)||0;
   const fecha=document.getElementById('f-fecha').value;
-  if(!h&&!fecha){document.getElementById('entrega-box').style.display='none';return;}
   const resp=document.getElementById('f-resp').value;
-  const prio=document.getElementById('f-prioridad').value;
-  const{entrega,horasCola,numTareas}=calcEntregaNueva(resp,h||0,prio,editTareaId);
+  if(!h&&!fecha){document.getElementById('entrega-box').style.display='none';return;}
   document.getElementById('entrega-box').style.display='flex';
-  if(h&&fecha){
-    const[fy,fm,fd]=fecha.split('-').map(Number);
-    const dlFull=new Date(fy,fm-1,fd,23,59,59);
-    const ok=entrega<=dlFull;
-    document.getElementById('eval').innerHTML=ok
-      ?`✓ Viable — las ${h}h estimadas caben antes del deadline`
-      :`⚠ Ajustado — las ${h}h estimadas no caben antes del ${fecha}`;
-    document.getElementById('eval').style.color=ok?'var(--verde)':'var(--urgente)';
+
+  if(h&&fecha&&resp){
+    const v=checkViabilidadModal(resp,h,fecha,editTareaId);
+    const nombre=getUsuarioNombre(resp).split(' ')[0];
+    if(v.viable){
+      document.getElementById('eval').innerHTML=`✓ Viable — ${nombre} tiene capacidad ese día (${v.horasDia}h de ${v.capacidad}h)`;
+      document.getElementById('eval').style.color='var(--verde)';
+    } else {
+      let msg=`⚠ Sobrecarga — ${nombre} ya tiene ${v.horasDia-h}h ese día (máx ${v.capacidad}h)`;
+      if(v.proximoDia){
+        const fmt=v.proximoDia.toLocaleDateString('es-PA',{weekday:'short',day:'numeric',month:'short'});
+        msg+=`. Próximo día libre: ${fmt}`;
+      }
+      document.getElementById('eval').innerHTML=msg;
+      document.getElementById('eval').style.color='var(--urgente)';
+    }
+    document.getElementById('edet').textContent=`${v.tareasEseDia} tarea${v.tareasEseDia!==1?'s':''} ya asignadas ese día`;
+    document.getElementById('cola-info').textContent=`${v.hCompTotal}h comprometidas en total`;
   } else if(fecha){
     document.getElementById('eval').innerHTML=`Deadline: ${fecha}`;
     document.getElementById('eval').style.color='var(--dark)';
+    document.getElementById('edet').textContent='';
+    document.getElementById('cola-info').textContent='';
   } else {
-    document.getElementById('eval').innerHTML=`${h}h estimadas en cola`;
+    document.getElementById('eval').innerHTML=`${h}h estimadas`;
     document.getElementById('eval').style.color='var(--dark)';
+    document.getElementById('edet').textContent='';
+    document.getElementById('cola-info').textContent='';
   }
-  document.getElementById('edet').textContent=numTareas>0?`${numTareas} tarea${numTareas>1?'s':''} antes en la cola de ${resp?getUsuarioNombre(resp).split(' ')[0]:''}`:' Cola libre';
-  document.getElementById('cola-info').textContent=horasCola>0?`${horasCola}h comprometidas`:'Cola libre';
 }
 
 // ══════════════════════════════════════════════════════════
@@ -1439,11 +1747,10 @@ function recalcEntrega(){
 // ══════════════════════════════════════════════════════════
 function buildTimeHtml(t){
   if(t.estado==='aprobado')return '';
-  // Entrega = deadline del pendiente
-  let deadlineHtml='';
+  let html='';
   if(t.fecha){
     const hoy=new Date();hoy.setHours(0,0,0,0);
-    const [fy,fm,fd]=t.fecha.split('-').map(Number);
+    const[fy,fm,fd]=t.fecha.split('-').map(Number);
     const dl=new Date(fy,fm-1,fd);
     const diff=Math.round((dl-hoy)/86400000);
     let cls='ok',lbl='';
@@ -1451,27 +1758,19 @@ function buildTimeHtml(t){
     else if(diff===0){cls='hoy';lbl='Vence hoy';}
     else if(diff===1){lbl='Mañana';}
     else{lbl=dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}
-    // Viabilidad: ¿las horas estimadas caben antes del deadline?
-    let viabHtml='';
-    if(t.horas&&(t.estado==='pendiente'||t.estado==='proceso')){
-      const entrega=calcEntregaTarea(t);
-      if(entrega&&t.fecha){
-        const dlFull=new Date(fy,fm-1,fd,23,59,59);
-        if(entrega>dlFull)viabHtml=` <span style="font-size:9px;color:var(--urgente);font-weight:700;" title="Las horas estimadas no caben antes del deadline">⚠ Ajustado</span>`;
+    // Alerta sobrecarga: ¿ese día ya está lleno?
+    let alertHtml='';
+    if(t.horas&&t.responsable&&(t.estado==='pendiente'||t.estado==='proceso')){
+      const v=checkViabilidadModal(t.responsable,t.horas,t.fecha,t.id);
+      if(v&&v.sobrecarga){
+        alertHtml=` <span style="font-size:9px;color:var(--urgente);font-weight:700;cursor:help;" title="Sobrecarga: ${v.horasDia}h asignadas, máx ${v.capacidad}h">⚠ Sobrecarga</span>`;
       }
     }
-    deadlineHtml=`<div class="card-time"><div class="card-time-est">&#128197; Deadline${t.horas?` <span style="color:var(--gray3);font-size:9px;">(${t.horas}h est.)</span>`:''}${viabHtml}</div><div class="card-entrega ${cls}"><small>Entrega</small>${lbl}</div></div>`;
+    html+=`<div class="card-time"><div class="card-time-est">&#128197;${t.horas?` <span style="color:var(--gray3);font-size:9px;">${t.horas}h</span>`:''}${alertHtml}</div><div class="card-entrega ${cls}"><small>Entrega</small>${lbl}</div></div>`;
   } else if(t.horas){
-    deadlineHtml=`<div class="card-time"><div class="card-time-est">&#9201; <span>${t.horas}h estimadas</span></div><div class="card-entrega" style="color:var(--gray3);font-size:10px;"><small>Sin deadline</small></div></div>`;
+    html+=`<div class="card-time"><div class="card-time-est">&#9201; <span>${t.horas}h est.</span></div><div style="font-size:10px;color:var(--gray3);">Sin deadline</div></div>`;
   }
-  // Barra de progreso si está en proceso
-  let progHtml='';
-  if(t.estado==='proceso'&&t.inicioProcess&&t.horas){
-    const tr=(Date.now()-t.inicioProcess)/3600000,pct=Math.min(100,Math.round(tr/t.horas*100));
-    const cls=pct>90?'over':pct>70?'warn':'';
-    progHtml=`<div class="card-prog"><div class="prog-track"><div class="prog-fill ${cls}" style="width:${pct}%"></div></div><div class="prog-lbl">${tr.toFixed(1)}h de ${t.horas}h trabajadas</div></div>`;
-  }
-  return deadlineHtml+progHtml;
+  return html;
 }
 function filtradas(){
   const hoy=new Date();hoy.setHours(0,0,0,0);
@@ -1492,13 +1791,22 @@ function filtradas(){
   });
 }
 function renderCarga(){
-  const MAX=45;
-  document.getElementById('carga-bar').innerHTML=usuarios.filter(u=>u.rol!=='admin'||true).map(u=>{
-    const act=tareas.filter(t=>t.responsable===u.id&&(t.estado==='pendiente'||t.estado==='proceso')&&t.horas);
-    const tot=act.reduce((s,t)=>s+(t.horas||0),0);
-    const pct=Math.min(100,Math.round(tot/MAX*100));
-    const cls=pct>90?'over':pct>70?'warn':'';
-    return`<div class="cp"><div class="cpn"><span>${u.nombre.split(' ')[0]}</span><span class="cph">${tot}h</span></div><div class="cpt"><div class="cpf ${cls}" style="width:${pct}%"></div></div></div>`;
+  // Carga del día de hoy por persona
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const hoyStr=hoy.toISOString().split('T')[0];
+  const maxHoy=horasDia(hoy);
+
+  document.getElementById('carga-bar').innerHTML=usuarios.map(u=>{
+    const carga=calcCargaDiaria(u.id);
+    const hoyData=carga[hoyStr]||{horas:0,tareas:[]};
+    const hoyH=hoyData.horas;
+    const pct=maxHoy>0?Math.min(100,Math.round(hoyH/maxHoy*100)):0;
+    const cls=hoyH>maxHoy?'over':pct>80?'warn':'';
+    const totalH=horasComprometidas(u.id);
+    return`<div class="cp">
+      <div class="cpn"><span>${u.nombre.split(' ')[0]}</span><span class="cph">${hoyH}h hoy · ${totalH}h total</span></div>
+      <div class="cpt"><div class="cpf ${cls}" style="width:${pct}%"></div></div>
+    </div>`;
   }).join('');
 }
 function render(){
@@ -1515,11 +1823,14 @@ function render(){
   });
   renderCarga();
   if(modoActual==='kds')renderKDS();
+  if(!isMobile())initDragDropKanban();
 }
 function mkCard(t){
   const div=document.createElement('div');
   const bloq=esBloqueada(t);
   div.className=`card ${t.prioridad}${bloq?' bloqueada':''}`;
+  div.dataset.tid=t.id;
+  div.draggable=true;
   const hoy=new Date();hoy.setHours(0,0,0,0);
   let fHtml='';
   if(t.fecha){const d=new Date(t.fecha+'T00:00:00'),diff=Math.round((d-hoy)/86400000);let cls='',lbl='';if(diff<0){cls='vencida';lbl=`Venció hace ${-diff}d`;}else if(diff===0){cls='hoy';lbl='Vence hoy';}else if(diff===1){lbl='Mañana';}else{lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}fHtml=`<span class="card-date ${cls}">&#128197; ${lbl}</span>`;}
@@ -1982,6 +2293,58 @@ function renderReporte(){
 function setPeriodo(p,btn){periodoActivo=p;document.querySelectorAll('.per-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderReporte();}
 
 // ADMIN
+function renderAdminTipos(){
+  const grid=document.getElementById('admin-matriz-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  matrizData.forEach(m=>{
+    const card=document.createElement('div');card.className='mcard';
+    card.innerHTML=`
+      <div class="mcard-top">
+        <div class="mcard-nom">${esc(m.nom)}</div>
+        <div style="display:flex;align-items:center;gap:.35rem;">
+          <input type="number" value="${m.horas}" min=".5" max="40" step=".5"
+            onchange="actualizarMatriz('${m.key}',this.value,'${m.id}')"
+            style="width:60px;padding:4px 6px;border:1.5px solid var(--gray2);border-radius:3px;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;color:var(--verde);text-align:center;outline:none;">
+          <span style="font-size:11px;color:var(--gray3);">h</span>
+        </div>
+      </div>
+      <div class="mcard-sub">${esc(m.descripcion||'')}</div>
+      <button class="ba danger" style="margin-top:.5rem;flex:0;padding:3px 8px;font-size:9px;width:auto;"
+        onclick="adminEliminarTipo('${m.id}','${esc(m.nom)}')">Eliminar</button>`;
+    grid.appendChild(card);
+  });
+}
+
+async function adminAgregarTipo(){
+  const nom=document.getElementById('admin-tipo-nom').value.trim();
+  const h=parseFloat(document.getElementById('admin-tipo-h').value)||2;
+  const desc=document.getElementById('admin-tipo-desc').value.trim();
+  if(!nom){toast('Ingresa un nombre para el tipo');return;}
+  const{error}=await sbAgregarMatriz(nom,h,desc);
+  if(error){toast('Error: '+error.message);return;}
+  document.getElementById('admin-tipo-nom').value='';
+  document.getElementById('admin-tipo-desc').value='';
+  await cargarMatriz();
+  renderAdminTipos();
+  renderMatriz();
+  poblarFiltros();
+  poblarFiltrosMobile();
+  toast('Tipo agregado');
+}
+
+async function adminEliminarTipo(id,nom){
+  if(!confirm(`¿Eliminar el tipo "${nom}"?`))return;
+  const{error}=await sbEliminarMatriz(id);
+  if(error){toast('Error: '+error.message);return;}
+  matrizData=matrizData.filter(m=>m.id!==id);
+  renderAdminTipos();
+  renderMatriz();
+  poblarFiltros();
+  poblarFiltrosMobile();
+  toast('Tipo eliminado');
+}
+
 async function renderAdmin(){
   const esAdmin=PERFIL?.rol==='admin';
   // Admin ve todos, Gerente ve solo su departamento
@@ -2016,6 +2379,10 @@ async function renderAdmin(){
     row.innerHTML=`<span style="font-size:13px;font-weight:600;flex:1;">${esc(d.nombre)}</span><span style="font-size:11px;color:var(--gray3);">/${d.slug}</span>`;
     dl.appendChild(row);
   });
+  // Tipos de tarea — admin y gerente
+  const tiposSection=document.getElementById('admin-tipos-section');
+  if(tiposSection){renderAdminTipos();}
+
   // Configuración visual — solo admin
   const configSection=document.getElementById('config-visual-section');
   if(configSection){
@@ -2094,8 +2461,8 @@ async function crearDept(){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 // ══════════════════════════════════════════════════════════
 // CONFIGURACIÓN VISUAL
@@ -2285,6 +2652,7 @@ function setVistaMobile(v, btn){
     document.getElementById('modo-toggle').style.display='none';
     if(v==='reportes')renderReporte();
     if(v==='proyectos')renderProyectos();
+    if(v==='calendario')renderCalendario();
     if(v==='matriz')renderMatriz();
     if(v==='admin')renderAdmin();
   }
@@ -2385,6 +2753,313 @@ function toggleKDSMobile(){
 }
 
 // ══════════════════════════════════════════════════════════
+// CALENDARIO
+// ══════════════════════════════════════════════════════════
+let calFecha = new Date(); // mes/semana mostrado actualmente
+let calVista = 'mes'; // 'mes' | 'semana'
+let calDiaSeleccionado = null;
+let dragTareaId = null;
+
+const DIAS_SEMANA = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function calNav(dir){
+  if(calVista==='mes'){
+    calFecha.setMonth(calFecha.getMonth()+dir);
+  } else {
+    calFecha.setDate(calFecha.getDate()+dir*7);
+  }
+  renderCal();
+}
+function calHoy(){calFecha=new Date();renderCal();}
+function setCalVista(v,btn){
+  calVista=v;
+  document.querySelectorAll('.cal-vista-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCal();
+}
+
+function tareasDelDia(fechaStr, respFiltro=''){
+  return tareas.filter(t=>{
+    if(t.fecha!==fechaStr)return false;
+    if(respFiltro&&t.responsable!==respFiltro)return false;
+    // Colaborador solo ve lo suyo
+    if(PERFIL?.rol==='colaborador'&&t.responsable!==USER.id)return false;
+    return true;
+  });
+}
+
+function cargaDia(fechaStr, respFiltro=''){
+  const ts=tareasDelDia(fechaStr, respFiltro).filter(t=>t.estado!=='aprobado'&&t.estado!=='revision');
+  return ts.reduce((s,t)=>s+(t.horas||0),0);
+}
+
+function renderCal(){
+  const resp=document.getElementById('cal-filtro-resp')?.value||'';
+  if(calVista==='mes') renderCalMes(resp);
+  else renderCalSemana(resp);
+}
+
+function renderCalMes(resp){
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const y=calFecha.getFullYear(),m=calFecha.getMonth();
+  document.getElementById('cal-mes-lbl').textContent=`${MESES[m]} ${y}`;
+
+  const primerDia=new Date(y,m,1);
+  const ultimoDia=new Date(y,m+1,0);
+  // Ajustar inicio a lunes
+  let inicioGrid=new Date(primerDia);
+  const dow=primerDia.getDay();
+  inicioGrid.setDate(primerDia.getDate()-(dow===0?6:dow-1));
+
+  const cont=document.getElementById('cal-container');
+  cont.innerHTML='';
+
+  const grid=document.createElement('div');grid.className='cal-grid';
+  // Headers días semana
+  ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].forEach(d=>{
+    const h=document.createElement('div');h.className='cal-dow';h.textContent=d;grid.appendChild(h);
+  });
+
+  // Días
+  const cur=new Date(inicioGrid);
+  for(let i=0;i<42;i++){
+    const fechaStr=cur.toISOString().split('T')[0];
+    const esMes=cur.getMonth()===m;
+    const esHoy=cur.getTime()===hoy.getTime();
+    const esDom=cur.getDay()===0;
+    const tsDelDia=tareasDelDia(fechaStr, resp);
+    const hDia=cargaDia(fechaStr, resp);
+    const maxH=esDom?0:cur.getDay()===6?4:7;
+    const sobrecarga=maxH>0&&hDia>maxH;
+
+    const div=document.createElement('div');
+    let cls='cal-dia';
+    if(!esMes)cls+=' otro-mes';
+    if(esHoy)cls+=' hoy';
+    if(esDom)cls+=' domingo';
+    if(sobrecarga&&esMes)cls+=' sobrecarga';
+    div.className=cls;
+    div.dataset.fecha=fechaStr;
+
+    const numDiv=document.createElement('div');numDiv.className='cal-dia-num';numDiv.textContent=cur.getDate();div.appendChild(numDiv);
+    if(sobrecarga&&esMes){const w=document.createElement('div');w.className='cal-dia-warn';w.textContent='⚠';div.appendChild(w);}
+
+    // Chips de tareas (máx 3 + "X más")
+    const mostrar=tsDelDia.slice(0,3);
+    mostrar.forEach(t=>{
+      const chip=document.createElement('div');
+      chip.className=`cal-chip ${t.estado}`;
+      chip.textContent=t.titulo;
+      chip.title=`${t.titulo} — ${getUsuarioNombre(t.responsable).split(' ')[0]} — ${EL[t.estado]}`;
+      chip.draggable=true;
+      chip.dataset.tareaId=t.id;
+      chip.addEventListener('dragstart',onDragStart);
+      chip.addEventListener('click',e=>{e.stopPropagation();editarTarea(t.id,e);});
+      div.appendChild(chip);
+    });
+    if(tsDelDia.length>3){
+      const mas=document.createElement('div');mas.className='cal-mas';mas.textContent=`+${tsDelDia.length-3} más`;div.appendChild(mas);
+    }
+
+    // Click en día → modal
+    div.addEventListener('click',()=>abrirModalDia(fechaStr,resp));
+    // Drag & drop
+    div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('drag-over');});
+    div.addEventListener('dragleave',()=>div.classList.remove('drag-over'));
+    div.addEventListener('drop',e=>{e.preventDefault();div.classList.remove('drag-over');onDropDia(fechaStr);});
+
+    grid.appendChild(div);
+    cur.setDate(cur.getDate()+1);
+    if(i>=34&&cur.getMonth()!==m)break;
+  }
+  cont.appendChild(grid);
+}
+
+function renderCalSemana(resp){
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  // Lunes de la semana actual
+  const lunes=new Date(calFecha);
+  const dow=lunes.getDay();
+  lunes.setDate(lunes.getDate()-(dow===0?6:dow-1));
+
+  document.getElementById('cal-mes-lbl').textContent=
+    `Semana del ${lunes.getDate()} ${MESES[lunes.getMonth()]} ${lunes.getFullYear()}`;
+
+  const cont=document.getElementById('cal-container');cont.innerHTML='';
+  const grid=document.createElement('div');grid.className='sem-grid';
+
+  for(let i=0;i<7;i++){
+    const d=new Date(lunes);d.setDate(lunes.getDate()+i);
+    const fechaStr=d.toISOString().split('T')[0];
+    const esHoy=d.getTime()===hoy.getTime();
+    const esDom=d.getDay()===0;
+    const maxH=esDom?0:d.getDay()===6?4:7;
+    const hDia=cargaDia(fechaStr, resp);
+    const sobrecarga=maxH>0&&hDia>maxH;
+    const tsDelDia=tareasDelDia(fechaStr, resp).sort((a,b)=>{
+      const o={proceso:0,pendiente:1,revision:2,aprobado:3};
+      return(o[a.estado]||0)-(o[b.estado]||0);
+    });
+
+    const col=document.createElement('div');
+    let cls='sem-col';
+    if(esHoy)cls+=' hoy-col';
+    if(esDom)cls+=' domingo-col';
+    if(sobrecarga)cls+=' sobrecarga-col';
+    col.className=cls;
+    col.dataset.fecha=fechaStr;
+
+    const hdr=document.createElement('div');hdr.className='sem-hdr';
+    hdr.innerHTML=`<div class="sem-dow">${DIAS_SEMANA[d.getDay()]}</div><div class="sem-num">${d.getDate()}</div>`;
+    if(maxH>0){
+      const hCls=hDia>maxH?'over':hDia>maxH*.8?'warn':'ok';
+      hdr.innerHTML+=`<div class="sem-horas ${hCls}">${hDia}h / ${maxH}h</div>`;
+    }
+    col.appendChild(hdr);
+
+    const chips=document.createElement('div');chips.className='sem-chips';
+    tsDelDia.forEach(t=>{
+      const chip=document.createElement('div');
+      chip.className=`sem-chip ${t.estado}`;
+      chip.innerHTML=`<div style="font-size:9px;color:inherit;opacity:.7;margin-bottom:1px;">${getUsuarioNombre(t.responsable).split(' ')[0]}${t.horas?` · ${t.horas}h`:''}</div><div>${esc(t.titulo)}</div>`;
+      chip.title=`${t.titulo} — ${EL[t.estado]}`;
+      chip.draggable=true;chip.dataset.tareaId=t.id;
+      chip.addEventListener('dragstart',onDragStart);
+      chip.addEventListener('click',e=>{e.stopPropagation();editarTarea(t.id,e);});
+      chips.appendChild(chip);
+    });
+    if(!tsDelDia.length&&!esDom){
+      const vacio=document.createElement('div');vacio.style.cssText='font-size:10px;color:var(--gray3);text-align:center;padding:1rem .5rem;';vacio.textContent='Sin pendientes';chips.appendChild(vacio);
+    }
+    col.appendChild(chips);
+
+    // Drag & drop
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('drag-over');});
+    col.addEventListener('dragleave',()=>col.classList.remove('drag-over'));
+    col.addEventListener('drop',e=>{e.preventDefault();col.classList.remove('drag-over');onDropDia(fechaStr);});
+    col.addEventListener('click',()=>abrirModalDia(fechaStr,resp));
+
+    grid.appendChild(col);
+  }
+  cont.appendChild(grid);
+}
+
+// DRAG & DROP calendario
+function onDragStart(e){
+  dragTareaId=e.currentTarget.dataset.tareaId;
+  e.currentTarget.classList.add('dragging');
+  setTimeout(()=>e.currentTarget.classList.remove('dragging'),0);
+}
+async function onDropDia(fechaStr){
+  if(!dragTareaId)return;
+  const t=tareas.find(x=>x.id===dragTareaId);
+  if(!t){dragTareaId=null;return;}
+  if(t.fecha===fechaStr){dragTareaId=null;return;}
+  t.fecha=fechaStr;
+  await sbGuardarTarea({...t},dragTareaId);
+  dragTareaId=null;
+  renderCal();render();toast(`Deadline movido a ${fechaStr}`);
+}
+
+// MODAL DÍA
+function abrirModalDia(fechaStr, resp=''){
+  calDiaSeleccionado=fechaStr;
+  const[y,m,d]=fechaStr.split('-').map(Number);
+  const dt=new Date(y,m-1,d);
+  const lbl=dt.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('modal-dia-ttl').textContent=lbl;
+  const ts=tareasDelDia(fechaStr,resp);
+  const hDia=cargaDia(fechaStr,resp);
+  const esDom=dt.getDay()===0;
+  const maxH=esDom?0:dt.getDay()===6?4:7;
+  const sobrecarga=maxH>0&&hDia>maxH;
+  let html='';
+  if(sobrecarga) html+=`<div class="cal-sobrecarga-banner">⚠ Sobrecarga: ${hDia}h asignadas, máximo ${maxH}h laborales</div>`;
+  if(!ts.length){html+='<div class="r-empty">Sin pendientes este día.</div>';}
+  else{
+    ts.sort((a,b)=>{const o={proceso:0,pendiente:1,revision:2,aprobado:3};return(o[a.estado]||0)-(o[b.estado]||0);})
+    .forEach(t=>{
+      html+=`<div class="mdia-card ${t.estado}">
+        <div class="mdia-top">
+          <div class="mdia-ttl">${esc(t.titulo)}</div>
+          <span class="mdia-estado ptestado ${t.estado}">${EL[t.estado]}</span>
+        </div>
+        <div class="mdia-meta">${getUsuarioNombre(t.responsable)}${t.horas?` · ${t.horas}h estimadas`:''}</div>
+        <div style="margin-top:.4rem;display:flex;gap:.35rem;">
+          ${EN[t.estado]?`<button class="ba avanzar" style="flex:0;padding:3px 8px;font-size:9px;" onclick="avanzarDesdeCal('${t.id}')">→ ${EL[EN[t.estado]]}</button>`:''}
+          <button class="ba" style="flex:0;padding:3px 8px;font-size:9px;" onclick="editarTareaDesdeModal('${t.id}')">Editar</button>
+        </div>
+      </div>`;
+    });
+  }
+  document.getElementById('modal-dia-content').innerHTML=html;
+  document.getElementById('modal-dia').classList.add('open');
+}
+
+async function avanzarDesdeCal(id){
+  const t=tareas.find(x=>x.id===id);if(!t)return;
+  const next=EN[t.estado];if(!next)return;
+  if(next==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();
+  if(next==='aprobado')t.aprobadoEn=Date.now();
+  t.estado=next;
+  await sbGuardarTarea({...t},id);
+  render();renderCal();
+  const resp=document.getElementById('cal-filtro-resp')?.value||'';
+  abrirModalDia(calDiaSeleccionado,resp);
+  toast(`"${t.titulo}" → ${EL[next]}`);
+}
+function editarTareaDesdeModal(id){
+  cerrarModal('modal-dia');
+  setTimeout(()=>editarTarea(id,null),100);
+}
+function abrirModalDesdeCal(){
+  cerrarModal('modal-dia');
+  abrirModal();
+  // Pre-llenar fecha seleccionada
+  setTimeout(()=>{if(calDiaSeleccionado)document.getElementById('f-fecha').value=calDiaSeleccionado;},150);
+}
+
+// Poblar filtro responsable en calendario
+function poblarFiltrosCal(){
+  const sel=document.getElementById('cal-filtro-resp');if(!sel)return;
+  const val=sel.value;
+  sel.innerHTML='<option value="">Todos</option>';
+  if(PERFIL?.rol!=='colaborador'){
+    usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;if(u.id===val)o.selected=true;sel.appendChild(o);});
+  }
+  // Colaborador no tiene filtro (solo ve lo suyo)
+  if(PERFIL?.rol==='colaborador'){sel.style.display='none';sel.previousElementSibling?.style&&(sel.previousElementSibling.style.display='none');}
+}
+
+// ══════════════════════════════════════════════════════════
+// DRAG & DROP KANBAN
+// ══════════════════════════════════════════════════════════
+let dragKanbanId=null;
+
+function initKanbanDnD(){
+  document.querySelectorAll('.col').forEach(col=>{
+    col.addEventListener('dragover',e=>{e.preventDefault();col.style.background='var(--gold-lt)';});
+    col.addEventListener('dragleave',()=>col.style.background='');
+    col.addEventListener('drop',e=>{
+      e.preventDefault();col.style.background='';
+      if(!dragKanbanId)return;
+      const estado=col.id.replace('col-','');
+      cambiarEstadoKanban(dragKanbanId,estado);
+    });
+  });
+}
+
+async function cambiarEstadoKanban(id,nuevoEstado){
+  const t=tareas.find(x=>x.id===id);if(!t||t.estado===nuevoEstado)return;
+  if(nuevoEstado==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();
+  if(nuevoEstado==='aprobado')t.aprobadoEn=Date.now();
+  t.estado=nuevoEstado;
+  await sbGuardarTarea({...t},id);
+  render();if(proyActualId)renderDetalle();
+  toast(`"${t.titulo}" → ${EL[nuevoEstado]}`);
+}
+
 // SERVICE WORKER (PWA)
 // ══════════════════════════════════════════════════════════
 if('serviceWorker' in navigator){
@@ -2395,6 +3070,290 @@ if('serviceWorker' in navigator){
       console.log('SW error:', err);
     });
   });
+}
+
+// ══════════════════════════════════════════════════════════
+// CALENDARIO
+// ══════════════════════════════════════════════════════════
+let calFecha=new Date(); // mes/semana actual mostrado
+let calVista='mes';
+let calFiltroResp='';
+
+function setVista_calendario_init(){
+  // Poblar filtro de responsable (solo si no es colaborador)
+  const sel=document.getElementById('cal-filter-resp');
+  if(!sel)return;
+  const esColab=PERFIL?.rol==='colaborador';
+  if(esColab){
+    sel.style.display='none';
+    calFiltroResp=USER.id;
+  }else{
+    sel.style.display='';
+    sel.innerHTML='<option value="">Todos</option>';
+    usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;sel.appendChild(o);});
+    sel.value=calFiltroResp;
+  }
+}
+
+function calNav(dir){
+  if(calVista==='mes')calFecha.setMonth(calFecha.getMonth()+dir);
+  else calFecha.setDate(calFecha.getDate()+dir*7);
+  renderCalendario();
+}
+function calHoy(){calFecha=new Date();renderCalendario();}
+function setCalVista(v,btn){
+  calVista=v;
+  document.querySelectorAll('.cal-vbtn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('cal-mes-view').style.display=v==='mes'?'block':'none';
+  document.getElementById('cal-semana-view').style.display=v==='semana'?'block':'none';
+  renderCalendario();
+}
+
+function calTareasFiltradas(){
+  const sel=document.getElementById('cal-filter-resp');
+  calFiltroResp=sel?sel.value:calFiltroResp;
+  return tareas.filter(t=>{
+    if(!t.fecha)return false;
+    if(PERFIL?.rol==='colaborador')return t.responsable===USER.id;
+    if(calFiltroResp)return t.responsable===calFiltroResp;
+    return true;
+  });
+}
+
+function renderCalendario(){
+  setVista_calendario_init();
+  if(calVista==='mes')renderCalMes();
+  else renderCalSemana();
+}
+
+function renderCalMes(){
+  const year=calFecha.getFullYear(), month=calFecha.getMonth();
+  document.getElementById('cal-title').textContent=calFecha.toLocaleDateString('es-PA',{month:'long',year:'numeric'});
+
+  // Días de la semana
+  const dowRow=document.getElementById('cal-dow-row');
+  dowRow.innerHTML=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'].map(d=>`<div class="cal-dow">${d}</div>`).join('');
+
+  const grid=document.getElementById('cal-grid');grid.innerHTML='';
+  const primerDia=new Date(year,month,1);
+  const ultimoDia=new Date(year,month+1,0);
+  // Lunes=0 ... Domingo=6
+  let startOffset=(primerDia.getDay()+6)%7;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const tareasVis=calTareasFiltradas();
+
+  const totalCells=Math.ceil((startOffset+ultimoDia.getDate())/7)*7;
+  for(let i=0;i<totalCells;i++){
+    const dayNum=i-startOffset+1;
+    const fecha=new Date(year,month,dayNum);
+    const fechaStr=fecha.toISOString().split('T')[0];
+    const otherMonth=dayNum<1||dayNum>ultimoDia.getDate();
+    const isToday=fecha.getTime()===hoy.getTime();
+    const isWeekend=fecha.getDay()===0||fecha.getDay()===6;
+
+    const tareasDelDia=tareasVis.filter(t=>t.fecha===fechaStr&&t.estado!=='aprobado');
+    const horasTotal=tareasDelDia.reduce((s,t)=>s+(t.horas||0),0);
+    const cap=horasDia(fecha);
+    const sobrecarga=cap>0&&horasTotal>cap;
+
+    const div=document.createElement('div');
+    div.className=`cal-day${otherMonth?' other-month':''}${isToday?' today':''}${isWeekend?' weekend':''}${sobrecarga?' sobrecarga':''}`;
+    div.dataset.fecha=fechaStr;
+    div.onclick=(e)=>{if(!e.target.closest('.cal-chip'))abrirModalCalDia(fechaStr);};
+
+    let chipsHtml='';
+    tareasDelDia.slice(0,3).forEach(t=>{
+      chipsHtml+=`<div class="cal-chip ${t.prioridad}" draggable="true" data-tid="${t.id}" title="${esc(t.titulo)}" onclick="event.stopPropagation();abrirModalCalDia('${fechaStr}')">${esc(t.titulo)}</div>`;
+    });
+    if(tareasDelDia.length>3)chipsHtml+=`<div class="cal-more">+${tareasDelDia.length-3} más</div>`;
+
+    div.innerHTML=`<div class="cal-day-num">${dayNum>0&&dayNum<=ultimoDia.getDate()?dayNum:fecha.getDate()}</div>
+${sobrecarga?'<div class="cal-day-alert" title="Sobrecarga">⚠</div>':''}
+<div class="cal-day-chips">${chipsHtml}</div>`;
+
+    // Drop zone
+    div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('dragover');});
+    div.addEventListener('dragleave',()=>div.classList.remove('dragover'));
+    div.addEventListener('drop',e=>{
+      e.preventDefault();div.classList.remove('dragover');
+      const tid=e.dataTransfer.getData('text/plain');
+      if(tid)moverTareaAFecha(tid,fechaStr);
+    });
+
+    grid.appendChild(div);
+  }
+
+  // Drag listeners en chips
+  setTimeout(()=>{
+    document.querySelectorAll('.cal-chip[draggable]').forEach(chip=>{
+      chip.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData('text/plain',chip.dataset.tid);
+        chip.classList.add('dragging');
+      });
+      chip.addEventListener('dragend',()=>chip.classList.remove('dragging'));
+    });
+  },50);
+}
+
+function renderCalSemana(){
+  // Encontrar el lunes de la semana actual
+  const d=new Date(calFecha);
+  const offset=(d.getDay()+6)%7;
+  const lunes=new Date(d);lunes.setDate(d.getDate()-offset);
+  const domingo=new Date(lunes);domingo.setDate(lunes.getDate()+6);
+
+  document.getElementById('cal-title').textContent=
+    `${lunes.toLocaleDateString('es-PA',{day:'numeric',month:'short'})} – ${domingo.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`;
+
+  const grid=document.getElementById('cal-week-grid');grid.innerHTML='';
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const tareasVis=calTareasFiltradas();
+  const dows=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+
+  for(let i=0;i<7;i++){
+    const fecha=new Date(lunes);fecha.setDate(lunes.getDate()+i);
+    const fechaStr=fecha.toISOString().split('T')[0];
+    const isToday=fecha.getTime()===hoy.getTime();
+    const isWeekend=fecha.getDay()===0||fecha.getDay()===6;
+    const tareasDelDia=tareasVis.filter(t=>t.fecha===fechaStr&&t.estado!=='aprobado');
+    const horasTotal=tareasDelDia.reduce((s,t)=>s+(t.horas||0),0);
+    const cap=horasDia(fecha);
+    const sobrecarga=cap>0&&horasTotal>cap;
+
+    const div=document.createElement('div');
+    div.className=`cal-week-day${isToday?' today':''}${isWeekend?' weekend':''}${sobrecarga?' sobrecarga':''}`;
+    div.dataset.fecha=fechaStr;
+
+    let chipsHtml='';
+    tareasDelDia.forEach(t=>{
+      chipsHtml+=`<div class="cal-chip ${t.prioridad}" draggable="true" data-tid="${t.id}" title="${esc(t.titulo)}" onclick="editarTarea('${t.id}',event)">${esc(t.titulo)} <span style="opacity:.6;">· ${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span></div>`;
+    });
+
+    div.innerHTML=`<div class="cal-week-hdr">
+  <div class="cal-week-dow">${dows[i]}</div>
+  <div class="cal-week-num">${fecha.getDate()}</div>
+  <div class="cal-week-cap">${horasTotal}h / ${cap}h${sobrecarga?' ⚠':''}</div>
+</div>
+<div class="cal-day-chips">${chipsHtml}</div>`;
+
+    div.addEventListener('dragover',e=>{e.preventDefault();div.classList.add('dragover');});
+    div.addEventListener('dragleave',()=>div.classList.remove('dragover'));
+    div.addEventListener('drop',e=>{
+      e.preventDefault();div.classList.remove('dragover');
+      const tid=e.dataTransfer.getData('text/plain');
+      if(tid)moverTareaAFecha(tid,fechaStr);
+    });
+
+    grid.appendChild(div);
+  }
+
+  setTimeout(()=>{
+    document.querySelectorAll('#cal-week-grid .cal-chip[draggable]').forEach(chip=>{
+      chip.addEventListener('dragstart',e=>{
+        e.dataTransfer.setData('text/plain',chip.dataset.tid);
+        chip.classList.add('dragging');
+      });
+      chip.addEventListener('dragend',()=>chip.classList.remove('dragging'));
+    });
+  },50);
+}
+
+async function moverTareaAFecha(tareaId,nuevaFecha){
+  const t=tareas.find(x=>x.id===tareaId);if(!t)return;
+  if(t.fecha===nuevaFecha)return;
+  const fechaAnterior=t.fecha;
+  t.fecha=nuevaFecha;
+  const{error}=await sbGuardarTarea({...t},tareaId);
+  if(error){t.fecha=fechaAnterior;toast('Error: '+error.message);renderCalendario();return;}
+  toast(`"${t.titulo}" movido a ${new Date(nuevaFecha+'T00:00:00').toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`);
+  renderCalendario();
+  render(); // actualizar kanban también
+}
+
+function abrirModalCalDia(fechaStr){
+  const fecha=new Date(fechaStr+'T00:00:00');
+  document.getElementById('cal-day-modal-title').textContent=
+    fecha.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'});
+
+  const tareasVis=calTareasFiltradas();
+  const tareasDelDia=tareasVis.filter(t=>t.fecha===fechaStr&&t.estado!=='aprobado')
+    .sort((a,b)=>{const po={urgente:0,normal:1,baja:2};return po[a.prioridad]-po[b.prioridad];});
+
+  const horasTotal=tareasDelDia.reduce((s,t)=>s+(t.horas||0),0);
+  const cap=horasDia(fecha);
+  const sobrecarga=cap>0&&horasTotal>cap;
+  const pct=cap>0?Math.min(100,Math.round(horasTotal/cap*100)):0;
+
+  document.getElementById('cal-day-cap-info').innerHTML=cap>0?`
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--gray3);margin-bottom:.3rem;">
+      <span>Carga del día</span><span style="font-weight:700;color:${sobrecarga?'var(--urgente)':'var(--dark)'}">${horasTotal}h de ${cap}h ${sobrecarga?'⚠ Sobrecarga':''}</span>
+    </div>
+    <div class="cal-day-cap-bar"><div class="cal-day-cap-fill ${sobrecarga?'over':''}" style="width:${pct}%"></div></div>
+  `:`<div style="font-size:11px;color:var(--gray3);margin-bottom:.75rem;">Día no laboral</div>`;
+
+  const lista=document.getElementById('cal-day-modal-list');
+  lista.innerHTML='';
+  if(!tareasDelDia.length){
+    lista.innerHTML='<div style="text-align:center;color:var(--gray3);font-size:12px;padding:1.5rem;">Sin pendientes para este día</div>';
+  }else{
+    tareasDelDia.forEach(t=>{
+      const div=document.createElement('div');
+      div.className=`cal-day-modal-item ${t.prioridad}`;
+      div.onclick=()=>{cerrarModal('modal-cal-day');editarTarea(t.id,{stopPropagation:()=>{}});};
+      div.innerHTML=`<div class="cal-day-modal-ttl">${esc(t.titulo)}</div>
+<div class="cal-day-modal-meta"><span>${esc(getUsuarioNombre(t.responsable))}</span><span>${esc(getTipoLabel(t.tipo))}</span>${t.horas?`<span>${t.horas}h</span>`:''}<span>${EL[t.estado]}</span></div>`;
+      lista.appendChild(div);
+    });
+  }
+  document.getElementById('modal-cal-day').classList.add('open');
+}
+
+// ══════════════════════════════════════════════════════════
+// DRAG AND DROP KANBAN (desktop)
+// ══════════════════════════════════════════════════════════
+let dragTareaId=null;
+
+function initDragDropKanban(){
+  // Drag start/end en cards
+  document.querySelectorAll('.card[data-tid]').forEach(card=>{
+    card.addEventListener('dragstart',e=>{
+      dragTareaId=card.dataset.tid;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move';
+    });
+    card.addEventListener('dragend',()=>{
+      card.classList.remove('dragging');
+      dragTareaId=null;
+    });
+  });
+  // Drop zones en columnas
+  ESTADOS.forEach(estado=>{
+    const col=document.getElementById(`col-${estado}`);
+    if(!col)return;
+    col.addEventListener('dragover',e=>{e.preventDefault();col.classList.add('dragover');});
+    col.addEventListener('dragleave',()=>col.classList.remove('dragover'));
+    col.addEventListener('drop',async e=>{
+      e.preventDefault();col.classList.remove('dragover');
+      if(!dragTareaId)return;
+      await moverTareaAEstado(dragTareaId,estado);
+    });
+  });
+}
+
+async function moverTareaAEstado(tareaId,nuevoEstado){
+  const t=tareas.find(x=>x.id===tareaId);if(!t)return;
+  if(t.estado===nuevoEstado)return;
+  if(esBloqueada(t)){toast('Tarea bloqueada por dependencia');return;}
+  const estadoAnterior=t.estado;
+  t.estado=nuevoEstado;
+  if(nuevoEstado==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();
+  if(nuevoEstado==='aprobado')t.aprobadoEn=Date.now();
+  const{error}=await sbGuardarTarea({...t},tareaId);
+  if(error){t.estado=estadoAnterior;toast('Error: '+error.message);render();return;}
+  toast(`"${t.titulo}" → ${EL[nuevoEstado]}`);
+  render();
+  if(proyActualId)renderDetalle();
 }
 
 // INIT

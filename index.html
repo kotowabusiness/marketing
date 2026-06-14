@@ -387,6 +387,14 @@ table.rt tr:last-child td{border-bottom:none;}
 .admin-wrap{padding:1.5rem 2rem 2rem;}
 .admin-section{background:var(--white);border-radius:6px;padding:1.25rem 1.5rem;box-shadow:0 1px 3px rgba(26,18,10,.07);margin-bottom:1.25rem;}
 .admin-section-title{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--dark);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gray2);}
+.notif-toggle-list{display:flex;flex-direction:column;gap:.6rem;}
+.notif-toggle-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.7rem .9rem;background:var(--linen);border-radius:6px;cursor:pointer;}
+.notif-toggle-ttl{font-size:12.5px;font-weight:600;color:var(--dark);}
+.notif-toggle-sub{font-size:10.5px;color:var(--gray3);margin-top:2px;line-height:1.4;}
+.notif-toggle-row input[type=checkbox]{width:38px;height:22px;flex-shrink:0;appearance:none;-webkit-appearance:none;background:var(--gray2);border-radius:11px;position:relative;cursor:pointer;transition:background .15s;outline:none;}
+.notif-toggle-row input[type=checkbox]::before{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--white);border-radius:50%;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15);}
+.notif-toggle-row input[type=checkbox]:checked{background:var(--verde);}
+.notif-toggle-row input[type=checkbox]:checked::before{transform:translateX(16px);}
 .users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;}
 .user-card{background:var(--linen);border-radius:5px;padding:.85rem 1rem;border:1px solid var(--gray2);display:flex;align-items:center;gap:.75rem;}
 .user-avatar{width:38px;height:38px;border-radius:50%;background:var(--verde);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;color:var(--white);flex-shrink:0;}
@@ -1059,6 +1067,41 @@ table.rt tr:last-child td{border-bottom:none;}
           <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Descripción</label><input type="text" class="fi" id="admin-tipo-desc" placeholder="Breve descripción"></div>
           <button class="btn-save" style="padding:7px 16px;" onclick="adminAgregarTipo()">+ Agregar</button>
         </div>
+      </div>
+    </div>
+
+    <div class="admin-section" id="admin-notif-section">
+      <div class="admin-section-title">&#128276; Notificaciones</div>
+      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Activa o desactiva qu&eacute; tipos de notificaci&oacute;n se env&iacute;an en este departamento.</div>
+      <div class="notif-toggle-list">
+        <label class="notif-toggle-row">
+          <div>
+            <div class="notif-toggle-ttl">En revisi&oacute;n</div>
+            <div class="notif-toggle-sub">Avisa a admin/gerente/asistente cuando alguien marca un pendiente como Listo</div>
+          </div>
+          <input type="checkbox" id="notif-cfg-revision" onchange="toggleNotifConfig('notif_revision',this)">
+        </label>
+        <label class="notif-toggle-row">
+          <div>
+            <div class="notif-toggle-ttl">Aprobado</div>
+            <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente es aprobado</div>
+          </div>
+          <input type="checkbox" id="notif-cfg-aprobado" onchange="toggleNotifConfig('notif_aprobado',this)">
+        </label>
+        <label class="notif-toggle-row">
+          <div>
+            <div class="notif-toggle-ttl">Cambios solicitados</div>
+            <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente regresa con cambios</div>
+          </div>
+          <input type="checkbox" id="notif-cfg-cambios" onchange="toggleNotifConfig('notif_cambios',this)">
+        </label>
+        <label class="notif-toggle-row">
+          <div>
+            <div class="notif-toggle-ttl">Desbloqueo</div>
+            <div class="notif-toggle-sub">Avisa al responsable cuando un pendiente bloqueado se desbloquea</div>
+          </div>
+          <input type="checkbox" id="notif-cfg-desbloqueo" onchange="toggleNotifConfig('notif_desbloqueo',this)">
+        </label>
       </div>
     </div>
 
@@ -2189,6 +2232,25 @@ function esAprobador(){
   return PERFIL?.rol==='admin'||PERFIL?.rol==='gerente'||PERFIL?.rol==='asistente';
 }
 
+// ¿Está activo este tipo de notificación para el departamento? (config en Admin)
+function notifTipoActivo(tipo){
+  return configData?.[`notif_${tipo}`]!==false;
+}
+
+function renderNotifConfigPanel(){
+  document.getElementById('notif-cfg-revision').checked=configData.notif_revision!==false;
+  document.getElementById('notif-cfg-aprobado').checked=configData.notif_aprobado!==false;
+  document.getElementById('notif-cfg-cambios').checked=configData.notif_cambios!==false;
+  document.getElementById('notif-cfg-desbloqueo').checked=configData.notif_desbloqueo!==false;
+}
+
+async function toggleNotifConfig(campo,input){
+  configData[campo]=input.checked;
+  const{error}=await sb.from('configuracion').update({[campo]:input.checked,updated_at:new Date().toISOString()}).eq('departamento_id',DEPT_ID);
+  if(error){toast('Error: '+error.message);input.checked=!input.checked;configData[campo]=input.checked;return;}
+  toast(input.checked?'Notificación activada':'Notificación desactivada');
+}
+
 async function cargarNotificaciones(){
   try{
     const q=sb.from('notificaciones').select('*');
@@ -2222,18 +2284,35 @@ async function crearNotificacionRow(tareaId,tipo,mensaje,destinatarioId=null){
 
 // Tarea pasó a "revisión" — notificar a admin/gerente/asistente del departamento
 async function notificarRevision(t){
+  if(!notifTipoActivo('revision'))return;
   const nombre=getUsuarioNombre(t.responsable).split(' ')[0];
   await crearNotificacionRow(t.id,'revision',`${nombre} marc&oacute; "${t.titulo}" como lista para revisi&oacute;n`,null);
 }
 
-// Tarea fue aprobada — notificar al responsable
+// Tarea fue aprobada — notificar al responsable, y revisar si desbloquea otras
 async function notificarAprobado(t){
-  await crearNotificacionRow(t.id,'aprobado',`Tu pendiente "${t.titulo}" fue aprobado &#10003;`,t.responsable);
+  if(notifTipoActivo('aprobado')){
+    await crearNotificacionRow(t.id,'aprobado',`Tu pendiente "${t.titulo}" fue aprobado &#10003;`,t.responsable);
+  }
+  await notificarDesbloqueados(t);
 }
 
 // Tarea regresó de revisión con cambios — notificar al responsable
 async function notificarCambios(t){
+  if(!notifTipoActivo('cambios'))return;
   await crearNotificacionRow(t.id,'cambios',`Tienes cambios en "${t.titulo}"`,t.responsable);
+}
+
+// Al aprobarse `t`, revisar si alguna tarea dependía de ella (depId===t.id) y,
+// si ahora queda desbloqueada (esBloqueada()===false), notificar a su responsable.
+async function notificarDesbloqueados(t){
+  if(!notifTipoActivo('desbloqueo'))return;
+  const dependientes=tareas.filter(x=>x.depId===t.id);
+  for(const dep of dependientes){
+    if(!esBloqueada(dep)&&dep.responsable){
+      await crearNotificacionRow(dep.id,'desbloqueo',`Ya puedes empezar "${dep.titulo}" — se desbloque&oacute; al aprobarse "${t.titulo}"`,dep.responsable);
+    }
+  }
 }
 
 function renderNotifBadge(){
@@ -2256,7 +2335,7 @@ function fmtNotifTime(iso){
   return d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
 }
 
-const NOTIF_ICONS={revision:'&#128221;',aprobado:'&#9989;',cambios:'&#9888;'};
+const NOTIF_ICONS={revision:'&#128221;',aprobado:'&#9989;',cambios:'&#9888;',desbloqueo:'&#128275;'};
 
 function renderNotifPanel(){
   const list=document.getElementById('notif-list');
@@ -2995,6 +3074,13 @@ async function renderAdmin(){
     configSection.style.display=esAdmin?'':'none';
     if(esAdmin) renderConfigPanel();
   }
+  // Notificaciones — admin y gerente (cada uno configura su departamento)
+  const notifSection=document.getElementById('admin-notif-section');
+  if(notifSection){
+    const puedeConfig=esAdmin||PERFIL?.rol==='gerente';
+    notifSection.style.display=puedeConfig?'':'none';
+    if(puedeConfig)renderNotifConfigPanel();
+  }
   // Poblar select de departamentos en modal usuario
   const sel=document.getElementById('uf-dept');sel.innerHTML='';
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});
@@ -3076,7 +3162,8 @@ document.getElementById('modal-sobrecarga').addEventListener('click',e=>{if(e.ta
 // ══════════════════════════════════════════════════════════
 let configData = {
   color_primario:'#00614D', color_acento:'#C9A84C', color_fondo:'#FAF7F2',
-  font_display:'Libre Baskerville', font_body:'Montserrat', nombre_app:'Mercadeo'
+  font_display:'Libre Baskerville', font_body:'Montserrat', nombre_app:'Mercadeo',
+  notif_revision:true, notif_aprobado:true, notif_cambios:true, notif_desbloqueo:true,
 };
 let configDirty = false;
 
@@ -3091,6 +3178,10 @@ async function cargarConfig(){
       font_display:data.font_display||'Libre Baskerville',
       font_body:data.font_body||'Montserrat',
       nombre_app:data.nombre_app||'Mercadeo',
+      notif_revision:data.notif_revision!==false,
+      notif_aprobado:data.notif_aprobado!==false,
+      notif_cambios:data.notif_cambios!==false,
+      notif_desbloqueo:data.notif_desbloqueo!==false,
     };
     aplicarConfig();
   }
@@ -3217,6 +3308,10 @@ async function guardarConfig(){
     font_display:configData.font_display,
     font_body:configData.font_body,
     nombre_app:configData.nombre_app,
+    notif_revision:configData.notif_revision,
+    notif_aprobado:configData.notif_aprobado,
+    notif_cambios:configData.notif_cambios,
+    notif_desbloqueo:configData.notif_desbloqueo,
     updated_at:new Date().toISOString()
   },{onConflict:'departamento_id'});
   if(error){toast('Error: '+error.message);return;}

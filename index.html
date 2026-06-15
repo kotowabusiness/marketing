@@ -346,6 +346,15 @@ table.rt tr:last-child td{border-bottom:none;}
 .notif-toggle-row input[type=checkbox]::before{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--white);border-radius:50%;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15);}
 .notif-toggle-row input[type=checkbox]:checked{background:var(--verde);}
 .notif-toggle-row input[type=checkbox]:checked::before{transform:translateX(16px);}
+/* PLANTILLAS */
+.pl-item-row{display:grid;grid-template-columns:1.6fr 1fr .9fr .8fr auto;gap:.4rem;align-items:center;padding:.4rem 0;border-bottom:1px solid var(--gray1);}
+.pl-item-row input,.pl-item-row select{font-family:'Montserrat',sans-serif;font-size:11px;padding:5px 7px;border:1px solid var(--gray2);border-radius:4px;background:var(--white);width:100%;}
+.pl-item-hdr{display:grid;grid-template-columns:1.6fr 1fr .9fr .8fr auto;gap:.4rem;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray3);padding-bottom:.4rem;border-bottom:1px solid var(--gray2);margin-bottom:.2rem;}
+.pl-item-del{background:none;border:none;color:var(--urgente);cursor:pointer;font-size:14px;padding:0 4px;}
+.pl-card{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--gray2);border-radius:6px;padding:.65rem .9rem;}
+.pl-card-nom{font-size:12.5px;font-weight:600;color:var(--dark);}
+.pl-card-sub{font-size:10px;color:var(--gray3);margin-top:1px;}
+.pl-card-actions{display:flex;gap:.4rem;}
 /* PROPUESTAS */
 .prop-card{background:var(--white);border-radius:6px;padding:1rem 1.25rem;box-shadow:0 1px 3px rgba(26,18,10,.07);margin-bottom:1rem;border-left:4px solid var(--gold);}
 .prop-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem;}
@@ -991,6 +1000,13 @@ table.rt tr:last-child td{border-bottom:none;}
       </div>
     </div>
 
+    <div class="admin-section" id="admin-plantillas-section">
+      <div class="admin-section-title">&#128203; Plantillas de proyecto</div>
+      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Checklists reutilizables (ej. apertura de tienda) que se aplican autom&aacute;ticamente al crear un proyecto nuevo.</div>
+      <div id="admin-plantillas-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;"></div>
+      <button class="btn-save" onclick="abrirModalPlantilla()">+ Nueva plantilla</button>
+    </div>
+
     <div class="admin-section" id="admin-notif-section">
       <div class="admin-section-title">&#128276; Notificaciones</div>
       <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Activa o desactiva qu&eacute; tipos de notificaci&oacute;n se env&iacute;an en este departamento.</div>
@@ -1163,8 +1179,35 @@ table.rt tr:last-child td{border-bottom:none;}
           <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLinkProy()">+ Agregar</button>
         </div>
       </div>
+      <div class="fg" id="pf-plantilla-grp">
+        <label class="flabel">Plantilla <span style="font-weight:400;color:var(--gray3)">(opcional &mdash; crea los pendientes autom&aacute;ticamente)</span></label>
+        <select class="fs" id="pf-plantilla">
+          <option value="">Ninguna &mdash; proyecto vac&iacute;o</option>
+        </select>
+        <div id="pf-plantilla-info" style="display:none;font-size:11px;color:var(--gray3);background:var(--linen);border-radius:4px;padding:.5rem .7rem;margin-top:.4rem;"></div>
+      </div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-proy')">Cancelar</button><button class="btn-del" id="btn-del-proy" style="display:none" onclick="eliminarProyectoActual()">Eliminar proyecto</button><button class="btn-save" onclick="guardarProy()">Guardar</button></div>
+  </div>
+</div>
+
+<!-- MODAL PLANTILLA -->
+<div class="modal-ov" id="modal-plantilla">
+  <div class="modal" style="max-width:780px;">
+    <div class="mhdr"><span class="mttl" id="mpl-ttl">Nueva plantilla</span><button class="mclose" onclick="cerrarModal('modal-plantilla')">&#215;</button></div>
+    <div class="mbody">
+      <input type="hidden" id="pl-id">
+      <div class="frow">
+        <div class="fg"><label class="flabel">Nombre de la plantilla</label><input type="text" class="fi" id="pl-nombre" placeholder="ej. Apertura de tienda"></div>
+        <div class="fg"><label class="flabel">Descripci&oacute;n</label><input type="text" class="fi" id="pl-desc" placeholder="Breve nota (opcional)"></div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Pendientes de la plantilla</label>
+        <div id="pl-items-table"></div>
+        <button class="ba" style="margin-top:.5rem;" onclick="plAgregarItem()">+ Agregar pendiente</button>
+      </div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-plantilla')">Cancelar</button><button class="btn-del" id="btn-del-plantilla" style="display:none" onclick="eliminarPlantillaActual()">Eliminar plantilla</button><button class="btn-save" onclick="guardarPlantilla()">Guardar</button></div>
   </div>
 </div>
 
@@ -1366,7 +1409,7 @@ async function iniciarApp(user){
     document.getElementById('tab-matriz').style.display='none';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas()]);
   // Poblar filtros dinámicos
   poblarFiltros();
   poblarFiltrosMobile();
@@ -1459,6 +1502,196 @@ async function cargarProyectos(){
     if(links.length)proyLinks[p.id]=links;
     return{...p,nombre:p.nombre,desc,links,deadline:p.deadline,estado:p.estado};
   });
+}
+
+// ══════════════════════════════════════════════════════════
+// PLANTILLAS — checklists reutilizables de proyecto, por departamento
+// ══════════════════════════════════════════════════════════
+let plantillas=[];
+
+async function cargarPlantillas(){
+  try{
+    const q=sb.from('plantillas').select('*');
+    if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
+    const{data,error}=await q.order('nombre');
+    if(error){console.log('cargarPlantillas:',error.message);plantillas=[];return;}
+    plantillas=data||[];
+  }catch(err){console.log('cargarPlantillas error:',err);plantillas=[];}
+}
+
+// Poblar el selector de plantilla en el modal de proyecto (solo al crear)
+function poblarSelectPlantilla(){
+  const sel=document.getElementById('pf-plantilla');if(!sel)return;
+  sel.innerHTML='<option value="">Ninguna &mdash; proyecto vac&iacute;o</option>';
+  plantillas.forEach(p=>{
+    const o=document.createElement('option');o.value=p.id;
+    o.textContent=`${p.nombre} (${(p.items||[]).length} pendientes)`;
+    sel.appendChild(o);
+  });
+  document.getElementById('pf-plantilla-info').style.display='none';
+}
+
+document.getElementById('pf-plantilla')?.addEventListener('change',function(){
+  const info=document.getElementById('pf-plantilla-info');
+  const p=plantillas.find(x=>x.id===this.value);
+  if(!p){info.style.display='none';return;}
+  const items=p.items||[];
+  const secciones=[...new Set(items.map(i=>i.seccion).filter(Boolean))];
+  info.innerHTML=`Esta plantilla crear&aacute; <b>${items.length} pendientes</b>${secciones.length?` en ${secciones.length} secci&oacute;n${secciones.length>1?'es':''}: ${secciones.join(', ')}`:''}.${p.descripcion?` ${esc(p.descripcion)}`:''} Las fechas de entrega se calcular&aacute;n a partir de la fecha de lanzamiento.`;
+  info.style.display='block';
+});
+
+// ── Gestión de plantillas en Admin ──
+let plItemsActuales=[]; // items en edición dentro del modal-plantilla
+let editPlantillaId=null;
+
+function renderAdminPlantillas(){
+  const list=document.getElementById('admin-plantillas-list');if(!list)return;
+  if(!plantillas.length){list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin plantillas todav&iacute;a.</div>';return;}
+  list.innerHTML=plantillas.map(p=>{
+    const items=p.items||[];
+    const secciones=[...new Set(items.map(i=>i.seccion).filter(Boolean))];
+    return`<div class="pl-card">
+      <div>
+        <div class="pl-card-nom">${esc(p.nombre)}</div>
+        <div class="pl-card-sub">${items.length} pendiente${items.length!==1?'s':''}${secciones.length?` · ${secciones.length} secci&oacute;n${secciones.length>1?'es':''}`:''}${p.descripcion?` · ${esc(p.descripcion)}`:''}</div>
+      </div>
+      <div class="pl-card-actions">
+        <button class="ba" onclick="editarPlantilla('${p.id}')">Editar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function plAgregarItem(seccion=''){
+  plItemsActuales.push({titulo:'',descripcion:'',tipo:matrizData[0]?.key||'otro',dias_produccion:0,horas:null,seccion});
+  renderPlItemsTable();
+}
+function plEliminarItem(idx){
+  plItemsActuales.splice(idx,1);
+  renderPlItemsTable();
+}
+function plActualizarItem(idx,campo,val){
+  if(!plItemsActuales[idx])return;
+  if(campo==='dias_produccion'||campo==='horas')val=val===''?(campo==='horas'?null:0):parseFloat(val);
+  plItemsActuales[idx][campo]=val;
+}
+
+function renderPlItemsTable(){
+  const wrap=document.getElementById('pl-items-table');
+  if(!plItemsActuales.length){wrap.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin pendientes a&uacute;n &mdash; agrega el primero.</div>';return;}
+  const tipoOpts=matrizData.map(m=>`<option value="${m.key}">${esc(m.nom)}</option>`).join('');
+  let html=`<div class="pl-item-hdr"><div>Título / secci&oacute;n</div><div>Tipo</div><div>D&iacute;as antes</div><div>Horas</div><div></div></div>`;
+  plItemsActuales.forEach((item,idx)=>{
+    html+=`<div class="pl-item-row">
+      <div>
+        <input type="text" placeholder="T&iacute;tulo del pendiente" value="${esc(item.titulo)}" oninput="plActualizarItem(${idx},'titulo',this.value)">
+        <input type="text" placeholder="Secci&oacute;n (opcional, ej. EXTERIOR)" value="${esc(item.seccion||'')}" style="margin-top:3px;font-size:10px;color:var(--gray3);" oninput="plActualizarItem(${idx},'seccion',this.value)">
+      </div>
+      <select onchange="plActualizarItem(${idx},'tipo',this.value)">${matrizData.map(m=>`<option value="${m.key}"${m.key===item.tipo?' selected':''}>${esc(m.nom)}</option>`).join('')}</select>
+      <input type="number" min="0" max="90" step="1" value="${item.dias_produccion||0}" title="D&iacute;as antes de la fecha de lanzamiento" oninput="plActualizarItem(${idx},'dias_produccion',this.value)">
+      <input type="number" min="0" max="40" step=".5" placeholder="&mdash;" value="${item.horas??''}" oninput="plActualizarItem(${idx},'horas',this.value)">
+      <button class="pl-item-del" onclick="plEliminarItem(${idx})" title="Eliminar">&#215;</button>
+    </div>`;
+  });
+  wrap.innerHTML=html;
+}
+
+function abrirModalPlantilla(){
+  editPlantillaId=null;
+  document.getElementById('mpl-ttl').textContent='Nueva plantilla';
+  document.getElementById('pl-id').value='';
+  document.getElementById('pl-nombre').value='';
+  document.getElementById('pl-desc').value='';
+  document.getElementById('btn-del-plantilla').style.display='none';
+  plItemsActuales=[];
+  renderPlItemsTable();
+  document.getElementById('modal-plantilla').classList.add('open');
+  setTimeout(()=>document.getElementById('pl-nombre').focus(),60);
+}
+
+function editarPlantilla(id){
+  const p=plantillas.find(x=>x.id===id);if(!p)return;
+  editPlantillaId=id;
+  document.getElementById('mpl-ttl').textContent='Editar plantilla';
+  document.getElementById('pl-id').value=id;
+  document.getElementById('pl-nombre').value=p.nombre;
+  document.getElementById('pl-desc').value=p.descripcion||'';
+  document.getElementById('btn-del-plantilla').style.display='inline-block';
+  plItemsActuales=(p.items||[]).map(i=>({...i}));
+  renderPlItemsTable();
+  document.getElementById('modal-plantilla').classList.add('open');
+}
+
+async function guardarPlantilla(){
+  const nombre=document.getElementById('pl-nombre').value.trim();
+  if(!nombre){document.getElementById('pl-nombre').focus();return;}
+  const itemsValidos=plItemsActuales.filter(i=>i.titulo&&i.titulo.trim());
+  if(!itemsValidos.length){toast('Agrega al menos un pendiente con t&iacute;tulo');return;}
+  const row={
+    departamento_id:DEPT_ID,
+    nombre,
+    descripcion:document.getElementById('pl-desc').value.trim()||null,
+    items:itemsValidos,
+    updated_at:new Date().toISOString(),
+  };
+  if(editPlantillaId){
+    const{error}=await sb.from('plantillas').update(row).eq('id',editPlantillaId);
+    if(error){toast('Error: '+error.message);return;}
+    const idx=plantillas.findIndex(p=>p.id===editPlantillaId);
+    if(idx>-1)Object.assign(plantillas[idx],row);
+    toast('Plantilla actualizada');
+  } else {
+    row.creado_por=USER.id;
+    const{data,error}=await sb.from('plantillas').insert(row).select().single();
+    if(error){toast('Error: '+error.message);return;}
+    plantillas.push(data);
+    toast('Plantilla creada');
+  }
+  cerrarModal('modal-plantilla');
+  renderAdminPlantillas();
+}
+
+async function eliminarPlantillaActual(){
+  if(!editPlantillaId)return;
+  if(!confirm('¿Eliminar esta plantilla? No afecta a proyectos ya creados.'))return;
+  await sb.from('plantillas').delete().eq('id',editPlantillaId);
+  plantillas=plantillas.filter(p=>p.id!==editPlantillaId);
+  cerrarModal('modal-plantilla');
+  renderAdminPlantillas();
+  toast('Plantilla eliminada');
+}
+
+// Crear los pendientes de una plantilla en un proyecto recién creado.
+// deadlineProyecto: 'YYYY-MM-DD' (fecha de lanzamiento) — cada ítem resta sus días de producción.
+async function aplicarPlantilla(plantillaId, proyId, deadlineProyecto){
+  const p=plantillas.find(x=>x.id===plantillaId);if(!p)return;
+  const items=p.items||[];
+  const lanzamiento=deadlineProyecto?fechaLocal(deadlineProyecto):null;
+  for(const item of items){
+    let fecha=null;
+    if(lanzamiento){
+      const dias=parseInt(item.dias_produccion)||0;
+      fecha=fechaStr(addDias(lanzamiento,-dias));
+    }
+    const datos={
+      titulo:item.titulo,
+      prioridad:'normal',
+      tipo:item.tipo||'otro',
+      responsable:item.responsable||null,
+      estado:'pendiente',
+      fecha,
+      brief:item.descripcion||'',
+      horas:item.horas||null,
+      proyId,
+      depId:null,
+      links:null,
+      dia_fijado:null,
+    };
+    const{error,id}=await sbGuardarTarea(datos,null);
+    if(error){console.log('aplicarPlantilla item error:',error.message);continue;}
+    tareas.unshift({...datos,id,creadaEn:Date.now(),links:[]});
+  }
 }
 async function cargarDepts(){
   const{data}=await sb.from('departamentos').select('*').order('nombre');
@@ -2913,20 +3146,27 @@ ${t.brief?`<div class="card-brief" style="margin:.35rem 0;">${esc(t.brief)}</div
   });
   if(proyVista==='gantt')renderGantt();
 }
-function abrirModalProy(){editProyId=null;document.getElementById('mp-ttl').textContent='Nuevo proyecto';['pf-nom','pf-desc','pf-deadline'].forEach(id=>document.getElementById(id).value='');document.getElementById('pf-estado').value='activo';document.getElementById('btn-del-proy').style.display='none';modalProyLinks=[];renderProyLinks();document.getElementById('modal-proy').classList.add('open');setTimeout(()=>document.getElementById('pf-nom').focus(),60);}
-function editarProy(id,e){e&&e.stopPropagation();const p=proyectos.find(x=>x.id===id);if(!p)return;editProyId=id;document.getElementById('mp-ttl').textContent='Editar proyecto';document.getElementById('pf-nom').value=p.nombre;document.getElementById('pf-desc').value=p.desc||'';document.getElementById('pf-deadline').value=p.deadline||'';document.getElementById('pf-estado').value=p.estado||'activo';document.getElementById('btn-del-proy').style.display='inline-block';modalProyLinks=proyLinks[id]||(p.links||[]);renderProyLinks();document.getElementById('modal-proy').classList.add('open');}
+function abrirModalProy(){editProyId=null;document.getElementById('mp-ttl').textContent='Nuevo proyecto';['pf-nom','pf-desc','pf-deadline'].forEach(id=>document.getElementById(id).value='');document.getElementById('pf-estado').value='activo';document.getElementById('btn-del-proy').style.display='none';modalProyLinks=[];renderProyLinks();document.getElementById('pf-plantilla-grp').style.display='block';poblarSelectPlantilla();document.getElementById('pf-plantilla').value='';document.getElementById('modal-proy').classList.add('open');setTimeout(()=>document.getElementById('pf-nom').focus(),60);}
+function editarProy(id,e){e&&e.stopPropagation();const p=proyectos.find(x=>x.id===id);if(!p)return;editProyId=id;document.getElementById('mp-ttl').textContent='Editar proyecto';document.getElementById('pf-nom').value=p.nombre;document.getElementById('pf-desc').value=p.desc||'';document.getElementById('pf-deadline').value=p.deadline||'';document.getElementById('pf-estado').value=p.estado||'activo';document.getElementById('btn-del-proy').style.display='inline-block';modalProyLinks=proyLinks[id]||(p.links||[]);renderProyLinks();document.getElementById('pf-plantilla-grp').style.display='none';document.getElementById('modal-proy').classList.add('open');}
 async function guardarProy(){
   const nombre=document.getElementById('pf-nom').value.trim();if(!nombre){document.getElementById('pf-nom').focus();return;}
   const linksJson=modalProyLinks.length?'||LINKS:'+JSON.stringify(modalProyLinks):'';
   const desc=(document.getElementById('pf-desc').value.trim())+linksJson;
-  const datos={nombre,desc,deadline:document.getElementById('pf-deadline').value||null,estado:document.getElementById('pf-estado').value,links:[...modalProyLinks]};
+  const deadline=document.getElementById('pf-deadline').value||null;
+  const datos={nombre,desc,deadline,estado:document.getElementById('pf-estado').value,links:[...modalProyLinks]};
+  const plantillaId=editProyId?null:(document.getElementById('pf-plantilla')?.value||null);
   const{error,id}=await sbGuardarProy(datos,editProyId);
   if(error){toast('Error: '+error.message);return;}
   const pid=editProyId||id;
   if(pid)proyLinks[pid]=[...modalProyLinks];
   if(editProyId){const idx=proyectos.findIndex(p=>p.id===editProyId);if(idx>-1)Object.assign(proyectos[idx],datos);toast('Proyecto actualizado');}
   else{proyectos.unshift({...datos,id});toast('Proyecto creado');}
-  cerrarModal('modal-proy');renderProyectos();
+  if(plantillaId){
+    await aplicarPlantilla(plantillaId,pid,deadline);
+    const p=plantillas.find(x=>x.id===plantillaId);
+    toast(`Proyecto creado con ${(p?.items||[]).length} pendientes de la plantilla`);
+  }
+  cerrarModal('modal-proy');renderProyectos();render();
 }
 async function eliminarProyectoActual(){if(!editProyId||!confirm('¿Eliminar este proyecto y TODAS sus tareas?'))return;await sbEliminarProy(editProyId);proyectos=proyectos.filter(p=>p.id!==editProyId);tareas=tareas.filter(t=>t.proyId!==editProyId);cerrarModal('modal-proy');if(proyActualId===editProyId)cerrarDetalle();else renderProyectos();toast('Proyecto eliminado');editProyId=null;}
 function abrirModalPT(){editPTId=null;document.getElementById('mpt-ttl').textContent='Nueva tarea';['ptf-titulo','ptf-brief','ptf-fecha'].forEach(id=>document.getElementById(id).value='');document.getElementById('ptf-estado').value='pendiente';document.getElementById('ptf-horas').value='2';document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';document.getElementById('btn-del-pt').style.display='none';poblarSelectResp('ptf-resp');const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');setTimeout(()=>document.getElementById('ptf-titulo').focus(),60);}
@@ -3157,6 +3397,13 @@ async function renderAdmin(){
     const puedeConfig=esAdmin||PERFIL?.rol==='gerente';
     notifSection.style.display=puedeConfig?'':'none';
     if(puedeConfig)renderNotifConfigPanel();
+  }
+  // Plantillas de proyecto — admin y gerente (por departamento)
+  const plantillasSection=document.getElementById('admin-plantillas-section');
+  if(plantillasSection){
+    const puedePlantillas=esAdmin||PERFIL?.rol==='gerente';
+    plantillasSection.style.display=puedePlantillas?'':'none';
+    if(puedePlantillas)renderAdminPlantillas();
   }
   // Poblar select de departamentos en modal usuario
   const sel=document.getElementById('uf-dept');sel.innerHTML='';

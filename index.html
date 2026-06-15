@@ -1137,6 +1137,7 @@ table.rt tr:last-child td{border-bottom:none;}
           <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLink()">+ Agregar</button>
         </div>
       </div>
+      <div id="modal-solo-links-msg" style="display:none;font-size:11px;color:var(--gray3);background:var(--linen);border-radius:4px;padding:.5rem .7rem;margin-top:-.5rem;">Solo puedes agregar o quitar links de este pendiente.</div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-tarea')">Cancelar</button><button class="btn-del" id="btn-del-tarea" style="display:none" onclick="eliminarTareaActual()">Eliminar</button><button class="btn-save" onclick="guardarTarea()">Guardar</button></div>
   </div>
@@ -2160,7 +2161,8 @@ function mkCard(t,colId){
   const depHtml=t.depId?(()=>{const dep=tareas.find(x=>x.id===t.depId);return dep?`<div class="card-dep">&#8627; ${esc(dep.titulo)}</div>`:''})():'';
   const linksT=tareasLinks[t.id]||(t.links||[]);
   const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(url=>{try{const h=new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${h}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
-  const editBtns=puedeEditar?`<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button>`:'';
+  // Colaborador no edita la tarea, pero sí puede abrir el modal en modo "solo links"
+  const editBtns=puedeEditar?`<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button>`:`<button class="ba" onclick="editarTarea('${t.id}',event)">&#128279; Link</button>`;
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
@@ -2427,12 +2429,25 @@ async function avanzar(id,e){
 }
 async function avanzarPT(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;if(esBloqueada(t)){toast('Bloqueada. Completa la anterior primero.');return;}const next=EN[t.estado];if(!next)return;if(next==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();if(next==='aprobado')t.aprobadoEn=Date.now();t.estado=next;await sbGuardarTarea({...t},id);render();renderDetalle();toast(`"${t.titulo}" → ${EL[next]}`);}
 
+// Campos del modal de tarea que se deshabilitan en modo "solo links" (colaborador)
+const MODAL_TAREA_CAMPOS=['f-titulo','f-tipo','f-resp','f-estado','f-brief','f-horas','f-fecha'];
+
+// activo=true -> modo solo-links (colaborador): deshabilita todo excepto agregar/quitar links
+function setModalSoloLinks(activo){
+  MODAL_TAREA_CAMPOS.forEach(id=>{const el=document.getElementById(id);if(el)el.disabled=activo;});
+  document.getElementById('btn-del-tarea').style.display=activo?'none':document.getElementById('btn-del-tarea').dataset.wasVisible==='1'?'inline-block':'none';
+  const footMsg=document.getElementById('modal-solo-links-msg');
+  if(footMsg)footMsg.style.display=activo?'block':'none';
+}
+
 function editarTarea(id,e){
   e&&e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;
-  editTareaId=id;document.getElementById('mt-ttl').textContent='Editar tarea';
+  const soloLinks=PERFIL?.rol==='colaborador';
+  editTareaId=id;document.getElementById('mt-ttl').textContent=soloLinks?'Agregar link':'Editar tarea';
   document.getElementById('f-titulo').value=t.titulo;
   document.getElementById('f-estado').value=t.estado;document.getElementById('f-brief').value=t.brief||'';document.getElementById('f-fecha').value=t.fecha||'';
   document.getElementById('btn-del-tarea').style.display='inline-block';
+  document.getElementById('btn-del-tarea').dataset.wasVisible='1';
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');
   document.getElementById('f-resp').value=t.responsable||'';document.getElementById('f-tipo').value=t.tipo||'otro';
   // Cargar links existentes
@@ -2440,6 +2455,7 @@ function editarTarea(id,e){
   renderModalLinks();
   if(t.horas){document.getElementById('ia-box').style.display='flex';document.getElementById('ia-txt').innerHTML=`<strong>Estimación guardada: ${t.horas}h</strong>`;document.getElementById('f-horas').value=t.horas;document.getElementById('horas-grp').style.display='block';recalcEntrega();}
   else{document.getElementById('ia-box').style.display='none';document.getElementById('horas-grp').style.display='none';document.getElementById('entrega-box').style.display='none';}
+  setModalSoloLinks(soloLinks);
   document.getElementById('modal-tarea').classList.add('open');
 }
 function confElim(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!confirm(`¿Eliminar "${t?.titulo}"?`))return;eliminarTareaById(id);}
@@ -2510,6 +2526,22 @@ function quitarLink(i){modalLinks.splice(i,1);renderModalLinks();}
 let pendienteGuardar=null; // datos en espera de resolución de sobrecarga
 
 async function guardarTarea(){
+  const tAnterior=editTareaId?tareas.find(x=>x.id===editTareaId):null;
+
+  // Colaborador: modo "solo links" — guarda únicamente los links, sin tocar el resto del pendiente
+  if(PERFIL?.rol==='colaborador'&&tAnterior){
+    const datosLinks={
+      titulo:tAnterior.titulo,prioridad:tAnterior.prioridad||'normal',tipo:tAnterior.tipo,
+      responsable:tAnterior.responsable,estado:tAnterior.estado,fecha:tAnterior.fecha,
+      brief:tAnterior.brief||'',horas:tAnterior.horas,inicioProcess:tAnterior.inicioProcess,
+      aprobadoEn:tAnterior.aprobadoEn,proyId:tAnterior.proyId,depId:tAnterior.depId,
+      dia_fijado:tAnterior.dia_fijado||null,
+      links:modalLinks.length?[...modalLinks]:null,
+    };
+    await ejecutarGuardado(datosLinks);
+    return;
+  }
+
   const titulo=document.getElementById('f-titulo').value.trim();if(!titulo){document.getElementById('f-titulo').focus();return;}
   const est=document.getElementById('f-estado').value;
   const horas=parseFloat(document.getElementById('f-horas')?.value)||null;
@@ -2517,7 +2549,6 @@ async function guardarTarea(){
   if(editTareaId){const t=tareas.find(x=>x.id===editTareaId);ip=t?.inicioProcess;ae=t?.aprobadoEn;}
   if(est==='proceso'&&!ip)ip=Date.now();
   if(est==='aprobado'&&!ae)ae=Date.now();
-  const tAnterior=editTareaId?tareas.find(x=>x.id===editTareaId):null;
   const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:document.getElementById('f-fecha').value||null,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,dia_fijado:tAnterior?.dia_fijado||null};
 
   // Solo chequear sobrecarga para tareas activas con horas y fecha
@@ -3207,7 +3238,7 @@ async function crearDept(){
 }
 
 // UTILS
-function cerrarModal(id){document.getElementById(id).classList.remove('open');editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
+function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea')setModalSoloLinks(false);editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('modal-sobrecarga').classList.contains('open')){cerrarModalSobrecarga();return;}['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
 ['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 document.getElementById('modal-sobrecarga').addEventListener('click',e=>{if(e.target===document.getElementById('modal-sobrecarga'))cerrarModalSobrecarga();});

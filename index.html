@@ -395,6 +395,23 @@ table.rt tr:last-child td{border-bottom:none;}
 .notif-toggle-row input[type=checkbox]::before{content:'';position:absolute;top:2px;left:2px;width:18px;height:18px;background:var(--white);border-radius:50%;transition:transform .15s;box-shadow:0 1px 2px rgba(0,0,0,.15);}
 .notif-toggle-row input[type=checkbox]:checked{background:var(--verde);}
 .notif-toggle-row input[type=checkbox]:checked::before{transform:translateX(16px);}
+/* PROPUESTAS */
+.prop-card{background:var(--white);border-radius:6px;padding:1rem 1.25rem;box-shadow:0 1px 3px rgba(26,18,10,.07);margin-bottom:1rem;border-left:4px solid var(--gold);}
+.prop-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;flex-wrap:wrap;gap:.5rem;}
+.prop-tipo{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;padding:2px 10px;border-radius:10px;background:var(--gold-lt);color:var(--dark);}
+.prop-tipo.editar{background:var(--azul-lt);color:var(--azul);}
+.prop-meta{font-size:11px;color:var(--gray3);}
+.prop-ttl{font-family:'Libre Baskerville',serif;font-size:15px;color:var(--dark);margin-bottom:.5rem;}
+.prop-diff{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem;}
+.prop-diff-row{display:contents;}
+.prop-diff-lbl{grid-column:1/-1;font-size:10px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-top:.4rem;}
+.prop-diff-old,.prop-diff-new{font-size:12px;padding:.4rem .6rem;border-radius:4px;}
+.prop-diff-old{background:var(--urgente-lt);color:var(--dark);text-decoration:line-through;opacity:.7;}
+.prop-diff-new{background:var(--verde-lt);color:var(--dark);font-weight:600;}
+.prop-full{font-size:12px;color:var(--dark);line-height:1.6;margin-bottom:.75rem;background:var(--linen);border-radius:4px;padding:.6rem .8rem;}
+.prop-full b{color:var(--verde);}
+.prop-actions{display:flex;gap:.6rem;}
+.prop-empty{text-align:center;color:var(--gray3);font-size:12px;padding:2rem;}
 .users-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:.75rem;}
 .user-card{background:var(--linen);border-radius:5px;padding:.85rem 1rem;border:1px solid var(--gray2);display:flex;align-items:center;gap:.75rem;}
 .user-avatar{width:38px;height:38px;border-radius:50%;background:var(--verde);display:flex;align-items:center;justify-content:center;font-family:'Libre Baskerville',serif;font-size:14px;font-weight:700;color:var(--white);flex-shrink:0;}
@@ -831,6 +848,7 @@ table.rt tr:last-child td{border-bottom:none;}
   <button class="ntab" id="tab-calendario" onclick="setVista('calendario',this)">Calendario</button>
   <button class="ntab" id="tab-matriz" onclick="setVista('matriz',this)">Tiempos</button>
   <button class="ntab" onclick="setVista('reportes',this)">Reportes</button>
+  <button class="ntab" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)">Propuestas<span class="notif-badge" id="propuestas-badge" style="display:none;position:absolute;top:-4px;right:-10px;">0</span></button>
   <button class="ntab admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)">&#9881; Admin</button>
   <div style="flex:1"></div>
   <div class="modo-toggle" id="modo-toggle">
@@ -1043,6 +1061,14 @@ table.rt tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- ADMIN -->
+<!-- PROPUESTAS -->
+<div class="vista" id="vista-propuestas">
+  <div class="rep-wrap">
+    <div class="proy-top"><span class="proy-titulo">Propuestas pendientes</span></div>
+    <div id="propuestas-list"></div>
+  </div>
+</div>
+
 <div class="vista" id="vista-admin">
   <div class="admin-wrap">
     <div class="proy-top"><div class="proy-titulo">&#9881; Administración</div></div>
@@ -1299,10 +1325,17 @@ table.rt tr:last-child td{border-bottom:none;}
       <input type="hidden" id="euf-id">
       <div class="fg"><label class="flabel">Nombre completo</label><input type="text" class="fi" id="euf-nombre" placeholder="Nombre completo"></div>
       <div class="frow">
-        <div class="fg"><label class="flabel">Rol</label><select class="fs" id="euf-rol"><option value="colaborador">Colaborador</option><option value="gerente">Gerente</option><option value="admin">Admin</option></select></div>
+        <div class="fg"><label class="flabel">Rol</label><select class="fs" id="euf-rol" onchange="toggleAsistentePermiso()"><option value="colaborador">Colaborador</option><option value="asistente">Asistente / Coordinador</option><option value="gerente">Gerente</option><option value="admin">Admin</option></select></div>
         <div class="fg"><label class="flabel">Departamento</label><select class="fs" id="euf-dept"></select></div>
       </div>
       <div class="fg"><label class="flabel">Estado</label><select class="fs" id="euf-activo"><option value="true">Activo</option><option value="false">Inactivo</option></select></div>
+      <label class="notif-toggle-row" id="euf-permiso-row" style="display:none;">
+        <div>
+          <div class="notif-toggle-ttl">Crear/editar sin aprobaci&oacute;n</div>
+          <div class="notif-toggle-sub">Si est&aacute; apagado, sus cambios van a la bandeja de propuestas para que el gerente apruebe</div>
+        </div>
+        <input type="checkbox" id="euf-permiso-directo">
+      </label>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-edit-user')">Cancelar</button><button class="btn-save" onclick="guardarUsuario()">Guardar</button></div>
   </div>
@@ -1435,6 +1468,7 @@ async function iniciarApp(user){
   // Mostrar tab admin solo si es admin o gerente
   if(rolFinal==='admin'||rolFinal==='gerente'){
     document.getElementById('admin-tab').style.display='inline-block';
+    document.getElementById('tab-propuestas').style.display='inline-block';
   }
   // Ocultar pestaña Tiempos para colaboradores
   // Admin y gerente pueden editar tipos; asistente y colaborador no
@@ -1442,7 +1476,7 @@ async function iniciarApp(user){
     document.getElementById('tab-matriz').style.display='none';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas()]);
   // Poblar filtros dinámicos
   poblarFiltros();
   poblarFiltrosMobile();
@@ -2468,7 +2502,7 @@ function setKDSResp(r,btn){kdsResp=r;document.querySelectorAll('[id^="kf-"]').fo
 setInterval(()=>{if(modoActual!=='kds')return;document.querySelectorAll('.kbig-timer[data-ki]').forEach(el=>{const d=(Date.now()-parseInt(el.dataset.ki))/1000,h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=Math.floor(d%60);el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;const pct=Math.min(100,(d/3600)/parseFloat(el.dataset.kh)*100);el.className=`kbig-timer ${pct>90?'over':pct>70?'warn':'ok'}`;});document.querySelectorAll('.kprog-fill[data-kp]').forEach(bar=>{const t=tareas.find(x=>x.id===bar.dataset.kp);if(!t||!t.inicioProcess||!t.horas)return;const pct=Math.min(100,Math.round(((Date.now()-t.inicioProcess)/3600000)/t.horas*100));bar.style.width=pct+'%';bar.className=`kprog-fill ${pct>90?'over':pct>70?'warn':'ok'}`;});},1000);
 
 // VISTAS
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='miDia'){renderMiDia();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';document.getElementById('modo-toggle').style.display=v==='tareas'?'flex':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){if(modoActual==='kds')renderKDS();else render();}}
 function sortTareas(a,b){
   const po={urgente:0,normal:1,baja:2};
   const hoy=new Date();
@@ -2656,7 +2690,172 @@ async function guardarTarea(){
   await ejecutarGuardado(datos);
 }
 
+// ══════════════════════════════════════════════════════════
+// PROPUESTAS — bandeja de creaciones/ediciones de asistentes sin permiso directo
+// ══════════════════════════════════════════════════════════
+let propuestas=[];
+
+async function cargarPropuestas(){
+  if(!(PERFIL?.rol==='admin'||PERFIL?.rol==='gerente')){propuestas=[];renderPropuestasBadge();return;}
+  try{
+    const q=sb.from('propuestas').select('*').eq('estado','pendiente');
+    if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
+    const{data,error}=await q.order('created_at',{ascending:false});
+    if(error){console.log('cargarPropuestas:',error.message);propuestas=[];}
+    else propuestas=data||[];
+  }catch(err){console.log('cargarPropuestas error:',err);propuestas=[];}
+  renderPropuestasBadge();
+  if(document.getElementById('vista-propuestas')?.classList.contains('active'))renderPropuestas();
+}
+
+function renderPropuestasBadge(){
+  const badge=document.getElementById('propuestas-badge');
+  if(!badge)return;
+  if(propuestas.length>0){badge.textContent=propuestas.length>9?'9+':propuestas.length;badge.style.display='flex';}
+  else badge.style.display='none';
+}
+
+const FIELD_LABELS={
+  titulo:'T&iacute;tulo', prioridad:'Prioridad', tipo:'Tipo', responsable:'Responsable',
+  estado:'Estado', fecha:'Deadline', brief:'Brief', horas:'Horas estimadas', links:'Links',
+};
+
+function fmtFieldVal(campo,val){
+  if(val===null||val===undefined||val==='')return '<span style="opacity:.5;">vac&iacute;o</span>';
+  if(campo==='responsable')return esc(getUsuarioNombre(val));
+  if(campo==='tipo')return esc(getTipoLabel(val));
+  if(campo==='estado')return EL[val]||val;
+  if(campo==='prioridad')return val.charAt(0).toUpperCase()+val.slice(1);
+  if(campo==='horas')return `${val}h`;
+  if(campo==='links')return Array.isArray(val)&&val.length?`${val.length} link(s)`:'sin links';
+  if(campo==='fecha')return fechaLocal(val).toLocaleDateString('es-PA',{day:'numeric',month:'short',year:'numeric'});
+  return esc(String(val));
+}
+
+function renderPropuestas(){
+  const list=document.getElementById('propuestas-list');
+  if(!propuestas.length){
+    list.innerHTML='<div class="prop-empty">No hay propuestas pendientes.</div>';
+    return;
+  }
+  list.innerHTML=propuestas.map(p=>{
+    const autor=getUsuarioNombre(p.autor_id).split(' ')[0];
+    const tiempo=fmtNotifTime(p.created_at);
+    let body='';
+    if(p.tipo==='crear'){
+      const d=p.datos_propuestos;
+      body=`<div class="prop-full">
+        <b>${esc(d.titulo)}</b><br>
+        Tipo: ${esc(getTipoLabel(d.tipo))} &middot; Responsable: ${esc(getUsuarioNombre(d.responsable))}<br>
+        ${d.fecha?`Deadline: ${fechaLocal(d.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short',year:'numeric'})}`:'Sin deadline'}${d.horas?` &middot; ${d.horas}h estimadas`:''}<br>
+        ${d.brief?`Brief: ${esc(d.brief)}`:''}
+      </div>`;
+    } else {
+      // Editar: diff campo por campo
+      const anteriores=p.datos_anteriores||{};
+      const nuevos=p.datos_propuestos||{};
+      const cambios=Object.keys(FIELD_LABELS).filter(campo=>{
+        const a=JSON.stringify(anteriores[campo]??null), b=JSON.stringify(nuevos[campo]??null);
+        return a!==b;
+      });
+      const tarea=tareas.find(t=>t.id===p.tarea_id);
+      body=`<div class="prop-meta" style="margin-bottom:.5rem;">Tarea: <b>${esc(tarea?.titulo||nuevos.titulo||'(eliminada)')}</b></div>`;
+      if(!cambios.length){
+        body+=`<div class="prop-full">Sin cambios detectados en los campos.</div>`;
+      } else {
+        body+=`<div class="prop-diff">`;
+        cambios.forEach(campo=>{
+          body+=`<div class="prop-diff-row">
+            <div class="prop-diff-lbl">${FIELD_LABELS[campo]}</div>
+            <div class="prop-diff-old">${fmtFieldVal(campo,anteriores[campo])}</div>
+            <div class="prop-diff-new">${fmtFieldVal(campo,nuevos[campo])}</div>
+          </div>`;
+        });
+        body+=`</div>`;
+      }
+    }
+    return`<div class="prop-card">
+      <div class="prop-hdr">
+        <span class="prop-tipo ${p.tipo}">${p.tipo==='crear'?'Nueva tarea':'Edici&oacute;n'}</span>
+        <span class="prop-meta">${esc(autor)} &middot; ${tiempo}</span>
+      </div>
+      ${p.tipo==='crear'?'':`<div class="prop-ttl">${esc(p.datos_propuestos?.titulo||'')}</div>`}
+      ${body}
+      <div class="prop-actions">
+        <button class="btn-save" onclick="aprobarPropuesta('${p.id}')">&#10003; Aprobar</button>
+        <button class="btn-cancel" onclick="rechazarPropuesta('${p.id}')">Rechazar</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function aprobarPropuesta(id){
+  const p=propuestas.find(x=>x.id===id);if(!p)return;
+  const datos=p.datos_propuestos;
+  const linksArr=datos.links||[];
+  if(p.tipo==='crear'){
+    const{error,id:nuevoId}=await sbGuardarTarea({...datos,links:linksArr},null);
+    if(error){toast('Error: '+error.message);return;}
+    tareas.unshift({...datos,id:nuevoId,creadaEn:Date.now(),links:linksArr});
+    if(linksArr.length)tareasLinks[nuevoId]=linksArr;
+  } else {
+    const{error}=await sbGuardarTarea({...datos,links:linksArr},p.tarea_id);
+    if(error){toast('Error: '+error.message);return;}
+    const idx=tareas.findIndex(t=>t.id===p.tarea_id);
+    if(idx>-1)Object.assign(tareas[idx],{...datos,links:linksArr});
+    if(linksArr.length)tareasLinks[p.tarea_id]=linksArr;
+  }
+  await sb.from('propuestas').update({estado:'aprobada',resuelto_en:new Date().toISOString(),resuelto_por:USER.id}).eq('id',id);
+  propuestas=propuestas.filter(x=>x.id!==id);
+  renderPropuestasBadge();renderPropuestas();render();
+  toast('Propuesta aprobada');
+}
+
+async function rechazarPropuesta(id){
+  if(!confirm('¿Rechazar esta propuesta? No se aplicará ningún cambio.'))return;
+  await sb.from('propuestas').update({estado:'rechazada',resuelto_en:new Date().toISOString(),resuelto_por:USER.id}).eq('id',id);
+  propuestas=propuestas.filter(x=>x.id!==id);
+  renderPropuestasBadge();renderPropuestas();
+  toast('Propuesta rechazada');
+}
+
+// ¿Este usuario es asistente SIN permiso de crear/editar directo?
+// (admin/gerente siempre tienen permiso directo; colaborador no crea/edita tareas)
+function esAsistenteSinPermiso(){
+  return PERFIL?.rol==='asistente' && !PERFIL?.puede_crear_directo;
+}
+
+// Asistente sin permiso directo: en vez de guardar en `tareas`, crea una propuesta
+// que el gerente debe aprobar desde la bandeja "Propuestas".
+async function guardarComoPropuesta(datos){
+  const tipo=editTareaId?'editar':'crear';
+  const anteriores=editTareaId?tareas.find(x=>x.id===editTareaId):null;
+  const row={
+    departamento_id:DEPT_ID,
+    tarea_id:editTareaId||null,
+    tipo,
+    autor_id:USER.id,
+    datos_propuestos:{...datos,links:[...modalLinks]},
+    datos_anteriores:tipo==='editar'?{
+      titulo:anteriores.titulo,prioridad:anteriores.prioridad,tipo:anteriores.tipo,
+      responsable:anteriores.responsable,estado:anteriores.estado,fecha:anteriores.fecha,
+      brief:anteriores.brief,horas:anteriores.horas,links:anteriores.links||[],
+    }:null,
+    estado:'pendiente',
+  };
+  const{error}=await sb.from('propuestas').insert(row);
+  if(error){toast('Error: '+error.message);return;}
+  cerrarModal('modal-tarea');
+  toast('Enviado para aprobaci&oacute;n del gerente');
+  await cargarPropuestas();
+}
+
 async function ejecutarGuardado(datos){
+  // Asistente sin permiso directo: enrutar a propuestas en vez de guardar directo
+  if(esAsistenteSinPermiso()){
+    await guardarComoPropuesta(datos);
+    return;
+  }
   // Detectar si un aprobador está resolviendo una tarea que estaba "En revisión"
   const estadoAnterior=editTareaId?tareas.find(x=>x.id===editTareaId)?.estado:null;
   const{error,id}=await sbGuardarTarea(datos,editTareaId);
@@ -3085,6 +3284,11 @@ async function renderAdmin(){
   const sel=document.getElementById('uf-dept');sel.innerHTML='';
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});
 }
+function toggleAsistentePermiso(){
+  const rol=document.getElementById('euf-rol').value;
+  document.getElementById('euf-permiso-row').style.display=rol==='asistente'?'flex':'none';
+}
+
 function editarUsuario(id){
   const esAdmin=PERFIL?.rol==='admin';
   // Para buscar el usuario, buscar en todos (puede no estar en la lista filtrada)
@@ -3092,18 +3296,21 @@ function editarUsuario(id){
   document.getElementById('euf-id').value=id;
   document.getElementById('euf-nombre').value=u.nombre||'';
   document.getElementById('euf-activo').value=String(u.activo!==false);
-  // Rol: admin puede asignar cualquier rol, gerente solo colaborador/gerente
+  // Rol: admin puede asignar cualquier rol, gerente solo colaborador/asistente/gerente
   const selRol=document.getElementById('euf-rol');
   selRol.innerHTML='';
   const roles=esAdmin
-    ?[['colaborador','Colaborador'],['gerente','Gerente'],['admin','Admin']]
-    :[['colaborador','Colaborador'],['gerente','Gerente']];
+    ?[['colaborador','Colaborador'],['asistente','Asistente / Coordinador'],['gerente','Gerente'],['admin','Admin']]
+    :[['colaborador','Colaborador'],['asistente','Asistente / Coordinador'],['gerente','Gerente']];
   roles.forEach(([v,l])=>{const o=document.createElement('option');o.value=v;o.textContent=l;if(v===u.rol)o.selected=true;selRol.appendChild(o);});
   // Departamento: admin puede mover a cualquier dept, gerente no puede cambiar dept
   const selDept=document.getElementById('euf-dept');
   selDept.innerHTML='<option value="">Sin departamento</option>';
   selDept.disabled=!esAdmin;
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;if(d.id===u.departamento_id)o.selected=true;selDept.appendChild(o);});
+  // Permiso directo (solo aplica a asistente)
+  document.getElementById('euf-permiso-directo').checked=!!u.puede_crear_directo;
+  toggleAsistentePermiso();
   document.getElementById('modal-edit-user').classList.add('open');
 }
 async function guardarUsuario(){
@@ -3112,15 +3319,16 @@ async function guardarUsuario(){
   const nombre=document.getElementById('euf-nombre').value.trim();
   const rol=document.getElementById('euf-rol').value;
   const activo=document.getElementById('euf-activo').value==='true';
+  const puedeCrearDirecto=document.getElementById('euf-permiso-directo').checked;
   // Solo admin puede cambiar departamento
   const dept=esAdmin?(document.getElementById('euf-dept').value||null):DEPT_ID;
   if(!nombre){document.getElementById('euf-nombre').focus();return;}
-  const update={nombre,rol,activo};
+  const update={nombre,rol,activo,puede_crear_directo:rol==='asistente'?puedeCrearDirecto:false};
   if(esAdmin)update.departamento_id=dept;
   const{error}=await sb.from('perfiles').update(update).eq('id',id);
   if(error){toast('Error: '+error.message);return;}
   const idx=usuarios.findIndex(u=>u.id===id);
-  if(idx>-1)Object.assign(usuarios[idx],{nombre,rol,departamento_id:dept,activo});
+  if(idx>-1)Object.assign(usuarios[idx],{nombre,rol,departamento_id:dept,activo,puede_crear_directo:update.puede_crear_directo});
   cerrarModal('modal-edit-user');renderAdmin();toast('Usuario actualizado');
 }
 

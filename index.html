@@ -157,8 +157,6 @@ header > *{padding-bottom:.65rem;}
 .sobrecarga-opt-ttl{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:2px;}
 .sobrecarga-opt-sub{font-size:11px;color:var(--gray3);line-height:1.4;}
 .sobrecarga-opt.danger:hover{border-color:var(--urgente);background:var(--urgente-lt);}
-.timer{font-size:10px;font-weight:700;color:var(--gray3);background:var(--gray1);padding:2px 6px;border-radius:3px;font-variant-numeric:tabular-nums;}
-.timer.ut{color:var(--urgente);background:var(--urgente-lt);}
 .card-actions{display:flex;gap:.25rem;padding-top:.4rem;border-top:1px solid var(--gray1);}
 .ba{font-size:10px;font-weight:600;padding:4px 7px;border:1px solid var(--gray2);border-radius:2px;cursor:pointer;background:var(--white);color:var(--dark);font-family:'Montserrat',sans-serif;transition:all .12s;flex:1;text-align:center;}
 .ba:hover{background:var(--verde);color:var(--white);border-color:var(--verde);}
@@ -2147,7 +2145,6 @@ function mkCard(t,colId){
     const cls=d<hoy?'vencida':'';
     fHtml=`<span class="card-date ${cls}">&#128197; Entrega: ${lbl}</span>`;
   }
-  const tmHtml=t.inicioProcess?`<span class="timer" data-inicio="${t.inicioProcess}">--:--</span>`:'';
   const overloadHtml=buildTimeHtml(t);
   const puedeEditar=PERFIL?.rol!=='colaborador';
   // Botón de acción según columna:
@@ -2176,7 +2173,7 @@ function mkCard(t,colId){
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
-<div class="card-footer">${fHtml}${tmHtml}</div>
+<div class="card-footer">${fHtml}</div>
 <div class="card-actions">${btnA}${editBtns}</div>`;
   return div;
 }
@@ -2365,7 +2362,6 @@ async function marcarListo(id,e){
   toast(`"${t.titulo}" → En revisión`);
   await notificarRevision(t);
 }
-setInterval(()=>{document.querySelectorAll('.timer[data-inicio]').forEach(el=>{const d=Math.floor((Date.now()-parseInt(el.dataset.inicio))/1000),h=Math.floor(d/3600),m=Math.floor((d%3600)/60),s=d%60;el.textContent=h>0?`${h}h ${String(m).padStart(2,'0')}m`:`${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;});},1000);
 
 // VISTAS
 function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.ntab').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}

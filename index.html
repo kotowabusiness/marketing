@@ -128,8 +128,6 @@ header > *{padding-bottom:.65rem;}
 .card.bloqueada{opacity:.5;background:var(--gray1);}
 .card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:.4rem;margin-bottom:.35rem;}
 .card-ttl{font-size:12px;font-weight:600;line-height:1.35;color:var(--dark);flex:1;}
-.bp{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
-.bp.urgente{background:var(--urgente-lt);color:var(--urgente);}.bp.normal{background:var(--gold-lt);color:var(--dark);}.bp.baja{background:var(--verde-lt);color:var(--verde);}
 .card-meta{display:flex;gap:.3rem;flex-wrap:wrap;margin-bottom:.35rem;align-items:center;}
 .bt{font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;background:var(--gold-lt);color:var(--dark);text-transform:uppercase;letter-spacing:.5px;border:1px solid var(--gold-mid);}
 .br{font-size:9px;font-weight:600;padding:2px 7px;border-radius:2px;background:var(--verde-lt);color:var(--verde);text-transform:uppercase;letter-spacing:.5px;border:1px solid #b2d4cc;}
@@ -2891,7 +2889,7 @@ function renderDetalle(){
       let fHtml='';if(t.fecha){const d=new Date(t.fecha+'T00:00:00'),diff=Math.round((d-hoy)/86400000);let cls='',lbl='';if(diff<0&&!esAp){cls='vencida';lbl=`Venció hace ${-diff}d`;}else if(diff===0&&!esAp){lbl='Vence hoy';}else if(diff===1&&!esAp){lbl='Mañana';}else{lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}fHtml=`<span class="ptfecha ${cls}">📅 ${lbl}</span>`;}
       const tHtml=buildTimeHtml(t);
       const card=document.createElement('div');card.className=`ptcard ${t.prioridad}${bloq?' bloqueada':''}${esAp?' aprobado-card':''}`;
-      card.innerHTML=`<div class="ptcard-top"><span class="ptcard-num">${num}</span><div class="ptcard-nom">${esc(t.titulo)}</div><span class="bp ${t.prioridad}" style="font-size:8px;padding:2px 6px;">${t.prioridad}</span></div>
+      card.innerHTML=`<div class="ptcard-top"><span class="ptcard-num">${num}</span><div class="ptcard-nom">${esc(t.titulo)}</div></div>
 <div class="ptcard-badges"><span class="ptestado ${bloq?'bloqueada':t.estado}">${bloq?'🔒 Bloqueada':EL[t.estado]}</span><span class="ptresp">${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span>${dep&&!esAp?`<span class="ptdep">&#8627; ${esc(dep.titulo)}</span>`:''}</div>
 ${t.brief?`<div class="card-brief" style="margin:.35rem 0;">${esc(t.brief)}</div>`:''}${tHtml}
 <div class="ptcard-foot">${fHtml}<div class="ptactions">${btnA}<button class="ba" style="flex:0;padding:4px 7px;font-size:10px;" onclick="editarPT('${t.id}',event)">&#9998;</button><button class="ba danger" style="flex:0;padding:4px 7px;font-size:10px;" onclick="confElimPT('${t.id}',event)">&#215;</button></div></div>`;

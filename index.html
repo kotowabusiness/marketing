@@ -462,6 +462,37 @@ table.rt tr:last-child td{border-bottom:none;}
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(26,18,10,.6);z-index:200;align-items:center;justify-content:center;padding:1rem;}
 .modal-ov.open{display:flex;}
 .modal{background:var(--white);border-radius:6px;width:100%;max-width:540px;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(26,18,10,.28);}
+
+/* Panel lateral (usado por modal-tarea: tiene mucha info, se ve mejor deslizando desde la derecha) */
+.modal-ov.side-ov{justify-content:flex-end;padding:0;align-items:stretch;background:rgba(26,18,10,.45);}
+.modal-ov.side-ov .modal.side-panel{
+  max-width:480px;width:100%;height:100%;max-height:100vh;border-radius:0;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .25s ease;
+  box-shadow:-8px 0 32px rgba(26,18,10,.22);
+}
+.modal-ov.side-ov.open .modal.side-panel{transform:translateX(0);}
+.modal-ov.side-ov .mbody{flex:1;overflow-y:auto;}
+.modal-ov.side-ov .mhdr{flex-shrink:0;}
+.modal-ov.side-ov .mfoot{flex-shrink:0;}
+@media(max-width:640px){
+  .modal-ov.side-ov .modal.side-panel{max-width:100%;}
+}
+
+/* Comentarios */
+.comments-section{border-top:1px solid var(--gray2);padding-top:1rem;margin-top:.5rem;}
+.comments-list{display:flex;flex-direction:column;gap:.65rem;max-height:260px;overflow-y:auto;margin-bottom:.6rem;}
+.comment-item{display:flex;gap:.6rem;}
+.comment-avatar{width:28px;height:28px;border-radius:50%;background:var(--verde);color:var(--white);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.comment-body{flex:1;min-width:0;background:var(--linen);border-radius:8px;padding:.5rem .7rem;}
+.comment-hdr{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.15rem;}
+.comment-autor{font-size:11.5px;font-weight:700;color:var(--dark);}
+.comment-fecha{font-size:10px;color:var(--gray3);}
+.comment-texto{font-size:12.5px;color:var(--dark);line-height:1.45;white-space:pre-wrap;word-break:break-word;}
+.comments-empty{font-size:11.5px;color:var(--gray3);text-align:center;padding:.75rem 0;}
+.comment-input-row{display:flex;gap:.5rem;align-items:flex-end;}
+.comment-input{flex:1;font-size:12.5px;min-height:42px;resize:vertical;}
+.comment-send{padding:9px 14px;white-space:nowrap;flex-shrink:0;}
 .mhdr{background:var(--verde);padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;border-radius:6px 6px 0 0;border-bottom:2px solid var(--gold);}
 .mttl{font-family:'Poppins',sans-serif;font-weight:700;font-size:15px;color:var(--white);}
 .mclose{background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:22px;line-height:1;}
@@ -1105,6 +1136,13 @@ table.rt tr:last-child td{border-bottom:none;}
           </div>
           <input type="checkbox" id="notif-cfg-desbloqueo" onchange="toggleNotifConfig('notif_desbloqueo',this)">
         </label>
+        <label class="notif-toggle-row">
+          <div>
+            <div class="notif-toggle-ttl">Comentarios</div>
+            <div class="notif-toggle-sub">Avisa cuando alguien comenta en un pendiente</div>
+          </div>
+          <input type="checkbox" id="notif-cfg-comentario" onchange="toggleNotifConfig('notif_comentario',this)">
+        </label>
       </div>
     </div>
 
@@ -1195,8 +1233,8 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
-<div class="modal-ov" id="modal-tarea">
-  <div class="modal">
+<div class="modal-ov side-ov" id="modal-tarea">
+  <div class="modal side-panel">
     <div class="mhdr"><span class="mttl" id="mt-ttl">Nueva tarea</span><button class="mclose" onclick="cerrarModal('modal-tarea')">&#215;</button></div>
     <div class="mbody">
       <input type="hidden" id="f-id">
@@ -1224,6 +1262,15 @@ table.rt tr:last-child td{border-bottom:none;}
         </div>
       </div>
       <div id="modal-solo-links-msg" style="display:none;font-size:11px;color:var(--gray3);background:var(--linen);border-radius:4px;padding:.5rem .7rem;margin-top:-.5rem;">Solo puedes agregar o quitar links de este pendiente.</div>
+
+      <div class="fg comments-section">
+        <label class="flabel">Comentarios</label>
+        <div id="comments-list" class="comments-list"></div>
+        <div class="comment-input-row">
+          <textarea class="fta comment-input" id="comment-input" placeholder="Escribe un comentario..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();agregarComentario();}"></textarea>
+          <button class="btn-save comment-send" onclick="agregarComentario()">Enviar</button>
+        </div>
+      </div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-tarea')">Cancelar</button><button class="btn-del" id="btn-del-tarea" style="display:none" onclick="eliminarTareaActual()">Eliminar</button><button class="btn-save" onclick="guardarTarea()">Guardar</button></div>
   </div>
@@ -2674,6 +2721,7 @@ function renderNotifConfigPanel(){
   document.getElementById('notif-cfg-aprobado').checked=configData.notif_aprobado!==false;
   document.getElementById('notif-cfg-cambios').checked=configData.notif_cambios!==false;
   document.getElementById('notif-cfg-desbloqueo').checked=configData.notif_desbloqueo!==false;
+  document.getElementById('notif-cfg-comentario').checked=configData.notif_comentario!==false;
 }
 
 async function toggleNotifConfig(campo,input){
@@ -2747,6 +2795,74 @@ async function notificarDesbloqueados(t){
   }
 }
 
+// ══════════════════════════════════════════════════════════
+// COMENTARIOS — hilo de comentarios por tarea (tipo chat)
+// ══════════════════════════════════════════════════════════
+let comentarios=[]; // comentarios de la tarea actualmente abierta en el modal
+
+async function cargarComentarios(tareaId){
+  comentarios=[];
+  if(!tareaId)return;
+  try{
+    const{data,error}=await sb.from('comentarios').select('*').eq('tarea_id',tareaId).order('created_at',{ascending:true});
+    if(error){console.log('cargarComentarios:',error.message);return;}
+    comentarios=data||[];
+  }catch(err){console.log('cargarComentarios error:',err);}
+}
+
+function renderComentarios(){
+  const list=document.getElementById('comments-list');
+  if(!list)return;
+  if(!comentarios.length){
+    list.innerHTML='<div class="comments-empty">A&uacute;n no hay comentarios.</div>';
+    return;
+  }
+  list.innerHTML=comentarios.map(c=>{
+    const nombre=getUsuarioNombre(c.autor_id)||'—';
+    const inicial=nombre.charAt(0).toUpperCase();
+    const fecha=fmtNotifTime(c.created_at);
+    return`<div class="comment-item">
+      <div class="comment-avatar">${inicial}</div>
+      <div class="comment-body">
+        <div class="comment-hdr"><span class="comment-autor">${esc(nombre.split(' ')[0])}</span><span class="comment-fecha">${fecha}</span></div>
+        <div class="comment-texto">${esc(c.texto)}</div>
+      </div>
+    </div>`;
+  }).join('');
+  list.scrollTop=list.scrollHeight;
+}
+
+async function agregarComentario(){
+  const input=document.getElementById('comment-input');
+  const texto=input.value.trim();
+  if(!texto||!editTareaId)return;
+  const row={tarea_id:editTareaId,autor_id:USER.id,texto};
+  const{data,error}=await sb.from('comentarios').insert(row).select().single();
+  if(error){toast('Error: '+error.message);return;}
+  comentarios.push(data);
+  renderComentarios();
+  input.value='';
+  await notificarComentario(editTareaId,texto);
+}
+
+// Notifica al responsable y a los aprobadores del departamento, excluyendo a quien comentó.
+async function notificarComentario(tareaId,texto){
+  if(!notifTipoActivo('comentario'))return;
+  const t=tareas.find(x=>x.id===tareaId);if(!t)return;
+  const nombre=getUsuarioNombre(USER.id).split(' ')[0];
+  const preview=texto.length>60?texto.slice(0,60)+'…':texto;
+  const mensaje=`${nombre} coment&oacute; en "${t.titulo}": ${esc(preview)}`;
+  // Notificar al responsable directo (si no es quien comentó)
+  if(t.responsable&&t.responsable!==USER.id){
+    await crearNotificacionRow(t.id,'comentario',mensaje,t.responsable);
+  }
+  // Notificar a los aprobadores (destinatario null = todos los aprobadores del depto),
+  // solo si la tarea está en revisión (ahí es donde más importa que el aprobador se entere)
+  if(t.estado==='revision'&&!esAprobador()){
+    await crearNotificacionRow(t.id,'comentario',mensaje,null);
+  }
+}
+
 function renderNotifBadge(){
   const badge=document.getElementById('notif-badge');
   if(!badge)return;
@@ -2767,7 +2883,7 @@ function fmtNotifTime(iso){
   return d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
 }
 
-const NOTIF_ICONS={revision:'&#128221;',aprobado:'&#9989;',cambios:'&#9888;',desbloqueo:'&#128275;'};
+const NOTIF_ICONS={revision:'&#128221;',aprobado:'&#9989;',cambios:'&#9888;',desbloqueo:'&#128275;',comentario:'&#128172;'};
 
 function renderNotifPanel(){
   const list=document.getElementById('notif-list');
@@ -2926,7 +3042,7 @@ function setModalSoloLinks(activo){
   if(footMsg)footMsg.style.display=activo?'block':'none';
 }
 
-function editarTarea(id,e){
+async function editarTarea(id,e){
   e&&e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;
   const soloLinks=PERFIL?.rol==='colaborador';
   editTareaId=id;document.getElementById('mt-ttl').textContent=soloLinks?'Agregar link':'Editar tarea';
@@ -2942,7 +3058,12 @@ function editarTarea(id,e){
   if(t.horas){document.getElementById('ia-box').style.display='flex';document.getElementById('ia-txt').innerHTML=`<strong>Estimación guardada: ${t.horas}h</strong>`;document.getElementById('f-horas').value=t.horas;document.getElementById('horas-grp').style.display='block';recalcEntrega();}
   else{document.getElementById('ia-box').style.display='none';document.getElementById('horas-grp').style.display='none';document.getElementById('entrega-box').style.display='none';}
   setModalSoloLinks(soloLinks);
+  document.querySelector('.comments-section').style.display='block';
+  document.getElementById('comments-list').innerHTML='<div class="comments-empty">Cargando…</div>';
+  document.getElementById('comment-input').value='';
   document.getElementById('modal-tarea').classList.add('open');
+  await cargarComentarios(id);
+  renderComentarios();
 }
 async function eliminarTareaById(id){await sbEliminarTarea(id);tareas=tareas.filter(x=>x.id!==id);render();if(proyActualId)renderDetalle();toast('Tarea eliminada');}
 function eliminarTareaActual(){if(editTareaId&&confirm('¿Eliminar esta tarea?')){eliminarTareaById(editTareaId);cerrarModal('modal-tarea');}}
@@ -2955,6 +3076,7 @@ function abrirModal(){
   document.getElementById('btn-del-tarea').style.display='none';
   document.getElementById('f-link-input').value='';
   modalLinks=[];renderModalLinks();
+  document.querySelector('.comments-section').style.display='none';
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');
   document.getElementById('modal-tarea').classList.add('open');setTimeout(()=>document.getElementById('f-titulo').focus(),60);
 }
@@ -3787,7 +3909,7 @@ async function crearDept(){
 }
 
 // UTILS
-function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea')setModalSoloLinks(false);editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
+function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea'){setModalSoloLinks(false);comentarios=[];}editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.getElementById('modal-sobrecarga').classList.contains('open')){cerrarModalSobrecarga();return;}['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
 ['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 document.getElementById('modal-sobrecarga').addEventListener('click',e=>{if(e.target===document.getElementById('modal-sobrecarga'))cerrarModalSobrecarga();});

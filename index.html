@@ -144,9 +144,12 @@ header > *{padding-bottom:.65rem;}
 .prog-fill{height:100%;border-radius:2px;background:var(--verde);}
 .prog-fill.warn{background:var(--warning);}.prog-fill.over{background:var(--urgente);}
 .prog-lbl{font-size:9px;color:var(--gray3);margin-top:2px;}
-.card-footer{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;}
+.card-footer{display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem;flex-wrap:wrap;gap:.3rem;}
 .card-date{font-size:10px;font-weight:600;color:var(--gray3);}
 .card-date.vencida{color:var(--urgente);}.card-date.hoy{color:var(--gold);}
+.card-deadline-real{font-size:10px;font-weight:600;color:var(--gray3);}
+.card-en-revision{font-size:9.5px;font-weight:700;color:var(--azul);background:var(--azul-lt);padding:1px 7px;border-radius:9px;}
+.card-rondas{font-size:9.5px;font-weight:700;color:var(--warning);background:var(--warning-lt);padding:1px 7px;border-radius:9px;}
 .card-overload{font-size:10px;font-weight:700;color:var(--urgente);background:var(--urgente-lt);border-radius:3px;padding:.3rem .5rem;margin-bottom:.4rem;cursor:help;}
 .sobrecarga-opt{display:flex;align-items:flex-start;gap:.65rem;padding:.7rem .8rem;border:1.5px solid var(--gray2);border-radius:6px;background:var(--white);cursor:pointer;text-align:left;font-family:'Montserrat',sans-serif;transition:all .12s;}
 .sobrecarga-opt:hover{border-color:var(--verde);background:var(--verde-lt);}
@@ -479,6 +482,8 @@ table.rt tr:last-child td{border-bottom:none;}
 .horas-wrap .fi{width:85px;text-align:center;font-weight:700;font-size:15px;}
 .horas-hint{font-size:11px;color:var(--gray3);flex:1;}
 .entrega-box{background:var(--white);border:1.5px solid var(--verde);border-radius:4px;padding:.6rem .75rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;}
+.entrega-calc-box{background:var(--gold-lt);border:1.5px solid var(--gold);border-radius:4px;padding:.55rem .75rem;font-size:13px;font-weight:600;color:var(--dark);}
+.entrega-calc-box .sub{display:block;font-size:10.5px;font-weight:500;color:var(--gray3);margin-top:2px;}
 .elbl{font-size:10px;color:var(--verde);font-weight:700;text-transform:uppercase;letter-spacing:.5px;}
 .eval{font-size:13px;font-weight:700;color:var(--dark);}
 .edet{font-size:10px;color:var(--gray3);margin-top:1px;}
@@ -1204,8 +1209,12 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg"><label class="flabel">Brief</label><textarea class="fta" id="f-brief" placeholder="Instrucciones, referencias..." oninput="scheduleEstimate()"></textarea></div>
       <div class="ia-box" id="ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="ia-txt"><span class="ia-load">Analizando...</span></div></div>
       <div class="fg" id="horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="f-horas" min=".5" max="40" step=".5" value="2" oninput="recalcEntrega()"><span class="horas-hint" id="horas-hint"></span></div></div>
+      <div class="fg"><label class="flabel">Deadline real <span style="font-weight:400;color:var(--gray3)">(cu&aacute;ndo debe estar listo/publicado)</span></label><input type="date" class="fi" id="f-deadline-real" onchange="recalcEntrega()"></div>
+      <div class="fg" id="entrega-calc-grp" style="display:none;">
+        <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
+        <div class="entrega-calc-box" id="entrega-calc-box">&mdash;</div>
+      </div>
       <div class="entrega-box" id="entrega-box" style="display:none;background:var(--verde-lt);border-color:var(--verde);"><div><div class="elbl">Viabilidad</div><div id="eval" class="eval" style="font-size:12px;">&mdash;</div><div class="edet" id="edet"></div></div><div style="text-align:right"><div class="elbl">Horas en cola</div><div id="cola-info" style="font-size:11px;color:var(--dark);font-weight:600;margin-top:2px">&mdash;</div></div></div>
-      <div class="fg"><label class="flabel">Deadline</label><input type="date" class="fi" id="f-fecha" onchange="recalcEntrega()"></div>
       <div class="fg">
         <label class="flabel">Links / referencias <span style="font-weight:400;color:var(--gray3)">(Drive, Figma, etc.)</span></label>
         <div id="links-list"></div>
@@ -1283,11 +1292,15 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="fg"><label class="flabel">Responsable</label><select class="fs" id="ptf-resp"></select></div>
         <div class="fg"><label class="flabel">Estado</label><select class="fs" id="ptf-estado"><option value="pendiente">Pendiente</option><option value="revision">En revisi&oacute;n</option><option value="aprobado">Culminado</option></select></div>
       </div>
-      <div class="fg"><label class="flabel">Deadline</label><input type="date" class="fi" id="ptf-fecha"></div>
+      <div class="fg"><label class="flabel">Deadline real <span style="font-weight:400;color:var(--gray3)">(cu&aacute;ndo debe estar listo/publicado)</span></label><input type="date" class="fi" id="ptf-deadline-real" onchange="recalcEntregaPT()"></div>
+      <div class="fg" id="ptf-entrega-calc-grp" style="display:none;">
+        <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
+        <div class="entrega-calc-box" id="ptf-entrega-calc-box">&mdash;</div>
+      </div>
       <div class="fg"><label class="flabel">Depende de</label><select class="fs" id="ptf-dep"><option value="">Ninguna</option></select></div>
       <div class="fg"><label class="flabel">Brief / notas</label><textarea class="fta" id="ptf-brief" placeholder="Instrucciones..." oninput="schedulePTEst()"></textarea></div>
       <div class="ia-box" id="pt-ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="pt-ia-txt"><span class="ia-load">Analizando...</span></div></div>
-      <div class="fg" id="pt-horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="ptf-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="pt-horas-hint"></span></div></div>
+      <div class="fg" id="pt-horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="ptf-horas" min=".5" max="40" step=".5" value="2" oninput="recalcEntregaPT()"><span class="horas-hint" id="pt-horas-hint"></span></div></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-pt')">Cancelar</button><button class="btn-del" id="btn-del-pt" style="display:none" onclick="eliminarPTActual()">Eliminar</button><button class="btn-save" onclick="guardarPT()">Guardar</button></div>
   </div>
@@ -1539,6 +1552,7 @@ async function cargarTareas(){
       depId:t.dep_id,
       inicioProcess:t.inicio_process,
       aprobadoEn:t.aprobado_en,
+      inicioRevision:t.inicio_revision,
       creadaEn:new Date(t.created_at).getTime(),
       horas:t.horas?parseFloat(t.horas):null,
       dia_fijado:t.dia_fijado||null,
@@ -1780,9 +1794,12 @@ async function sbGuardarTarea(datos,id=null){
     responsable_nombre:getUsuarioNombre(datos.responsable),
     horas:datos.horas||null,
     fecha:datos.fecha||null,
+    deadline_real:datos.deadline_real||null,
+    rondas_cambio:datos.rondas_cambio||0,
     dep_id:datos.depId||null,
     inicio_process:datos.inicioProcess||null,
     aprobado_en:datos.aprobadoEn||null,
+    inicio_revision:datos.inicioRevision||null,
     dia_fijado:datos.dia_fijado||null,
     updated_at:new Date().toISOString(),
   };
@@ -1902,6 +1919,48 @@ function fechaStr(date){
   return `${y}-${m}-${d}`;
 }
 function hoyStr(){const h=new Date();h.setHours(0,0,0,0);return fechaStr(h);}
+
+// Ajusta una fecha hacia atrás (a más temprano) hasta el día hábil más cercano (nunca domingo).
+function ajustarADiaHabil(fecha){
+  let d=new Date(fecha);
+  while(!esDiaLaboral(d))d=addDias(d,-1);
+  return d;
+}
+
+// Margen de días reservados para todo el ciclo de revisión/cambios, según el tamaño de la tarea.
+// Tareas chicas necesitan menos colchón; tareas grandes (más rondas probables) necesitan más.
+function margenRevision(horas){
+  if(!horas)return 2; // sin estimación: margen medio por defecto
+  if(horas<=2)return 1;
+  if(horas<=8)return 2;
+  return 4;
+}
+
+// Calcula la fecha de entrega a revisión (campo "fecha") a partir del deadline real.
+// rondaActual=0 -> primera vez (usa el margen completo).
+// rondaActual>=1 -> ya se regresó por cambios N veces: reparte el tiempo que queda hasta el
+// deadline entre las rondas restantes de las 2 planeadas (si ya se agotaron, sigue dividiendo
+// entre 1 = la siguiente entrega, acercándose cada vez más al deadline).
+function calcularFechaEntrega(deadlineRealStr, horas, rondaActual=0){
+  if(!deadlineRealStr)return null;
+  const deadline=fechaLocal(deadlineRealStr);
+  if(rondaActual===0){
+    const margen=margenRevision(horas);
+    const objetivo=addDias(deadline,-margen);
+    const ajustada=ajustarADiaHabil(objetivo);
+    // Nunca antes de hoy
+    const hoy0=new Date();hoy0.setHours(0,0,0,0);
+    return fechaStr(ajustada<hoy0?hoy0:ajustada);
+  }
+  // Repartir el tiempo restante entre las rondas que quedan de las 2 planeadas
+  const hoy0=new Date();hoy0.setHours(0,0,0,0);
+  const diasRestantes=Math.max(1,Math.round((deadline-hoy0)/86400000));
+  const rondasRestantes=Math.max(1,2-rondaActual+1);
+  const diasHastaProxEntrega=Math.max(1,Math.round(diasRestantes/rondasRestantes));
+  const objetivo=addDias(hoy0,diasHastaProxEntrega);
+  const ajustada=ajustarADiaHabil(objetivo<deadline?objetivo:deadline);
+  return fechaStr(ajustada<hoy0?hoy0:ajustada);
+}
 
 // ──────────────────────────────────────────────────────────
 // MOTOR: planificarPersona
@@ -2142,8 +2201,26 @@ function schedulePTEst(){
 }
 function recalcEntrega(){
   const h=parseFloat(document.getElementById('f-horas')?.value)||0;
-  const fecha=document.getElementById('f-fecha').value;
+  const deadlineReal=document.getElementById('f-deadline-real').value;
   const resp=document.getElementById('f-resp').value;
+
+  // Fecha de entrega a revisión: calculada a partir del deadline real.
+  // Si la tarea ya tenía rondas de cambio (se está editando), se usa ese historial para
+  // repartir el tiempo restante; si es nueva, se usa el margen completo según las horas.
+  const tAct=editTareaId?tareas.find(x=>x.id===editTareaId):null;
+  const rondas=tAct?.rondas_cambio||0;
+  const fecha=deadlineReal?calcularFechaEntrega(deadlineReal,h,rondas):'';
+
+  const calcGrp=document.getElementById('entrega-calc-grp');
+  const calcBox=document.getElementById('entrega-calc-box');
+  if(deadlineReal&&fecha){
+    calcGrp.style.display='block';
+    const fLbl=fechaLocal(fecha).toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
+    calcBox.innerHTML=`${fLbl}<span class="sub">Margen de ${margenRevision(h)} d&iacute;a${margenRevision(h)!==1?'s':''} antes del deadline real${rondas?` &middot; ronda ${rondas+1} de cambios`:''}</span>`;
+  } else {
+    calcGrp.style.display='none';
+  }
+
   if(!h&&!fecha){document.getElementById('entrega-box').style.display='none';return;}
   document.getElementById('entrega-box').style.display='flex';
 
@@ -2153,7 +2230,7 @@ function recalcEntrega(){
     if(v.vencido){
       document.getElementById('eval').innerHTML=`&#9888; Esta fecha ya pasó — no es un deadline válido para planificar`;
       document.getElementById('eval').style.color='var(--urgente)';
-      document.getElementById('edet').textContent='Ajusta la fecha de entrega a hoy o una fecha futura';
+      document.getElementById('edet').textContent='Ajusta el deadline real a una fecha futura';
       document.getElementById('cola-info').textContent=`${v.hCompTotal-h}h comprometidas actualmente`;
     } else if(v.viable){
       document.getElementById('eval').innerHTML=`✓ Viable — ${nombre} tiene capacidad ese día (${v.horasDia}h de ${v.capacidad}h)`;
@@ -2172,7 +2249,7 @@ function recalcEntrega(){
       document.getElementById('cola-info').textContent=`${v.hCompTotal}h comprometidas en total`;
     }
   } else if(fecha){
-    document.getElementById('eval').innerHTML=`Deadline: ${fecha}`;
+    document.getElementById('eval').innerHTML=`Entrega calculada: ${fecha}`;
     document.getElementById('eval').style.color='var(--dark)';
     document.getElementById('edet').textContent='';
     document.getElementById('cola-info').textContent='';
@@ -2360,6 +2437,7 @@ function renderMiDia(){
   if(perf){
     const gc=perf.pF>=90?'ok':perf.pF>=70?'mid':'bad';
     const hc=perf.pH>=90?'ok':perf.pH>=70?'mid':'bad';
+    const rc=perf.pR>=90?'ok':perf.pR>=70?'mid':'bad';
     html+=`<div class="midia-perf-card">
       <div class="midia-card-ttl">Performance esta semana</div>
       <div class="midia-grade-row">
@@ -2369,8 +2447,12 @@ function renderMiDia(){
         </div>
       </div>
       <div class="midia-perf-metric">
-        <div class="midia-perf-metric-row"><span>Cumplimiento de fecha</span><span class="midia-perf-val ${gc}">${perf.pF}%</span></div>
+        <div class="midia-perf-metric-row"><span>Cumplimiento de deadline</span><span class="midia-perf-val ${gc}">${perf.pF}%</span></div>
         <div class="sbar"><div class="sbar-f ${perf.pF<70?'b':perf.pF<90?'w':''}" style="width:${perf.pF}%"></div></div>
+      </div>
+      <div class="midia-perf-metric">
+        <div class="midia-perf-metric-row"><span>Entregas sin cambios</span><span class="midia-perf-val ${rc}">${perf.pR}%</span></div>
+        <div class="sbar"><div class="sbar-f ${perf.pR<70?'b':perf.pR<90?'w':''}" style="width:${perf.pR}%"></div></div>
       </div>
       <div class="midia-perf-metric">
         <div class="midia-perf-metric-row"><span>Precisi&oacute;n de estimaci&oacute;n</span><span class="midia-perf-val ${hc}">${perf.pH}%</span></div>
@@ -2445,7 +2527,17 @@ function mkMiDiaCard(t,diaPlan,resp,dimmed=false){
   const cpd=colorPorDeadline(t);
   const inicial=(getUsuarioNombre(t.responsable)||'?').charAt(0).toUpperCase();
   let dateCls='',dateTxt='';
-  if(t.fecha){
+  if(t.estado==='revision'){
+    // Ya entregó a tiempo — ahora corre el reloj de quien aprueba, no del responsable.
+    if(t.inicioRevision){
+      const dias=Math.floor((Date.now()-t.inicioRevision)/86400000);
+      dateTxt=dias===0?'En revisi&oacute;n hoy':`${dias}d en revisi&oacute;n`;
+    } else {
+      dateTxt='En revisi&oacute;n';
+    }
+  } else if(t.estado==='aprobado'){
+    dateTxt='Culminado';
+  } else if(t.fecha){
     const dl=fechaLocal(t.fecha);
     const hoy0=new Date();hoy0.setHours(0,0,0,0);
     const diffDias=Math.round((dl-hoy0)/86400000);
@@ -2506,17 +2598,34 @@ function mkCard(t,colId){
   div.className=`card ${colorPorDeadline(t)}${bloq?' bloqueada':''}`;
   div.dataset.tid=t.id;
   div.draggable=true;
-  // Fecha de entrega — una sola vez, simple
+  div.style.cursor='pointer';
+  // Click en cualquier parte de la tarjeta abre el modal de edición (modo solo-links para colaborador)
+  div.onclick=(e)=>editarTarea(t.id,e);
+  // Fecha de entrega a revisión (la que organiza el motor de planificación)
   let fHtml='';
   if(t.fecha){
     const d=new Date(t.fecha+'T00:00:00');
     const lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
     const hoy=new Date();hoy.setHours(0,0,0,0);
-    const cls=d<hoy?'vencida':'';
+    // En revisión/aprobado ya no aplica "vencida" — el responsable ya cumplió su parte
+    const cls=(d<hoy&&t.estado!=='revision'&&t.estado!=='aprobado')?'vencida':'';
     fHtml=`<span class="card-date ${cls}">&#128197; Entrega: ${lbl}</span>`;
   }
+  // Deadline real (lanzamiento/publicación) — visible en la tarjeta cuando existe y es distinto
+  let dlHtml='';
+  if(t.deadline_real){
+    const dl=new Date(t.deadline_real+'T00:00:00');
+    const lbl=dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
+    dlHtml=`<span class="card-deadline-real">&#127919; Deadline: ${lbl}</span>`;
+  }
   const overloadHtml=buildTimeHtml(t);
-  const puedeEditar=PERFIL?.rol!=='colaborador';
+  // En revisión: mostrar cuánto tiempo lleva ahí (productividad de quien aprueba, no del responsable)
+  let revHtml='';
+  if(t.estado==='revision'&&t.inicioRevision){
+    const dias=Math.floor((Date.now()-t.inicioRevision)/86400000);
+    revHtml=`<span class="card-en-revision">${dias===0?'En revisi&oacute;n hoy':`${dias}d en revisi&oacute;n`}</span>`;
+  }
+  const rondasHtml=t.rondas_cambio?`<span class="card-rondas" title="Veces que se regresó por cambios">&#128260; ${t.rondas_cambio} cambio${t.rondas_cambio!==1?'s':''}</span>`:'';
   // Botón de acción según columna:
   // - "Hoy": botón único "Listo →" pasa directo a Revisión
   // - "Pendientes": sin botón de avanzar (apagado, no es de hoy todavía)
@@ -2534,18 +2643,16 @@ function mkCard(t,colId){
     btnA=`<button class="ba done" disabled>🔒</button>`;
   }
   const rHtml=t.responsable?`<span class="br">${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span>`:'';
-  const pHtml=t.proyId?`<span class="bproy" onclick="abrirDetalle('${t.proyId}',event)">${esc((proyectos.find(p=>p.id===t.proyId)||{}).nombre||'Proyecto')}</span>`:'';
+  const pHtml=t.proyId?`<span class="bproy" onclick="event.stopPropagation();abrirDetalle('${t.proyId}',event)">${esc((proyectos.find(p=>p.id===t.proyId)||{}).nombre||'Proyecto')}</span>`:'';
   const blHtml=bloq?`<span class="bblq">&#128274;</span>`:'';
   const depHtml=t.depId?(()=>{const dep=tareas.find(x=>x.id===t.depId);return dep?`<div class="card-dep">&#8627; ${esc(dep.titulo)}</div>`:''})():'';
   const linksT=tareasLinks[t.id]||(t.links||[]);
   const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(url=>{try{const h=new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${h}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
-  // Colaborador no edita la tarea, pero sí puede abrir el modal en modo "solo links"
-  const editBtns=puedeEditar?`<button class="ba" onclick="editarTarea('${t.id}',event)">Editar</button><button class="ba danger" onclick="confElim('${t.id}',event)">&#215;</button>`:`<button class="ba" onclick="editarTarea('${t.id}',event)">&#128279; Link</button>`;
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
-<div class="card-footer">${fHtml}</div>
-<div class="card-actions">${btnA}${editBtns}</div>`;
+<div class="card-footer">${fHtml}${dlHtml}${revHtml}${rondasHtml}</div>
+<div class="card-actions">${btnA}</div>`;
   return div;
 }
 
@@ -2728,7 +2835,8 @@ async function marcarListo(id,e){
   const t=tareas.find(x=>x.id===id);if(!t)return;
   if(!t.inicioProcess)t.inicioProcess=Date.now();
   t.estado='revision';
-  await sbGuardarTarea({...t,inicioProcess:t.inicioProcess},id);
+  t.inicioRevision=Date.now();
+  await sbGuardarTarea({...t,inicioProcess:t.inicioProcess,inicioRevision:t.inicioRevision},id);
   render();if(proyActualId)renderDetalle();
   toast(`"${t.titulo}" → En revisión`);
   await notificarRevision(t);
@@ -2808,7 +2916,7 @@ async function avanzar(id,e){
 async function avanzarPT(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;if(esBloqueada(t)){toast('Bloqueada. Completa la anterior primero.');return;}const next=EN[t.estado];if(!next)return;if(next==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();if(next==='aprobado')t.aprobadoEn=Date.now();t.estado=next;await sbGuardarTarea({...t},id);render();renderDetalle();toast(`"${t.titulo}" → ${EL[next]}`);}
 
 // Campos del modal de tarea que se deshabilitan en modo "solo links" (colaborador)
-const MODAL_TAREA_CAMPOS=['f-titulo','f-tipo','f-resp','f-estado','f-brief','f-horas','f-fecha'];
+const MODAL_TAREA_CAMPOS=['f-titulo','f-tipo','f-resp','f-estado','f-brief','f-horas','f-deadline-real'];
 
 // activo=true -> modo solo-links (colaborador): deshabilita todo excepto agregar/quitar links
 function setModalSoloLinks(activo){
@@ -2823,7 +2931,7 @@ function editarTarea(id,e){
   const soloLinks=PERFIL?.rol==='colaborador';
   editTareaId=id;document.getElementById('mt-ttl').textContent=soloLinks?'Agregar link':'Editar tarea';
   document.getElementById('f-titulo').value=t.titulo;
-  document.getElementById('f-estado').value=t.estado;document.getElementById('f-brief').value=t.brief||'';document.getElementById('f-fecha').value=t.fecha||'';
+  document.getElementById('f-estado').value=t.estado;document.getElementById('f-brief').value=t.brief||'';document.getElementById('f-deadline-real').value=t.deadline_real||t.fecha||'';
   document.getElementById('btn-del-tarea').style.display='inline-block';
   document.getElementById('btn-del-tarea').dataset.wasVisible='1';
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');
@@ -2836,13 +2944,12 @@ function editarTarea(id,e){
   setModalSoloLinks(soloLinks);
   document.getElementById('modal-tarea').classList.add('open');
 }
-function confElim(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!confirm(`¿Eliminar "${t?.titulo}"?`))return;eliminarTareaById(id);}
 async function eliminarTareaById(id){await sbEliminarTarea(id);tareas=tareas.filter(x=>x.id!==id);render();if(proyActualId)renderDetalle();toast('Tarea eliminada');}
 function eliminarTareaActual(){if(editTareaId&&confirm('¿Eliminar esta tarea?')){eliminarTareaById(editTareaId);cerrarModal('modal-tarea');}}
 
 function abrirModal(){
   editTareaId=null;document.getElementById('mt-ttl').textContent='Nueva tarea';
-  ['f-titulo','f-brief','f-fecha'].forEach(id=>document.getElementById(id).value='');
+  ['f-titulo','f-brief','f-deadline-real'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-estado').value='pendiente';
   document.getElementById('ia-box').style.display='none';document.getElementById('horas-grp').style.display='none';document.getElementById('entrega-box').style.display='none';
   document.getElementById('btn-del-tarea').style.display='none';
@@ -2923,11 +3030,19 @@ async function guardarTarea(){
   const titulo=document.getElementById('f-titulo').value.trim();if(!titulo){document.getElementById('f-titulo').focus();return;}
   const est=document.getElementById('f-estado').value;
   const horas=parseFloat(document.getElementById('f-horas')?.value)||null;
-  let ip=null,ae=null;
-  if(editTareaId){const t=tareas.find(x=>x.id===editTareaId);ip=t?.inicioProcess;ae=t?.aprobadoEn;}
+  let ip=null,ae=null,ir=null;
+  if(editTareaId){const t=tareas.find(x=>x.id===editTareaId);ip=t?.inicioProcess;ae=t?.aprobadoEn;ir=t?.inicioRevision;}
   if(est==='proceso'&&!ip)ip=Date.now();
   if(est==='aprobado'&&!ae)ae=Date.now();
-  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:document.getElementById('f-fecha').value||null,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,dia_fijado:tAnterior?.dia_fijado||null};
+  if(est==='revision'&&!ir)ir=Date.now();
+  if(est!=='revision')ir=null; // sale de revisión: ya no aplica el contador
+  const deadlineReal=document.getElementById('f-deadline-real').value||null;
+  // Si un aprobador regresa la tarea de "En revisión" a "Pendiente", cuenta como una ronda de cambios:
+  // se incrementa el contador y se recalcula la fecha de entrega repartiendo el tiempo que queda.
+  const esRegresoPorCambios=tAnterior?.estado==='revision'&&est==='pendiente';
+  const rondasActuales=(tAnterior?.rondas_cambio||0)+(esRegresoPorCambios?1:0);
+  const fechaCalculada=deadlineReal?calcularFechaEntrega(deadlineReal,horas,rondasActuales):null;
+  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:fechaCalculada,deadline_real:deadlineReal,rondas_cambio:rondasActuales,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,dia_fijado:tAnterior?.dia_fijado||null};
 
   // Solo chequear sobrecarga para tareas activas con horas y fecha
   if(horas&&datos.fecha&&datos.responsable&&(est==='pendiente'||est==='proceso')){
@@ -3278,14 +3393,18 @@ function renderDetalle(){
     const grid=document.createElement('div');grid.className='pt-grid';
     grupo.items.forEach(t=>{
       const bloq=esBloqueada(t),dep=t.depId?ts.find(x=>x.id===t.depId):null,esAp=t.estado==='aprobado',num=ords.indexOf(t)+1,next=EN[t.estado];
-      const btnA=!bloq&&next?`<button class="ba avanzar" style="flex:0;white-space:nowrap;padding:4px 9px;font-size:9px;" onclick="avanzarPT('${t.id}',event)">${EL[next]} &rarr;</button>`:'';
-      let fHtml='';if(t.fecha){const d=new Date(t.fecha+'T00:00:00'),diff=Math.round((d-hoy)/86400000);let cls='',lbl='';if(diff<0&&!esAp){cls='vencida';lbl=`Venció hace ${-diff}d`;}else if(diff===0&&!esAp){lbl='Vence hoy';}else if(diff===1&&!esAp){lbl='Mañana';}else{lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}fHtml=`<span class="ptfecha ${cls}">📅 ${lbl}</span>`;}
+      const btnA=!bloq&&next?`<button class="ba avanzar" style="flex:0;white-space:nowrap;padding:4px 9px;font-size:9px;" onclick="event.stopPropagation();avanzarPT('${t.id}',event)">${EL[next]} &rarr;</button>`:'';
+      let fHtml='';if(t.fecha){const d=new Date(t.fecha+'T00:00:00'),diff=Math.round((d-hoy)/86400000);let cls='',lbl='';const enRevisionOAprobado=t.estado==='revision'||esAp;if(diff<0&&!enRevisionOAprobado){cls='vencida';lbl=`Venció hace ${-diff}d`;}else if(diff===0&&!enRevisionOAprobado){lbl='Vence hoy';}else if(diff===1&&!enRevisionOAprobado){lbl='Mañana';}else if(enRevisionOAprobado){lbl=t.estado==='revision'?(t.inicioRevision?`${Math.floor((Date.now()-t.inicioRevision)/86400000)}d en revisión`:'En revisión'):'Culminado';}else{lbl=d.toLocaleDateString('es-PA',{day:'numeric',month:'short'});}fHtml=`<span class="ptfecha ${cls}">📅 ${lbl}</span>`;}
+      let dlHtmlPT='';if(t.deadline_real){const dl=new Date(t.deadline_real+'T00:00:00');dlHtmlPT=`<span class="ptfecha" style="color:var(--gray3);">&#127919; ${dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}</span>`;}
+      const rondasHtmlPT=t.rondas_cambio?`<span class="card-rondas">&#128260; ${t.rondas_cambio}</span>`:'';
       const tHtml=buildTimeHtml(t);
       const card=document.createElement('div');card.className=`ptcard ${colorPorDeadline(t)}${bloq?' bloqueada':''}${esAp?' aprobado-card':''}`;
+      card.style.cursor='pointer';
+      card.onclick=(e)=>editarPT(t.id,e);
       card.innerHTML=`<div class="ptcard-top"><span class="ptcard-num">${num}</span><div class="ptcard-nom">${esc(t.titulo)}</div></div>
 <div class="ptcard-badges"><span class="ptestado ${bloq?'bloqueada':t.estado}">${bloq?'🔒 Bloqueada':EL[t.estado]}</span><span class="ptresp">${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</span>${dep&&!esAp?`<span class="ptdep">&#8627; ${esc(dep.titulo)}</span>`:''}</div>
 ${t.brief?`<div class="card-brief" style="margin:.35rem 0;">${esc(t.brief)}</div>`:''}${tHtml}
-<div class="ptcard-foot">${fHtml}<div class="ptactions">${btnA}<button class="ba" style="flex:0;padding:4px 7px;font-size:10px;" onclick="editarPT('${t.id}',event)">&#9998;</button><button class="ba danger" style="flex:0;padding:4px 7px;font-size:10px;" onclick="confElimPT('${t.id}',event)">&#215;</button></div></div>`;
+<div class="ptcard-foot">${fHtml}${dlHtmlPT}${rondasHtmlPT}<div class="ptactions">${btnA}</div></div>`;
       grid.appendChild(card);
     });body.appendChild(grid);
   });
@@ -3314,21 +3433,44 @@ async function guardarProy(){
   cerrarModal('modal-proy');renderProyectos();render();
 }
 async function eliminarProyectoActual(){if(!editProyId||!confirm('¿Eliminar este proyecto y TODAS sus tareas?'))return;await sbEliminarProy(editProyId);proyectos=proyectos.filter(p=>p.id!==editProyId);tareas=tareas.filter(t=>t.proyId!==editProyId);cerrarModal('modal-proy');if(proyActualId===editProyId)cerrarDetalle();else renderProyectos();toast('Proyecto eliminado');editProyId=null;}
-function abrirModalPT(){editPTId=null;document.getElementById('mpt-ttl').textContent='Nueva tarea';['ptf-titulo','ptf-brief','ptf-fecha'].forEach(id=>document.getElementById(id).value='');document.getElementById('ptf-estado').value='pendiente';document.getElementById('ptf-horas').value='2';document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';document.getElementById('btn-del-pt').style.display='none';poblarSelectResp('ptf-resp');const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');setTimeout(()=>document.getElementById('ptf-titulo').focus(),60);}
-function editarPT(id,e){e&&e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;editPTId=id;document.getElementById('mpt-ttl').textContent='Editar tarea';document.getElementById('ptf-titulo').value=t.titulo;document.getElementById('ptf-estado').value=t.estado||'pendiente';document.getElementById('ptf-fecha').value=t.fecha||'';document.getElementById('ptf-brief').value=t.brief||'';document.getElementById('btn-del-pt').style.display='inline-block';poblarSelectResp('ptf-resp');document.getElementById('ptf-resp').value=t.responsable||'';if(t.horas){document.getElementById('pt-ia-box').style.display='flex';document.getElementById('pt-ia-txt').innerHTML=`<strong>Estimación: ${t.horas}h</strong>`;document.getElementById('ptf-horas').value=t.horas;document.getElementById('pt-horas-grp').style.display='block';}else{document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';}const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().filter(x=>x.id!==id).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.titulo;if(x.id===t.depId)o.selected=true;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');}
+function abrirModalPT(){editPTId=null;document.getElementById('mpt-ttl').textContent='Nueva tarea';['ptf-titulo','ptf-brief','ptf-deadline-real'].forEach(id=>document.getElementById(id).value='');document.getElementById('ptf-entrega-calc-grp').style.display='none';document.getElementById('ptf-estado').value='pendiente';document.getElementById('ptf-horas').value='2';document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';document.getElementById('btn-del-pt').style.display='none';poblarSelectResp('ptf-resp');const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');setTimeout(()=>document.getElementById('ptf-titulo').focus(),60);}
+function editarPT(id,e){e&&e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;editPTId=id;document.getElementById('mpt-ttl').textContent='Editar tarea';document.getElementById('ptf-titulo').value=t.titulo;document.getElementById('ptf-estado').value=t.estado||'pendiente';document.getElementById('ptf-deadline-real').value=t.deadline_real||t.fecha||'';document.getElementById('ptf-brief').value=t.brief||'';document.getElementById('btn-del-pt').style.display='inline-block';poblarSelectResp('ptf-resp');document.getElementById('ptf-resp').value=t.responsable||'';if(t.horas){document.getElementById('pt-ia-box').style.display='flex';document.getElementById('pt-ia-txt').innerHTML=`<strong>Estimación: ${t.horas}h</strong>`;document.getElementById('ptf-horas').value=t.horas;document.getElementById('pt-horas-grp').style.display='block';}else{document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';}const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().filter(x=>x.id!==id).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.titulo;if(x.id===t.depId)o.selected=true;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');recalcEntregaPT();}
+function recalcEntregaPT(){
+  const deadlineReal=document.getElementById('ptf-deadline-real').value;
+  const h=parseFloat(document.getElementById('ptf-horas')?.value)||null;
+  const tAct=editPTId?tareas.find(x=>x.id===editPTId):null;
+  const rondas=tAct?.rondas_cambio||0;
+  const calcGrp=document.getElementById('ptf-entrega-calc-grp');
+  const calcBox=document.getElementById('ptf-entrega-calc-box');
+  if(deadlineReal){
+    const fecha=calcularFechaEntrega(deadlineReal,h,rondas);
+    calcGrp.style.display='block';
+    const fLbl=fechaLocal(fecha).toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
+    calcBox.innerHTML=`${fLbl}<span class="sub">Margen de ${margenRevision(h)} d&iacute;a${margenRevision(h)!==1?'s':''} antes del deadline real${rondas?` &middot; ronda ${rondas+1} de cambios`:''}</span>`;
+  } else {
+    calcGrp.style.display='none';
+  }
+}
 async function guardarPT(){
   const titulo=document.getElementById('ptf-titulo').value.trim();if(!titulo){document.getElementById('ptf-titulo').focus();return;}
   const est=document.getElementById('ptf-estado').value,horas=parseFloat(document.getElementById('ptf-horas')?.value)||null;
-  let ip=null,ae=null;if(editPTId){const t=tareas.find(x=>x.id===editPTId);ip=t?.inicioProcess;ae=t?.aprobadoEn;}
+  const tAnteriorPT=editPTId?tareas.find(x=>x.id===editPTId):null;
+  let ip=null,ae=null,ir=null;
+  if(editPTId){ip=tAnteriorPT?.inicioProcess;ae=tAnteriorPT?.aprobadoEn;ir=tAnteriorPT?.inicioRevision;}
   if(est==='proceso'&&!ip)ip=Date.now();if(est==='aprobado'&&!ae)ae=Date.now();
-  const datos={titulo,responsable:document.getElementById('ptf-resp').value,prioridad:'normal',estado:est,fecha:document.getElementById('ptf-fecha').value||null,brief:document.getElementById('ptf-brief').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',horas,inicioProcess:ip,aprobadoEn:ae};
+  if(est==='revision'&&!ir)ir=Date.now();
+  if(est!=='revision')ir=null;
+  const deadlineReal=document.getElementById('ptf-deadline-real').value||null;
+  const esRegresoPorCambiosPT=tAnteriorPT?.estado==='revision'&&est==='pendiente';
+  const rondasActualesPT=(tAnteriorPT?.rondas_cambio||0)+(esRegresoPorCambiosPT?1:0);
+  const fechaCalculadaPT=deadlineReal?calcularFechaEntrega(deadlineReal,horas,rondasActualesPT):null;
+  const datos={titulo,responsable:document.getElementById('ptf-resp').value,prioridad:'normal',estado:est,fecha:fechaCalculadaPT,deadline_real:deadlineReal,rondas_cambio:rondasActualesPT,brief:document.getElementById('ptf-brief').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir};
   const{error,id}=await sbGuardarTarea(datos,editPTId);
   if(error){toast('Error: '+error.message);return;}
   if(editPTId){const idx=tareas.findIndex(t=>t.id===editPTId);if(idx>-1)Object.assign(tareas[idx],{...datos,id:editPTId});toast('Tarea actualizada');}
   else{tareas.unshift({...datos,id,creadaEn:Date.now()});toast('Tarea agregada');}
   cerrarModal('modal-pt');render();renderDetalle();
 }
-function confElimPT(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!confirm(`¿Eliminar "${t?.titulo}"?`))return;eliminarPTById(id);}
 async function eliminarPTById(id){await sbEliminarTarea(id);tareas=tareas.filter(x=>x.id!==id);render();renderDetalle();toast('Tarea eliminada');}
 function eliminarPTActual(){if(editPTId&&confirm('¿Eliminar esta tarea?')){eliminarPTById(editPTId);cerrarModal('modal-pt');}}
 
@@ -3396,10 +3538,25 @@ function getRango(){const hoy=new Date();hoy.setHours(23,59,59,999);if(periodoAc
 function calcScorePeriodo(uid,desde,hasta){
   const apr=tareas.filter(t=>t.responsable===uid&&t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
   if(!apr.length)return null;
-  const cf=apr.filter(t=>t.fecha);let pF=100;if(cf.length){const at=cf.filter(t=>t.aprobadoEn<=new Date(t.fecha+'T23:59:59').getTime());pF=Math.round(at.length/cf.length*100);}
-  const ch=apr.filter(t=>t.horas&&t.inicioProcess&&t.aprobadoEn);let pH=100;if(ch.length){const devs=ch.map(t=>Math.abs((t.aprobadoEn-t.inicioProcess)/3600000-t.horas)/t.horas);pH=Math.max(0,Math.round((1-Math.min(devs.reduce((s,d)=>s+d,0)/devs.length,1))*100));}
-  const score=Math.round(pF*.6+pH*.4),grade=score>=90?'A':score>=75?'B':score>=60?'C':score>=40?'D':'F';
-  return{score,grade,pF,pH,total:apr.length};
+  // Cumplimiento: ¿se aprobó dentro del deadline real? (si no hay deadline_real, usa la fecha de entrega como respaldo)
+  const cf=apr.filter(t=>t.deadline_real||t.fecha);
+  let pF=100;
+  if(cf.length){
+    const at=cf.filter(t=>t.aprobadoEn<=new Date((t.deadline_real||t.fecha)+'T23:59:59').getTime());
+    pF=Math.round(at.length/cf.length*100);
+  }
+  // Precisión de estimación: horas reales vs horas estimadas
+  const ch=apr.filter(t=>t.horas&&t.inicioProcess&&t.aprobadoEn);
+  let pH=100;
+  if(ch.length){
+    const devs=ch.map(t=>Math.abs((t.aprobadoEn-t.inicioProcess)/3600000-t.horas)/t.horas);
+    pH=Math.max(0,Math.round((1-Math.min(devs.reduce((s,d)=>s+d,0)/devs.length,1))*100));
+  }
+  // Rondas de cambio: cada ronda de regreso por cambios resta puntos (entregar bien a la primera es lo ideal)
+  const avgRondas=apr.reduce((s,t)=>s+(t.rondas_cambio||0),0)/apr.length;
+  const pR=Math.max(0,Math.round(100-avgRondas*25));
+  const score=Math.round(pF*.45+pH*.25+pR*.3),grade=score>=90?'A':score>=75?'B':score>=60?'C':score>=40?'D':'F';
+  return{score,grade,pF,pH,pR,total:apr.length};
 }
 function calcScore(uid){
   const{desde,hasta}=getRango();
@@ -3425,8 +3582,8 @@ function renderReporte(){
   usuariosReporte.forEach(u=>{
     const s=calcScore(u.id);
     if(!s){html+=`<div class="scard"><div class="snom">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray3);margin-top:.5rem">Sin tareas completadas en este periodo.</div></div>`;return;}
-    const gc=s.pF>=90?'g':s.pF>=70?'w':'b',hc=s.pH>=90?'g':s.pH>=70?'w':'b';
-    html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Cumplimiento fecha</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 60% fecha · 40% estimación</div></div>`;
+    const gc=s.pF>=90?'g':s.pF>=70?'w':'b',hc=s.pH>=90?'g':s.pH>=70?'w':'b',rc=s.pR>=90?'g':s.pR>=70?'w':'b';
+    html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Cumplimiento deadline</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Entregas sin cambios</span><span class="smet-val ${rc}">${s.pR}%</span></div><div class="sbar"><div class="sbar-f ${s.pR<70?'b':s.pR<90?'w':''}" style="width:${s.pR}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 45% deadline · 30% sin cambios · 25% estimación</div></div>`;
   });
   html+=`</div>`;
   const histBase=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
@@ -4144,7 +4301,7 @@ async function onDropDia(fechaStr){
   t.fecha=fechaStr;
   await sbGuardarTarea({...t},dragTareaId);
   dragTareaId=null;
-  renderCal();render();toast(`Deadline movido a ${fechaStr}`);
+  renderCal();render();toast(`Fecha de entrega movida a ${fechaStr}`);
 }
 
 // MODAL DÍA
@@ -4215,7 +4372,7 @@ function abrirModalDesdeCal(){
   cerrarModal('modal-dia');
   abrirModal();
   // Pre-llenar fecha seleccionada
-  setTimeout(()=>{if(calDiaSeleccionado)document.getElementById('f-fecha').value=calDiaSeleccionado;},150);
+  setTimeout(()=>{if(calDiaSeleccionado)document.getElementById('f-deadline-real').value=calDiaSeleccionado;},150);
 }
 
 // Poblar filtro responsable en calendario
@@ -4266,15 +4423,31 @@ async function moverAColumna(id,colDestino){
     await sbGuardarTarea({...t},id);
     toast(`"${t.titulo}" → asignado a Hoy`);
   } else if(colDestino==='pendientes'){
-    if(t.estado!=='pendiente'&&t.estado!=='proceso'){toast('Solo se puede devolver a Pendientes desde Hoy');return;}
-    // Quitar la fijación manual — vuelve a la cola normal, el motor decide
-    t.dia_fijado=null;
-    await sbGuardarTarea({...t},id);
-    toast(`"${t.titulo}" → de vuelta a Pendientes`);
+    if(colActual==='revision'){
+      // Regreso por cambios: cuenta como una ronda, recalcula la fecha de entrega
+      // repartiendo el tiempo que queda hasta el deadline real.
+      const rondasNuevas=(t.rondas_cambio||0)+1;
+      t.rondas_cambio=rondasNuevas;
+      t.estado='pendiente';
+      t.dia_fijado=null;
+      t.inicioRevision=null;
+      if(t.deadline_real)t.fecha=calcularFechaEntrega(t.deadline_real,t.horas,rondasNuevas);
+      await sbGuardarTarea({...t},id);
+      toast(`"${t.titulo}" → de vuelta a Pendientes (ronda de cambios ${rondasNuevas})`);
+      await notificarCambios(t);
+    } else if(t.estado!=='pendiente'&&t.estado!=='proceso'){
+      toast('Solo se puede devolver a Pendientes desde Hoy o Revisión');return;
+    } else {
+      // Quitar la fijación manual — vuelve a la cola normal, el motor decide
+      t.dia_fijado=null;
+      await sbGuardarTarea({...t},id);
+      toast(`"${t.titulo}" → de vuelta a Pendientes`);
+    }
   } else if(colDestino==='revision'){
     if(colActual!=='hoy'){toast('Solo lo que está en Hoy puede pasar a Revisión');return;}
     if(!t.inicioProcess)t.inicioProcess=Date.now();
     t.estado='revision';
+    t.inicioRevision=Date.now();
     await sbGuardarTarea({...t},id);
     toast(`"${t.titulo}" → En revisión`);
     await notificarRevision(t);

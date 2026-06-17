@@ -137,6 +137,8 @@ body{font-family:'Montserrat',sans-serif;background:var(--bg-app);color:var(--da
 .col-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:.6rem;border-bottom:1px solid var(--gray2);margin-bottom:.1rem;}
 .col-ttl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 .col-cnt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--white);color:var(--ink);border:1px solid var(--gray2);}
+.col-horas-aviso{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--gold-lt);color:#8A6A1F;margin-right:auto;margin-left:.5rem;}
+.col-horas-aviso.over{background:var(--urgente-lt);color:var(--urgente);}
 .col-pendientes .col-hdr{border-color:var(--gray3);}.col-pendientes .col-ttl{color:var(--gray3);}
 .col-hoy .col-hdr{border-color:var(--gold);}.col-hoy .col-ttl{color:var(--gold);}
 .col-revision .col-hdr{border-color:var(--azul);}.col-revision .col-ttl{color:var(--azul);}
@@ -1014,7 +1016,7 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div class="board">
     <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></div></div>
-    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy</span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
+    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy</span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></div></div>
     <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></div></div>
   </div>
@@ -1503,14 +1505,11 @@ function getPlanPersona(resp){
   return _planCache[resp];
 }
 
-// ¿Esta tarea está en el plan del motor para HOY? (columna "Hoy" del tablero)
+// ¿Esta tarea está asignada a HOY? Ahora es 100% manual: solo si tú la fijaste a hoy
+// (arrastrándola o seleccionándola en el modal), nunca porque el motor la haya movido solo.
 function esDeHoy(t){
   if(t.estado!=='pendiente'&&t.estado!=='proceso')return false;
-  if(!t.responsable)return false;
-  const{plan}=getPlanPersona(t.responsable);
-  const hp=plan[hoyStr()];
-  if(!hp)return false;
-  return hp.bloques.some(b=>b.tareaId===t.id);
+  return t.dia_fijado===hoyStr();
 }
 
 // Columna visual donde cae una tarea
@@ -2066,7 +2065,9 @@ function calcularFechaEntrega(deadlineRealStr, horas, rondaActual=0){
 
 // ──────────────────────────────────────────────────────────
 // MOTOR: planificarPersona
-// Reparte las horas de cada pendiente activo de `resp` en días.
+// Ya NO reparte automáticamente las tareas sin día fijado entre hoy y el deadline.
+// Solo coloca en el plan las que TÚ fijaste manualmente (dia_fijado) — arrastrando la
+// tarjeta en el Tablero. Las demás se quedan en "Pendientes" hasta que las fijes a un día.
 // Devuelve:
 //   plan: {[fechaStr]: {horas, capacidad, sobrecarga, bloques:[{tareaId,horas,esFijado}]}}
 //   porTarea: {[tareaId]: {dias:[fechaStr,...], viable:bool, diasNecesarios, diasDisponibles}}
@@ -2082,10 +2083,8 @@ function planificarPersona(resp, excluirId=null, extra=null){
   );
   if(extra)activas=[...activas,extra];
 
-  // Separar fijadas (dia_fijado) de las que el motor debe ordenar
   const fijadas=activas.filter(t=>t.dia_fijado);
-  const libres=activas.filter(t=>!t.dia_fijado)
-    .sort((a,b)=>new Date(a.fecha)-new Date(b.fecha)); // deadline más próximo primero
+  const libres=activas.filter(t=>!t.dia_fijado);
 
   const plan={}; // fechaStr -> {horas, capacidad, sobrecarga, bloques:[]}
   function addBloque(fecha,tareaId,horas,esFijado){
@@ -2099,48 +2098,23 @@ function planificarPersona(resp, excluirId=null, extra=null){
 
   const porTarea={};
 
-  // 1. Colocar primero las fijadas tal cual (pueden sobrecargar el día — eso se detecta después)
+  // Colocar las fijadas tal cual (pueden sobrecargar el día — eso se detecta después, solo informativo)
   fijadas.forEach(t=>{
     addBloque(t.dia_fijado,t.id,t.horas,true);
     porTarea[t.id]={dias:[t.dia_fijado],viable:true,diasNecesarios:1,diasDisponibles:1};
   });
 
-  // 2. Repartir las libres día por día desde HOY, hacia el deadline, llenando capacidad
-  const hoy=new Date();hoy.setHours(0,0,0,0);
+  // Las libres no se asignan a ningún día — quedan en Pendientes hasta que se fijen manualmente.
+  // Igual se reporta info útil para el modal (cuántos días tomaría, viabilidad teórica de cara al deadline).
   libres.forEach(t=>{
-    let restante=t.horas;
-    const dias=[];
+    const diasNecesarios=Math.ceil(t.horas/HORAS_DIA);
+    const hoy=new Date();hoy.setHours(0,0,0,0);
     const deadline=fechaLocal(t.fecha);
-    let cursor=new Date(hoy);
-    let diasDisponibles=0;
-    // Buscar desde hoy hasta el deadline (inclusive), días laborales con espacio libre
-    while(restante>0){
-      const fStr=fechaStr(cursor);
-      const cap=horasDia(cursor);
-      if(cap>0){
-        const usado=plan[fStr]?.horas||0;
-        const libre=cap-usado;
-        if(cursor<=deadline)diasDisponibles++;
-        if(libre>0){
-          const asignar=Math.min(restante,libre);
-          addBloque(fStr,t.id,asignar,false);
-          if(!dias.includes(fStr))dias.push(fStr);
-          restante-=asignar;
-        }
-      }
-      if(cursor>deadline && restante>0){
-        // Ya pasamos el deadline y sigue sin caber — seguir buscando espacio
-        // pero ya es inviable
-      }
-      if(cursor>addDias(deadline,60))break; // límite de seguridad
-      cursor=addDias(cursor,1);
-    }
-    const diasNecesarios=Math.ceil(t.horas/HORAS_DIA); // aproximado, para mostrar
-    const viable=dias.every(f=>fechaLocal(f)<=deadline) && restante<=0;
-    porTarea[t.id]={dias,viable,diasNecesarios,diasDisponibles};
+    const diasDisponibles=Math.max(0,Math.round((deadline-hoy)/86400000))+1;
+    porTarea[t.id]={dias:[],viable:diasDisponibles>=diasNecesarios,diasNecesarios,diasDisponibles};
   });
 
-  // Marcar sobrecarga por día
+  // Marcar sobrecarga por día (informativo, nunca bloquea)
   Object.entries(plan).forEach(([f,v])=>{ v.sobrecarga = v.horas > v.capacidad; });
 
   return{plan,porTarea};
@@ -2683,6 +2657,20 @@ function render(){
     [...col.children].forEach(el=>{if(!el.classList.contains('col-hdr'))el.remove();});
     const cards=lista.filter(t=>columnaDe(t)===colId).sort((a,b)=>sortTareas(a,b));
     document.getElementById(`cnt-${colId}`).textContent=cards.length;
+    if(colId==='hoy'){
+      // Alerta informativa de horas asignadas hoy — nunca bloquea, solo avisa
+      const totalH=cards.reduce((s,t)=>s+(t.horas||0),0);
+      const cap=horasDia(new Date());
+      const elH=document.getElementById('hoy-horas-aviso');
+      if(elH){
+        if(totalH>0){
+          const over=totalH>cap;
+          elH.textContent=`${totalH}h asignadas${cap?` de ${cap}h`:''}${over?' ⚠':''}`;
+          elH.className=`col-horas-aviso${over?' over':''}`;
+          elH.style.display='inline-block';
+        } else elH.style.display='none';
+      }
+    }
     if(!cards.length){const el=document.createElement('div');el.className='empty-col';el.textContent='Sin tareas';col.appendChild(el);return;}
     cards.forEach(t=>{
       const card=mkCard(t,colId);
@@ -4594,8 +4582,7 @@ function initKanbanDnD(){
 
 // Mover una tarjeta arrastrándola a una columna VISUAL (pendientes/hoy/revision/aprobado).
 // Las columnas "pendientes" y "hoy" no son estados reales en BD — son una clasificación
-// derivada del plan del motor. Soltar en una u otra ajusta dia_fijado para forzar/quitar
-// la asignación manual, en vez de escribir un "estado" inválido.
+// basada en dia_fijado, que ahora se decide 100% manualmente (tú arrastras, no el motor).
 async function moverAColumna(id,colDestino){
   const t=tareas.find(x=>x.id===id);if(!t)return;
   const colActual=columnaDe(t);
@@ -4603,7 +4590,7 @@ async function moverAColumna(id,colDestino){
 
   if(colDestino==='hoy'){
     if(t.estado!=='pendiente'&&t.estado!=='proceso'){toast('Solo pendientes activos pueden moverse a Hoy');return;}
-    // Fijar manualmente para hoy — el motor respeta esta asignación y recalcula el resto
+    // Fijar manualmente a hoy
     t.dia_fijado=hoyStr();
     await sbGuardarTarea({...t},id);
     toast(`"${t.titulo}" → asignado a Hoy`);
@@ -4623,7 +4610,7 @@ async function moverAColumna(id,colDestino){
     } else if(t.estado!=='pendiente'&&t.estado!=='proceso'){
       toast('Solo se puede devolver a Pendientes desde Hoy o Revisión');return;
     } else {
-      // Quitar la fijación manual — vuelve a la cola normal, el motor decide
+      // Quitar la fijación manual — vuelve a Pendientes
       t.dia_fijado=null;
       await sbGuardarTarea({...t},id);
       toast(`"${t.titulo}" → de vuelta a Pendientes`);

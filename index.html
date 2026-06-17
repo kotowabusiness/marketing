@@ -317,106 +317,108 @@ table.rt tr:last-child td{border-bottom:none;}
 .rb.ok{background:var(--verde-lt);color:var(--verde);}.rb.tarde{background:var(--urgente-lt);color:var(--urgente);}.rb.puntual{background:var(--gold-lt);color:var(--dark);}
 .r-empty{text-align:center;padding:3rem 1rem;color:var(--gray3);font-size:12px;line-height:1.8;}
 /* MI DÍA */
-.midia-wrap{padding:1.5rem 2rem 2rem;max-width:1080px;}
+.midia-wrap{padding:0;max-width:1180px;}
 .midia-empty{text-align:center;color:var(--gray3);font-size:12px;padding:1rem;}
 
 /* Saludo */
-.midia-greeting{margin-bottom:1.5rem;}
-.midia-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gold);margin-bottom:.25rem;}
-.midia-greeting-ttl{font-family:'Poppins',sans-serif;font-weight:800;font-size:22px;color:var(--dark);line-height:1.2;}
-.midia-greeting-sub{font-size:13px;color:var(--gray3);margin-top:.25rem;font-weight:500;}
+.page-hdr{margin-bottom:1.5rem;}
+.page-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray3);margin-bottom:.25rem;}
+.page-ttl{font-family:'Poppins',sans-serif;font-weight:700;font-size:22px;color:var(--ink);line-height:1.2;}
+.midia-greeting-sub{font-size:13px;color:var(--gray3);margin-top:.3rem;font-weight:500;}
 
 /* Stat cards */
-.midia-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;margin-bottom:1.5rem;}
-.midia-stat{background:var(--white);border-radius:14px;padding:1rem 1.1rem;display:flex;flex-direction:column;gap:.35rem;box-shadow:0 1px 3px rgba(26,18,10,.06);border:1px solid var(--gray2);position:relative;overflow:hidden;}
-.midia-stat::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
-.midia-stat.verde::before{background:var(--verde);}
-.midia-stat.gold::before{background:var(--gold);}
-.midia-stat.red::before{background:var(--urgente);}
-.midia-stat.amber::before{background:var(--warning);}
-.midia-stat-icon{font-size:18px;margin-bottom:.1rem;}
-.midia-stat-n{font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:var(--dark);line-height:1;}
-.midia-stat-n.verde{color:var(--verde);}
-.midia-stat-n.red{color:var(--urgente);}
-.midia-stat-n.amber{color:var(--warning);}
-.midia-stat-lbl{font-size:10.5px;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.4px;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+.stat-card{background:var(--white);border:1px solid var(--gray2);border-radius:16px;padding:1.1rem 1.2rem;box-shadow:0 1px 2px rgba(20,30,25,.04);}
+.stat-card.filled{background:var(--v-700);border:none;color:var(--white);}
+.stat-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.7rem;}
+.stat-icon-circle{width:34px;height:34px;border-radius:10px;background:var(--v-100);color:var(--v-700);display:flex;align-items:center;justify-content:center;font-size:15px;}
+.stat-card.filled .stat-icon-circle{background:rgba(255,255,255,.18);color:var(--white);}
+.stat-trend{font-size:10.5px;font-weight:700;color:var(--v-700);background:var(--v-100);padding:2px 8px;border-radius:99px;}
+.stat-trend.down{color:var(--urgente);background:var(--urgente-lt);}
+.stat-n{font-family:'Poppins',sans-serif;font-size:26px;font-weight:800;color:var(--ink);line-height:1;margin-bottom:.25rem;}
+.stat-card.filled .stat-n{color:var(--white);}
+.stat-lbl{font-size:11.5px;color:var(--gray3);font-weight:500;}
+.stat-card.filled .stat-lbl{color:rgba(255,255,255,.75);}
 
 /* Grid: gráfica + performance */
-.midia-grid2{display:grid;grid-template-columns:1fr 300px;gap:.875rem;margin-bottom:1.75rem;}
-.midia-card-ttl{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:1.1rem;display:flex;align-items:center;gap:.4rem;}
-.midia-card-ttl .sub{font-size:10.5px;font-weight:500;color:var(--gray3);margin-left:auto;}
+.mid-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:1rem;margin-bottom:1.5rem;}
+.panel{background:var(--white);border:1px solid var(--gray2);border-radius:16px;padding:1.3rem 1.4rem;box-shadow:0 1px 2px rgba(20,30,25,.04);}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;}
+.panel-ttl{font-size:13.5px;font-weight:700;color:var(--ink);}
+.panel-pill{font-size:10.5px;font-weight:600;color:var(--v-700);background:var(--v-50);border:1px solid var(--v-200);padding:3px 10px;border-radius:99px;}
 
 /* Gráfica de semana */
-.midia-chart-card{background:var(--white);border-radius:14px;padding:1.25rem 1.4rem;box-shadow:0 1px 3px rgba(26,18,10,.06);border:1px solid var(--gray2);}
-.midia-barchart{display:flex;align-items:flex-end;gap:.5rem;height:90px;}
-.midia-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;}
-.midia-bar-wrap{width:100%;height:80px;display:flex;align-items:flex-end;position:relative;}
-.midia-bar-bg{position:absolute;inset:0;background:var(--gray1);border-radius:6px 6px 0 0;}
-.midia-bar-fill{position:absolute;bottom:0;left:0;right:0;border-radius:6px 6px 0 0;transition:height .3s ease;}
-.midia-bar-fill.done{background:var(--verde);}
-.midia-bar-fill.today{background:var(--gold);}
-.midia-bar-fill.future{background:var(--gold-mid);}
-.midia-bar-fill.over{background:var(--urgente);}
-.midia-bar-fill.empty{background:var(--gray2);height:4px!important;}
-.midia-bar-lbl{font-size:10px;font-weight:600;color:var(--gray3);text-align:center;}
-.midia-bar-lbl.today-lbl{color:var(--gold);}
-.midia-chart-legend{display:flex;gap:1rem;margin-top:1rem;flex-wrap:wrap;}
-.midia-legend-item{display:flex;align-items:center;gap:.35rem;font-size:10px;font-weight:600;color:var(--gray3);text-transform:uppercase;letter-spacing:.4px;}
-.midia-legend-dot{width:8px;height:8px;border-radius:50%;}
+.bars{display:flex;align-items:flex-end;gap:.65rem;height:110px;margin-bottom:.9rem;}
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.bar-track{width:100%;height:95px;background:var(--gray1);border-radius:8px 8px 4px 4px;display:flex;align-items:flex-end;overflow:hidden;position:relative;}
+.bar-fill{width:100%;border-radius:8px 8px 0 0;transition:height .3s;}
+.bar-fill.done{background:var(--v-300);}
+.bar-fill.today{background:var(--v-700);}
+.bar-fill.future{background:var(--v-200);}
+.bar-fill.over{background:var(--urgente);opacity:.85;}
+.bar-lbl{font-size:10px;font-weight:600;color:var(--gray3);}
+.bar-lbl.today{color:var(--v-700);font-weight:700;}
+.legend-row{display:flex;gap:1.1rem;padding-top:.8rem;border-top:1px solid var(--gray1);flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-size:10.5px;font-weight:600;color:var(--gray3);}
+.legend-dot{width:8px;height:8px;border-radius:50%;}
 
-/* Performance lateral */
-.midia-perf-card{background:var(--white);border-radius:14px;padding:1.25rem 1.4rem;box-shadow:0 1px 3px rgba(26,18,10,.06);border:1px solid var(--gray2);display:flex;flex-direction:column;gap:1rem;}
-.midia-grade-row{display:flex;align-items:center;gap:1rem;}
-.midia-grade-circle{width:54px;height:54px;border-radius:50%;background:var(--verde-lt);display:flex;align-items:center;justify-content:center;font-family:'Poppins',sans-serif;font-size:24px;font-weight:800;color:var(--verde);flex-shrink:0;}
-.midia-grade-circle.B{background:var(--azul-lt);color:var(--azul);}
-.midia-grade-circle.C{background:var(--warning-lt);color:var(--warning);}
-.midia-grade-circle.D,.midia-grade-circle.F{background:var(--urgente-lt);color:var(--urgente);}
-.midia-grade-info{flex:1;}
-.midia-grade-ttl{font-size:12px;font-weight:600;color:var(--dark);}
-.midia-perf-metric{display:flex;flex-direction:column;gap:4px;}
-.midia-perf-metric-row{display:flex;justify-content:space-between;align-items:center;font-size:11px;}
-.midia-perf-metric-row span:first-child{font-weight:600;color:var(--dark);}
-.midia-perf-val{font-weight:700;font-size:12px;}
-.midia-perf-val.ok{color:var(--verde);}
-.midia-perf-val.mid{color:var(--warning);}
-.midia-perf-val.bad{color:var(--urgente);}
+/* Performance donut */
+.donut-row{display:flex;align-items:center;gap:1.3rem;margin-bottom:1.2rem;}
+.donut-wrap{position:relative;width:92px;height:92px;flex-shrink:0;}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.donut-grade{font-family:'Poppins',sans-serif;font-size:22px;font-weight:800;color:var(--v-700);line-height:1;}
+.donut-grade-lbl{font-size:9px;color:var(--gray3);font-weight:600;text-transform:uppercase;}
+.donut-info-ttl{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:.2rem;}
+.donut-info-sub{font-size:11px;color:var(--gray3);}
+.metric-row{margin-bottom:.85rem;}
+.metric-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:.35rem;}
+.metric-lbl{font-size:11.5px;font-weight:600;color:var(--ink);}
+.metric-val{font-size:12.5px;font-weight:700;color:var(--v-700);}
+.metric-val.warn{color:var(--warning);}
+.track{height:6px;background:var(--gray1);border-radius:99px;overflow:hidden;}
+.track-fill{height:100%;border-radius:99px;background:var(--v-700);}
+.track-fill.warn{background:var(--warning);}
 
 /* Secciones (Para hoy / Mañana / etc) */
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;}
+.section-ttl{font-size:14.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.section-pill{font-size:10.5px;font-weight:700;background:var(--gray1);color:var(--gray3);padding:3px 10px;border-radius:99px;}
+.section-pill.active{background:var(--v-100);color:var(--v-800);}
+.section-pill.over{background:var(--urgente-lt);color:var(--urgente);}
 .midia-section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.875rem;flex-wrap:wrap;gap:.5rem;}
-.midia-section-ttl{font-size:14.5px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
-.midia-section-badge{font-size:10.5px;font-weight:700;background:var(--gold-lt);color:var(--dark);padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.4px;}
+.midia-section-ttl{font-size:14.5px;font-weight:700;color:var(--ink);display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+.midia-section-badge{font-size:10.5px;font-weight:700;background:var(--gray1);color:var(--gray3);padding:3px 10px;border-radius:99px;text-transform:uppercase;letter-spacing:.4px;}
 .midia-section-badge.over{background:var(--urgente-lt);color:var(--urgente);}
 
 /* Grid de tareas (2-3 por fila) */
-.midia-task-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.875rem;}
+.midia-task-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;}
 .midia-task-grid.dimmed-grid{opacity:.65;}
 
-.midia-task-card{background:var(--white);border-radius:14px;padding:1.1rem;display:flex;flex-direction:column;gap:.7rem;box-shadow:0 1px 3px rgba(26,18,10,.05);border:1px solid var(--gray2);cursor:pointer;transition:box-shadow .15s,transform .15s;border-top:3px solid transparent;}
-.midia-task-card:hover{box-shadow:0 4px 12px rgba(26,18,10,.10);transform:translateY(-1px);}
+.midia-task-card{background:var(--white);border-radius:16px;padding:1.1rem;display:flex;flex-direction:column;gap:.7rem;box-shadow:0 1px 2px rgba(20,30,25,.04);border:1px solid var(--gray2);cursor:pointer;transition:box-shadow .15s,transform .15s;border-top:3px solid transparent;}
+.midia-task-card:hover{box-shadow:0 8px 20px rgba(20,30,25,.08);transform:translateY(-2px);}
 .midia-task-card.urgente{border-top-color:var(--urgente);}
 .midia-task-card.normal{border-top-color:var(--gold);}
-.midia-task-card.baja{border-top-color:var(--verde);}
-.midia-task-card.dimmed{opacity:.6;}
+.midia-task-card.baja{border-top-color:var(--v-500);}
+.midia-task-card.dimmed{opacity:.55;}
 .midia-task-card.dimmed:hover{opacity:1;}
 
 .midia-task-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
-.midia-task-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--gray2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--white);}
-.midia-task-check.done{border-color:var(--verde);background:var(--verde);}
-.midia-task-resp{width:28px;height:28px;border-radius:50%;background:var(--verde);color:var(--white);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.midia-task-check{width:24px;height:24px;border-radius:50%;border:2px solid var(--gray2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--white);}
+.midia-task-check.done{border-color:var(--v-700);background:var(--v-700);}
+.midia-task-resp{width:28px;height:28px;border-radius:50%;background:var(--v-600);color:var(--white);font-family:'Poppins',sans-serif;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
 .midia-task-body{flex:1;min-width:0;}
-.midia-task-title{font-size:13.5px;font-weight:600;color:var(--dark);line-height:1.35;margin-bottom:.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.midia-task-title{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.35;margin-bottom:.5rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
 .midia-task-title.done{text-decoration:line-through;color:var(--gray3);}
 .midia-task-meta{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
-.midia-task-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px;border-radius:99px;background:var(--gold-lt);color:var(--dark);}
+.midia-task-tag{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:3px 9px;border-radius:7px;background:var(--v-100);color:var(--v-800);}
 .midia-task-date{font-size:10.5px;color:var(--gray3);font-weight:500;display:flex;align-items:center;gap:.2rem;}
 .midia-task-date.vence-hoy{color:var(--warning);font-weight:600;}
 .midia-task-date.vencida{color:var(--urgente);font-weight:600;}
 
 .midia-task-bottom{margin-top:auto;}
-.midia-btn-listo{font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;background:var(--verde);color:var(--white);border:none;border-radius:99px;padding:7px 16px;cursor:pointer;white-space:nowrap;transition:background .15s;width:100%;}
-.midia-btn-listo:hover{background:var(--verde-dk);}
-
+.midia-btn-listo{font-size:11px;font-weight:700;font-family:'Montserrat',sans-serif;background:var(--v-700);color:var(--white);border:none;border-radius:99px;padding:7px 16px;cursor:pointer;white-space:nowrap;transition:background .15s;width:100%;}
+.midia-btn-listo:hover{background:var(--v-800);}
 @media(max-width:900px){
   .midia-stats{grid-template-columns:repeat(2,1fr);}
   .midia-grid2{grid-template-columns:1fr;}
@@ -2464,43 +2466,43 @@ function renderMiDia(){
   if(enRevisionAhora.length)situacion.push(`${enRevisionAhora.length} en revisi&oacute;n`);
   const situacionTxt=situacion.length?situacion.join(' &middot; '):'Sin pendientes activos por ahora';
 
-  let html=`<div class="midia-greeting">
-    <div class="midia-eyebrow">${hoy.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'})}</div>
-    <div class="midia-greeting-ttl">${saludoBase}, ${esc(nombrePila)} &#128075;</div>
+  let html=`<div class="page-hdr">
+    <div class="page-eyebrow">${hoy.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'})}</div>
+    <div class="page-ttl">${saludoBase}, ${esc(nombrePila)} &#128075;</div>
     <div class="midia-greeting-sub">${situacionTxt}</div>
   </div>`;
 
   // ── STAT CARDS ──
-  html+=`<div class="midia-stats">
-    <div class="midia-stat verde">
-      <div class="midia-stat-icon">&#9989;</div>
-      <div class="midia-stat-n verde">${completadasSemana}</div>
-      <div class="midia-stat-lbl">Completadas esta semana</div>
+  html+=`<div class="stats-row">
+    <div class="stat-card filled">
+      <div class="stat-top"><div class="stat-icon-circle">&#9989;</div></div>
+      <div class="stat-n">${completadasSemana}</div>
+      <div class="stat-lbl">Completadas esta semana</div>
     </div>
-    <div class="midia-stat gold">
-      <div class="midia-stat-icon">&#128203;</div>
-      <div class="midia-stat-n">${pendientesHoy.length+enProceso.length}</div>
-      <div class="midia-stat-lbl">Tareas para hoy</div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon-circle">&#128203;</div></div>
+      <div class="stat-n">${pendientesHoy.length+enProceso.length}</div>
+      <div class="stat-lbl">Tareas para hoy</div>
     </div>
-    <div class="midia-stat amber">
-      <div class="midia-stat-icon">&#128065;</div>
-      <div class="midia-stat-n amber">${enRevisionAhora.length}</div>
-      <div class="midia-stat-lbl">Esperando revisi&oacute;n</div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon-circle">&#128065;</div></div>
+      <div class="stat-n">${enRevisionAhora.length}</div>
+      <div class="stat-lbl">Esperando revisi&oacute;n</div>
     </div>
-    <div class="midia-stat ${venceHoy?'red':'verde'}">
-      <div class="midia-stat-icon">&#128197;</div>
-      <div class="midia-stat-n ${venceHoy?'red':'verde'}">${venceHoy}</div>
-      <div class="midia-stat-lbl">Vence hoy</div>
+    <div class="stat-card">
+      <div class="stat-top"><div class="stat-icon-circle">&#128197;</div>${venceHoy?'<span class="stat-trend down">Hoy</span>':''}</div>
+      <div class="stat-n">${venceHoy}</div>
+      <div class="stat-lbl">Vence hoy</div>
     </div>
   </div>`;
 
   // ── GRID: gráfica de semana + performance ──
-  html+=`<div class="midia-grid2">`;
+  html+=`<div class="mid-grid">`;
 
   // Gráfica de semana (lunes a sábado)
-  html+=`<div class="midia-chart-card">
-    <div class="midia-card-ttl">Carga de la semana<span class="sub">Cap. ${HORAS_DIA}h / d&iacute;a &middot; S&aacute;b. ${HORAS_DIA_SAB}h</span></div>
-    <div class="midia-barchart">`;
+  html+=`<div class="panel">
+    <div class="panel-hdr"><div class="panel-ttl">Carga de la semana</div><span class="panel-pill">Cap. ${HORAS_DIA}h / d&iacute;a</span></div>
+    <div class="bars">`;
   let cursorSem=new Date(lunSemana);
   const diasLbl=['Lun','Mar','Mi&eacute;','Jue','Vie','S&aacute;b'];
   for(let i=0;i<6;i++){
@@ -2511,65 +2513,72 @@ function renderMiDia(){
     const cap=dPlan.capacidad||1;
     const pct=Math.min(100,Math.round((dPlan.horas/cap)*100));
     const over=dPlan.horas>dPlan.capacidad;
-    let fillCls='empty',fillH=4;
+    let fillCls='',fillH=4,fillBg='var(--gray2)';
     if(dPlan.horas>0){
       fillCls=over?'over':esHoy?'today':esPasado?'done':'future';
       fillH=Math.max(pct,6);
     }
-    html+=`<div class="midia-bar-col">
-      <div class="midia-bar-wrap" title="${dPlan.horas}h de ${cap}h">
-        <div class="midia-bar-bg"></div>
-        <div class="midia-bar-fill ${fillCls}" style="height:${fillH}%"></div>
-      </div>
-      <div class="midia-bar-lbl${esHoy?' today-lbl':''}">${diasLbl[i]}${esHoy?' &larr;':''}</div>
+    html+=`<div class="bar-col">
+      <div class="bar-track" title="${dPlan.horas}h de ${cap}h"><div class="bar-fill ${fillCls}" style="height:${fillH}%${fillCls?'':`;background:${fillBg}`}"></div></div>
+      <div class="bar-lbl${esHoy?' today':''}">${diasLbl[i]}</div>
     </div>`;
     cursorSem=addDias(cursorSem,1);
   }
   html+=`</div>
-    <div class="midia-chart-legend">
-      <div class="midia-legend-item"><div class="midia-legend-dot" style="background:var(--verde)"></div>Completado</div>
-      <div class="midia-legend-item"><div class="midia-legend-dot" style="background:var(--gold)"></div>Hoy</div>
-      <div class="midia-legend-item"><div class="midia-legend-dot" style="background:var(--gray2)"></div>Por venir</div>
+    <div class="legend-row">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--v-300)"></div>Completado</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--v-700)"></div>Hoy</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gray2)"></div>Por venir</div>
     </div>
   </div>`;
 
-  // Performance
+  // Performance (donut chart real)
   if(perf){
-    const gc=perf.pF>=90?'ok':perf.pF>=70?'mid':'bad';
-    const hc=perf.pH>=90?'ok':perf.pH>=70?'mid':'bad';
-    const rc=perf.pR>=90?'ok':perf.pR>=70?'mid':'bad';
-    html+=`<div class="midia-perf-card">
-      <div class="midia-card-ttl">Performance esta semana</div>
-      <div class="midia-grade-row">
-        <div class="midia-grade-circle ${perf.grade}">${perf.grade}</div>
-        <div class="midia-grade-info">
-          <div class="midia-grade-ttl">${perf.total} tarea${perf.total!==1?'s':''} completada${perf.total!==1?'s':''}</div>
+    const gc=perf.pF>=90?'':perf.pF>=70?'warn':'warn';
+    const hc=perf.pH>=90?'':'warn';
+    const rc=perf.pR>=90?'':'warn';
+    const circ=2*Math.PI*40;
+    const dash=Math.round((perf.score/100)*circ);
+    html+=`<div class="panel">
+      <div class="panel-hdr"><div class="panel-ttl">Performance esta semana</div></div>
+      <div class="donut-row">
+        <div class="donut-wrap">
+          <svg width="92" height="92" viewBox="0 0 92 92">
+            <circle cx="46" cy="46" r="40" fill="none" stroke="var(--v-100)" stroke-width="10"/>
+            <circle cx="46" cy="46" r="40" fill="none" stroke="var(--v-700)" stroke-width="10"
+              stroke-dasharray="${dash} ${Math.round(circ)}" stroke-linecap="round" transform="rotate(-90 46 46)"/>
+          </svg>
+          <div class="donut-center"><div class="donut-grade">${perf.grade}</div><div class="donut-grade-lbl">Grade</div></div>
+        </div>
+        <div>
+          <div class="donut-info-ttl">${perf.total} tarea${perf.total!==1?'s':''} completada${perf.total!==1?'s':''}</div>
+          <div class="donut-info-sub">esta semana</div>
         </div>
       </div>
-      <div class="midia-perf-metric">
-        <div class="midia-perf-metric-row"><span>Cumplimiento de deadline</span><span class="midia-perf-val ${gc}">${perf.pF}%</span></div>
-        <div class="sbar"><div class="sbar-f ${perf.pF<70?'b':perf.pF<90?'w':''}" style="width:${perf.pF}%"></div></div>
+      <div class="metric-row">
+        <div class="metric-top"><span class="metric-lbl">Cumplimiento de deadline</span><span class="metric-val ${gc}">${perf.pF}%</span></div>
+        <div class="track"><div class="track-fill ${gc}" style="width:${perf.pF}%"></div></div>
       </div>
-      <div class="midia-perf-metric">
-        <div class="midia-perf-metric-row"><span>Entregas sin cambios</span><span class="midia-perf-val ${rc}">${perf.pR}%</span></div>
-        <div class="sbar"><div class="sbar-f ${perf.pR<70?'b':perf.pR<90?'w':''}" style="width:${perf.pR}%"></div></div>
+      <div class="metric-row">
+        <div class="metric-top"><span class="metric-lbl">Entregas sin cambios</span><span class="metric-val ${rc}">${perf.pR}%</span></div>
+        <div class="track"><div class="track-fill ${rc}" style="width:${perf.pR}%"></div></div>
       </div>
-      <div class="midia-perf-metric">
-        <div class="midia-perf-metric-row"><span>Precisi&oacute;n de estimaci&oacute;n</span><span class="midia-perf-val ${hc}">${perf.pH}%</span></div>
-        <div class="sbar"><div class="sbar-f ${perf.pH<70?'b':perf.pH<90?'w':''}" style="width:${perf.pH}%"></div></div>
+      <div class="metric-row">
+        <div class="metric-top"><span class="metric-lbl">Precisi&oacute;n de estimaci&oacute;n</span><span class="metric-val ${hc}">${perf.pH}%</span></div>
+        <div class="track"><div class="track-fill ${hc}" style="width:${perf.pH}%"></div></div>
       </div>
     </div>`;
   } else {
-    html+=`<div class="midia-perf-card">
-      <div class="midia-card-ttl">Performance esta semana</div>
+    html+=`<div class="panel">
+      <div class="panel-hdr"><div class="panel-ttl">Performance esta semana</div></div>
       <div class="midia-empty" style="padding:1.5rem .5rem;">A&uacute;n no hay tareas completadas esta semana.</div>
     </div>`;
   }
-  html+=`</div>`; // fin midia-grid2
+  html+=`</div>`; // fin mid-grid
 
   // ── PARA HOY (grid de cards) ──
-  html+=`<div class="midia-section-hdr">
-    <div class="midia-section-ttl">Para hoy<span class="midia-section-badge">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''} &middot; ${totalHoyH}h de ${capHoyH}h</span></div>
+  html+=`<div class="section-hdr">
+    <div class="section-ttl">Para hoy<span class="section-pill active">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''} &middot; ${totalHoyH}h de ${capHoyH}h</span></div>
   </div>`;
   if(!tareasHoy.length){
     html+=`<div class="midia-empty">Sin pendientes para hoy. ¡Buen momento para revisar lo de mañana!</div>`;

@@ -16,8 +16,8 @@
 :root{
   --verde:#00614D;--verde-lt:#E6F2EF;--verde-dk:#004d3d;
   --gold:#C9A84C;--gold-lt:#F5EDD6;--gold-mid:#E8D49A;
-  --linen:#FAF7F2;--dark:#1A120A;
-  --white:#FFFFFF;--gray1:#F0EDE8;--gray2:#DDD8D0;--gray3:#9C8E7E;
+  --linen:#FFFFFF;--dark:#1B2420;
+  --white:#FFFFFF;--gray1:#EEF0EF;--gray2:#DDD8D0;--gray3:#9C8E7E;
   --urgente:#C0392B;--urgente-lt:#FDEDEC;
   --warning:#E67E22;--warning-lt:#FEF5EC;
   --azul:#2471A3;--azul-lt:#EAF2FB;
@@ -256,7 +256,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .gmonth-lbl{font-size:9px;font-weight:700;color:var(--white);background:var(--verde);text-align:center;padding:2px 4px;text-transform:uppercase;}
 .gdays{display:flex;}
 .gday{text-align:center;font-size:9px;color:var(--gray3);border-right:1px solid var(--gray1);padding:2px 0;font-variant-numeric:tabular-nums;}
-.gday.today{background:var(--urgente-lt);color:var(--urgente);font-weight:700;}.gday.weekend{background:var(--gray1);}
+.gday.today{background:var(--gold-lt);color:#8A6A1F;font-weight:700;}.gday.weekend{background:var(--gray1);}
 .gdata-row{display:flex;margin-bottom:3px;}
 .gtask-lbl{display:flex;align-items:center;gap:.4rem;padding:0 .6rem;background:var(--white);border:1px solid var(--gray2);border-radius:8px 0 0 8px;flex-shrink:0;min-height:32px;}
 .gtask-prio{width:4px;height:18px;border-radius:2px;flex-shrink:0;}
@@ -267,7 +267,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .gbar.pendiente{background:var(--gray3);}.gbar.proceso{background:var(--gold);color:var(--dark);}.gbar.revision{background:var(--azul);}.gbar.aprobado{background:var(--verde);}
 .gbar.bloqueada{background:var(--gray2);color:var(--gray3);}.gbar.urgente-bar{background:var(--urgente);}
 .gstripe{position:absolute;top:0;bottom:0;width:1px;background:var(--gray1);}
-.gtoday{position:absolute;top:0;bottom:0;width:2px;background:var(--urgente);opacity:.7;z-index:3;}
+.gtoday{position:absolute;top:0;bottom:0;width:2px;background:var(--gold);opacity:.8;z-index:3;}
 .gantt-empty{text-align:center;padding:3rem;color:var(--gray3);font-size:12px;}
 /* MATRIZ */
 .matriz-wrap{padding:1.5rem 2rem 2rem;}
@@ -1227,6 +1227,14 @@ table.rt tr:last-child td{border-bottom:none;}
             <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FFFFFF" oninput="onHexChange('fondo',this.value)">
           </div>
           <div class="config-desc">Solo el interior de las ventanas que se abren (editar pendiente, proyecto, etc.).</div>
+        </div>
+        <div class="config-item">
+          <div class="config-label">Fondo de columnas y tarjetas neutras</div>
+          <div class="color-picker-wrap">
+            <div class="color-swatch" id="swatch-fondocol"><input type="color" id="cp-fondocol" oninput="onColorChange('fondocol',this.value)"></div>
+            <input type="text" class="color-hex" id="hex-fondocol" maxlength="7" placeholder="#EEF0EF" oninput="onHexChange('fondocol',this.value)">
+          </div>
+          <div class="config-desc">El fondo gris detrás de las tarjetas en el Tablero (las columnas Pendientes, Hoy, etc.).</div>
         </div>
         <div class="config-item">
           <div class="config-label">Color de texto general</div>
@@ -3761,7 +3769,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','mod
 // ══════════════════════════════════════════════════════════
 let configData = {
   color_primario:'#00614D', color_acento:'#C9A84C', color_fondo:'#FFFFFF',
-  color_fondo_app:'#FAFBFA', color_texto:'#1B2420', color_texto_sidebar:'#8C9690',
+  color_fondo_app:'#FAFBFA', color_fondo_columnas:'#EEF0EF', color_texto:'#1B2420', color_texto_sidebar:'#8C9690',
   font_display:'Poppins', font_body:'Montserrat', nombre_app:'Mercadeo',
   notif_revision:true, notif_aprobado:true, notif_cambios:true, notif_desbloqueo:true,
 };
@@ -3776,6 +3784,7 @@ async function cargarConfig(){
       color_acento:data.color_acento||'#C9A84C',
       color_fondo:data.color_fondo||'#FFFFFF',
       color_fondo_app:data.color_fondo_app||'#FAFBFA',
+      color_fondo_columnas:data.color_fondo_columnas||'#EEF0EF',
       color_texto:data.color_texto||'#1B2420',
       color_texto_sidebar:data.color_texto_sidebar||'#8C9690',
       font_display:data.font_display||'Poppins',
@@ -3811,6 +3820,7 @@ function aplicarConfig(){
   // Fondo de TODA la app (body) — distinto del fondo dentro de modales
   r.setProperty('--bg-app', configData.color_fondo_app||'#FAFBFA');
   r.setProperty('--linen', configData.color_fondo||'#FFFFFF');
+  r.setProperty('--gray1', configData.color_fondo_columnas||'#EEF0EF');
   // Color de texto general y del sidebar
   r.setProperty('--dark', configData.color_texto||'#1B2420');
   r.setProperty('--ink', configData.color_texto||'#1B2420');
@@ -3853,8 +3863,8 @@ function cargarFonts(display, body){
 
 function renderConfigPanel(){
   // Colores
-  ['primario','acento','fondo','fondoapp','texto','textosb'].forEach(k=>{
-    const campoBd={primario:'color_primario',acento:'color_acento',fondo:'color_fondo',fondoapp:'color_fondo_app',texto:'color_texto',textosb:'color_texto_sidebar'}[k];
+  ['primario','acento','fondo','fondoapp','fondocol','texto','textosb'].forEach(k=>{
+    const campoBd={primario:'color_primario',acento:'color_acento',fondo:'color_fondo',fondoapp:'color_fondo_app',fondocol:'color_fondo_columnas',texto:'color_texto',textosb:'color_texto_sidebar'}[k];
     const val=configData[campoBd];
     document.getElementById(`cp-${k}`).value=val;
     document.getElementById(`hex-${k}`).value=val.toUpperCase();
@@ -3876,7 +3886,7 @@ function actualizarFontBtns(tipo, valor){
   });
 }
 
-const CAMPO_COLOR_BD={primario:'color_primario',acento:'color_acento',fondo:'color_fondo',fondoapp:'color_fondo_app',texto:'color_texto',textosb:'color_texto_sidebar'};
+const CAMPO_COLOR_BD={primario:'color_primario',acento:'color_acento',fondo:'color_fondo',fondoapp:'color_fondo_app',fondocol:'color_fondo_columnas',texto:'color_texto',textosb:'color_texto_sidebar'};
 function onColorChange(tipo, valor){
   const campo=CAMPO_COLOR_BD[tipo]||`color_${tipo}`;
   configData[campo]=valor;
@@ -3928,6 +3938,7 @@ async function guardarConfig(){
     color_acento:configData.color_acento,
     color_fondo:configData.color_fondo,
     color_fondo_app:configData.color_fondo_app,
+    color_fondo_columnas:configData.color_fondo_columnas,
     color_texto:configData.color_texto,
     color_texto_sidebar:configData.color_texto_sidebar,
     font_display:configData.font_display,

@@ -133,8 +133,15 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .counter strong{color:var(--dark);}.counter .urg{color:var(--urgente);font-weight:700;}
 
 /* TABLERO */
-.board{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;padding:.25rem 2rem 2rem;}
-.col{background:var(--gray1);border-radius:16px;padding:.85rem;display:flex;flex-direction:column;gap:.6rem;min-height:380px;}
+.board{display:flex;gap:1rem;padding:.25rem 2rem 1.5rem;overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:var(--gray2) transparent;}
+.board::-webkit-scrollbar{height:8px;}
+.board::-webkit-scrollbar-track{background:transparent;}
+.board::-webkit-scrollbar-thumb{background:var(--gray2);border-radius:99px;}
+.board::-webkit-scrollbar-thumb:hover{background:var(--gray3);}
+.col{background:var(--gray1);border-radius:16px;padding:.85rem;display:flex;flex-direction:column;gap:.6rem;min-height:380px;flex:0 0 300px;width:300px;}
+@media(max-width:480px){
+  .col{flex:0 0 86vw;width:86vw;}
+}
 .col-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:.6rem;border-bottom:1px solid var(--gray2);margin-bottom:.1rem;}
 .col-ttl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
 .col-cnt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--white);color:var(--ink);border:1px solid var(--gray2);}
@@ -1009,8 +1016,8 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div class="board">
     <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></div></div>
-    <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl">Esta semana</span><span class="col-cnt" id="cnt-semana">0</span></div></div>
     <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy</span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
+    <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl">Esta semana</span><span class="col-cnt" id="cnt-semana">0</span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></div></div>
     <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></div></div>
   </div>
@@ -1515,7 +1522,7 @@ let estTimer=null, ptEstTimer=null;
 // "pendientes" y "hoy" son una clasificación derivada del plan del motor sobre
 // tareas con estado pendiente/proceso — NO son estados nuevos en BD.
 const ESTADOS=['pendiente','proceso','revision','aprobado']; // se mantiene para compat (reportes, etc.)
-const COLUMNAS=['pendientes','semana','hoy','revision','aprobado'];
+const COLUMNAS=['pendientes','hoy','semana','revision','aprobado'];
 const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Culminado',pendientes:'Pendientes',semana:'Esta semana',hoy:'Hoy',culminado:'Culminado'};
 const EN={pendiente:'proceso',proceso:'revision',revision:'aprobado',aprobado:null};
 

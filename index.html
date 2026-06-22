@@ -144,6 +144,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 }
 .col-hdr{display:flex;align-items:center;justify-content:space-between;padding-bottom:.6rem;border-bottom:1px solid var(--gray2);margin-bottom:.1rem;}
 .col-ttl{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:1px;}
+.col-ttl-fecha{font-weight:600;text-transform:none;letter-spacing:0;opacity:.65;font-size:10px;}
 .col-cnt{font-size:10px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--white);color:var(--ink);border:1px solid var(--gray2);}
 .col-horas-aviso{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:99px;background:var(--gold-lt);color:#8A6A1F;margin-right:auto;margin-left:.5rem;}
 .col-horas-aviso.over{background:var(--urgente-lt);color:var(--urgente);}
@@ -187,6 +188,7 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .card-deadline-real{font-size:10px;font-weight:600;color:var(--gray3);}
 .card-en-revision{font-size:9.5px;font-weight:700;color:var(--azul);background:var(--azul-lt);padding:1px 7px;border-radius:9px;}
 .card-rondas{font-size:9.5px;font-weight:700;color:var(--warning);background:var(--warning-lt);padding:1px 7px;border-radius:9px;}
+.card-atraso{font-size:9.5px;font-weight:700;color:var(--urgente);background:var(--urgente-lt);padding:1px 7px;border-radius:9px;}
 .card-actions{display:flex;gap:.25rem;padding-top:.4rem;border-top:1px solid var(--gray1);}
 .ba{font-size:10px;font-weight:600;padding:5px 8px;border:1px solid var(--gray2);border-radius:8px;cursor:pointer;background:var(--white);color:var(--dark);font-family:var(--font-body);transition:all .12s;flex:1;text-align:center;}
 .ba:hover{background:var(--verde);color:var(--white);border-color:var(--verde);}
@@ -1025,8 +1027,8 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div class="board">
     <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></div></div>
-    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy</span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
-    <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl">Esta semana</span><span class="col-cnt" id="cnt-semana">0</span></div></div>
+    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
+    <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl">Esta semana <span class="col-ttl-fecha" id="col-semana-fecha"></span></span><span class="col-cnt" id="cnt-semana">0</span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></div></div>
     <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></div></div>
   </div>
@@ -1645,7 +1647,7 @@ async function iniciarApp(user){
     document.getElementById('tab-matriz').style.display='none';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas()]);
   // Poblar filtros dinámicos
   poblarFiltros();
   poblarFiltrosMobile();
@@ -2411,7 +2413,7 @@ function renderMiDia(){
         </div>
       </div>
       <div class="metric-row">
-        <div class="metric-top"><span class="metric-lbl">Cumplimiento de deadline</span><span class="metric-val ${gc}">${perf.pF}%</span></div>
+        <div class="metric-top"><span class="metric-lbl">Entregas a tiempo</span><span class="metric-val ${gc}">${perf.pF}%</span></div>
         <div class="track"><div class="track-fill ${gc}" style="width:${perf.pF}%"></div></div>
       </div>
       <div class="metric-row">
@@ -2533,6 +2535,18 @@ function render(){
   const lista=filtradas();
   const urg=lista.filter(t=>colorPorDeadline(t)==='urgente'&&t.estado!=='aprobado'&&t.estado!=='revision').length;
   document.getElementById('counter').innerHTML=`<strong>${lista.length}</strong> tarea${lista.length!==1?'s':''}${urg?` &nbsp;&middot;&nbsp; <span class="urg">${urg} urgente${urg>1?'s':''}</span>`:''}`;
+  // Fecha de hoy y rango de la semana junto a los títulos de columna
+  const hoyColHdr=new Date();
+  const elHoyFecha=document.getElementById('col-hoy-fecha');
+  if(elHoyFecha)elHoyFecha.textContent=hoyColHdr.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
+  const elSemFecha=document.getElementById('col-semana-fecha');
+  if(elSemFecha){
+    const fin=addDias(hoyColHdr,6);
+    const mismoMes=hoyColHdr.getMonth()===fin.getMonth();
+    const lblIni=hoyColHdr.toLocaleDateString('es-PA',{day:'numeric',month:mismoMes?undefined:'short'});
+    const lblFin=fin.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
+    elSemFecha.textContent=`${lblIni}-${lblFin}`;
+  }
   COLUMNAS.forEach(colId=>{
     const col=document.getElementById(`col-${colId}`);
     [...col.children].forEach(el=>{if(!el.classList.contains('col-hdr'))el.remove();});
@@ -2604,6 +2618,17 @@ function mkCard(t,colId){
     revHtml=`<span class="card-en-revision">${dias===0?'En revisi&oacute;n hoy':`${dias}d en revisi&oacute;n`}</span>`;
   }
   const rondasHtml=t.rondas_cambio?`<span class="card-rondas" title="Veces que se regresó por cambios">&#128260; ${t.rondas_cambio} cambio${t.rondas_cambio!==1?'s':''}</span>`:'';
+  // Si lleva más de un día fijada en "Hoy" sin pasar a revisión, mostrar de cuánto atraso va.
+  // Solo visual — nunca mueve la tarjeta automáticamente.
+  let atrasoHtml='';
+  if(colId==='hoy'&&t.dia_fijado){
+    const fijado=fechaLocal(t.dia_fijado);
+    const hoy0=new Date();hoy0.setHours(0,0,0,0);
+    const diasAtraso=Math.round((hoy0-fijado)/86400000);
+    if(diasAtraso>0){
+      atrasoHtml=`<span class="card-atraso" title="Se asignó a Hoy hace ${diasAtraso} día${diasAtraso!==1?'s':''} y sigue sin pasar a revisión">&#9888; ${diasAtraso}d de atraso</span>`;
+    }
+  }
   // Botón de acción según columna:
   // - "Hoy": botón único "Listo →" pasa directo a Revisión
   // - "Pendientes": sin botón de avanzar (apagado, no es de hoy todavía)
@@ -2629,7 +2654,7 @@ function mkCard(t,colId){
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
-<div class="card-footer">${fHtml}${dlHtml}${revHtml}${rondasHtml}</div>
+<div class="card-footer">${fHtml}${dlHtml}${revHtml}${rondasHtml}${atrasoHtml}</div>
 <div class="card-actions">${btnA}</div>`;
   return div;
 }
@@ -2694,6 +2719,43 @@ async function crearNotificacionRow(tareaId,tipo,mensaje,destinatarioId=null){
 }
 
 // Tarea pasó a "revisión" — notificar a admin/gerente/asistente del departamento
+// Historial de entregas a revisión — cargado una vez al iniciar, alimenta el grade de Mi día
+let historialEntregas=[];
+async function cargarHistorialEntregas(){
+  try{
+    // Solo necesitamos las últimas ~10 semanas para los cálculos de score (evita traer todo el histórico)
+    const desde=new Date();desde.setDate(desde.getDate()-70);
+    const{data,error}=await sb.from('historial_entregas').select('*').gte('entregado_en',desde.toISOString());
+    if(error){console.log('cargarHistorialEntregas:',error.message);return;}
+    historialEntregas=data||[];
+  }catch(err){console.log('cargarHistorialEntregas error:',err);}
+}
+
+// Registra en el historial que esta tarea se entregó a revisión justo ahora, con la
+// fecha que tenía asignada en ese momento. Esto es lo que alimenta el grade de "Mi día" —
+// el responsable cumple si entrega a tiempo a revisión, sin importar cuánto tarde
+// después la aprobación (eso ya no es responsabilidad suya).
+async function registrarEntregaRevision(t){
+  if(!t.responsable)return;
+  const hoy0=new Date();hoy0.setHours(0,0,0,0);
+  let aTiempo=true;
+  if(t.fecha){
+    const dl=fechaLocal(t.fecha);
+    aTiempo=hoy0<=dl;
+  }
+  const row={
+    tarea_id:t.id,
+    responsable_id:t.responsable,
+    fecha_asignada:t.fecha||null,
+    a_tiempo:aTiempo,
+    ronda:t.rondas_cambio||0,
+  };
+  try{
+    const{data,error}=await sb.from('historial_entregas').insert(row).select().single();
+    if(!error&&data)historialEntregas.push(data);
+  }catch(err){console.log('registrarEntregaRevision error:',err);}
+}
+
 async function notificarRevision(t){
   if(!notifTipoActivo('revision'))return;
   const nombre=getUsuarioNombre(t.responsable).split(' ')[0];
@@ -2884,6 +2946,7 @@ async function marcarListo(id,e){
   t.estado='revision';
   t.inicioRevision=Date.now();
   await sbGuardarTarea({...t,inicioProcess:t.inicioProcess,inicioRevision:t.inicioRevision},id);
+  await registrarEntregaRevision(t);
   render();if(proyActualId)renderDetalle();
   toast(`"${t.titulo}" → En revisión`);
   await notificarRevision(t);
@@ -3356,6 +3419,11 @@ async function ejecutarGuardado(datos){
   else{tareas.unshift({...datos,id,creadaEn:Date.now(),links:[...modalLinks]});toast('Tarea creada');}
   // Persistir links
   if(id||editTareaId){const tid=editTareaId||id;if(tid){tareasLinks[tid]=[...modalLinks];}}
+  // Registrar en el historial si la tarea acaba de entrar a "En revisión" desde este modal
+  if(datos.estado==='revision'&&estadoAnterior!=='revision'){
+    const tNueva=tareas.find(t=>t.id===(editTareaId||id));
+    if(tNueva)await registrarEntregaRevision(tNueva);
+  }
   // Notificar al responsable si un aprobador resolvió una tarea que estaba en revisión
   if(editTareaId&&estadoAnterior==='revision'&&datos.estado!==estadoAnterior&&esAprobador()){
     const t=tareas.find(x=>x.id===editTareaId);
@@ -3466,7 +3534,15 @@ function renderDetalle(){
       // de pendientes del proyecto no muestran fecha hasta que se les asigne ahí.
       let fHtml='';
       if(columnaDe(t)==='hoy'){
-        fHtml=`<span class="ptfecha" style="color:var(--gold);font-weight:700;">&#128197; Hoy</span>`;
+        // Verificar si lleva días de atraso (fijado a Hoy pero no avanzó)
+        let atrasoLbl='';
+        if(t.dia_fijado){
+          const fijado=fechaLocal(t.dia_fijado);
+          const hoy0=new Date();hoy0.setHours(0,0,0,0);
+          const diasAtraso=Math.round((hoy0-fijado)/86400000);
+          if(diasAtraso>0)atrasoLbl=` &middot; <span class="card-atraso">&#9888; ${diasAtraso}d de atraso</span>`;
+        }
+        fHtml=`<span class="ptfecha" style="color:#B8923A;font-weight:700;">&#128197; Hoy${atrasoLbl}</span>`;
       } else if(t.estado==='revision'){
         fHtml=`<span class="ptfecha">${t.inicioRevision?`${Math.floor((Date.now()-t.inicioRevision)/86400000)}d en revisión`:'En revisión'}</span>`;
       } else if(esAp){
@@ -3547,6 +3623,11 @@ async function guardarPT(){
   if(error){toast('Error: '+error.message);return;}
   if(editPTId){const idx=tareas.findIndex(t=>t.id===editPTId);if(idx>-1)Object.assign(tareas[idx],{...datos,id:editPTId});toast('Tarea actualizada');}
   else{tareas.unshift({...datos,id,creadaEn:Date.now()});toast('Tarea agregada');}
+  // Registrar en el historial si la tarea acaba de entrar a "En revisión" desde este modal
+  if(est==='revision'&&tAnteriorPT?.estado!=='revision'){
+    const tNueva=tareas.find(t=>t.id===(editPTId||id));
+    if(tNueva)await registrarEntregaRevision(tNueva);
+  }
   cerrarModal('modal-pt');render();renderDetalle();
 }
 async function eliminarPTById(id){await sbEliminarTarea(id);tareas=tareas.filter(x=>x.id!==id);render();renderDetalle();toast('Tarea eliminada');}
@@ -3612,29 +3693,36 @@ async function eliminarTipo(id){if(!confirm('¿Eliminar este tipo?'))return;cons
 
 // REPORTES
 function getRango(){const hoy=new Date();hoy.setHours(23,59,59,999);if(periodoActivo==='todo')return{desde:new Date(0),hasta:hoy};if(periodoActivo==='mes')return{desde:new Date(hoy.getFullYear(),hoy.getMonth(),1),hasta:hoy};const lun=new Date(hoy);lun.setHours(0,0,0,0);lun.setDate(hoy.getDate()-(hoy.getDay()===0?6:hoy.getDay()-1));return{desde:lun,hasta:hoy};}
-// Score parametrizable por rango — usado en Reportes y en "Mi día"
+// Score parametrizable por rango — usado en Reportes y en "Mi día".
+// Ya NO depende de cuánto tarde el gerente en aprobar — eso no es responsabilidad
+// del responsable. Se basa en: ¿entregó a tiempo a revisión? y ¿cuántas rondas de
+// cambio necesitó lo que se aprobó en el período?
 function calcScorePeriodo(uid,desde,hasta){
-  const apr=tareas.filter(t=>t.responsable===uid&&t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
-  if(!apr.length)return null;
-  // Cumplimiento: ¿se aprobó dentro del deadline real? (si no hay deadline_real, usa la fecha de entrega como respaldo)
-  const cf=apr.filter(t=>t.deadline_real||t.fecha);
+  // Cumplimiento: de las entregas a revisión hechas en el período (cada ronda cuenta
+  // aparte), ¿cuántas fueron a tiempo según la fecha que tenían asignada ese momento?
+  const entregas=historialEntregas.filter(h=>h.responsable_id===uid&&new Date(h.entregado_en).getTime()>=desde.getTime()&&new Date(h.entregado_en).getTime()<=hasta.getTime());
   let pF=100;
-  if(cf.length){
-    const at=cf.filter(t=>t.aprobadoEn<=new Date((t.deadline_real||t.fecha)+'T23:59:59').getTime());
-    pF=Math.round(at.length/cf.length*100);
+  if(entregas.length){
+    const aTiempo=entregas.filter(h=>h.a_tiempo).length;
+    pF=Math.round(aTiempo/entregas.length*100);
   }
-  // Precisión de estimación: horas reales vs horas estimadas
+  // Sin cambios: de lo que se APROBÓ en el período, ¿cuánto llegó sin ninguna ronda de regreso?
+  const apr=tareas.filter(t=>t.responsable===uid&&t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
+  let pR=100;
+  if(apr.length){
+    const sinCambios=apr.filter(t=>!t.rondas_cambio).length;
+    pR=Math.round(sinCambios/apr.length*100);
+  }
+  // Precisión de estimación: horas reales vs horas estimadas (de lo aprobado en el período)
   const ch=apr.filter(t=>t.horas&&t.inicioProcess&&t.aprobadoEn);
   let pH=100;
   if(ch.length){
     const devs=ch.map(t=>Math.abs((t.aprobadoEn-t.inicioProcess)/3600000-t.horas)/t.horas);
     pH=Math.max(0,Math.round((1-Math.min(devs.reduce((s,d)=>s+d,0)/devs.length,1))*100));
   }
-  // Rondas de cambio: cada ronda de regreso por cambios resta puntos (entregar bien a la primera es lo ideal)
-  const avgRondas=apr.reduce((s,t)=>s+(t.rondas_cambio||0),0)/apr.length;
-  const pR=Math.max(0,Math.round(100-avgRondas*25));
-  const score=Math.round(pF*.45+pH*.25+pR*.3),grade=score>=90?'A':score>=75?'B':score>=60?'C':score>=40?'D':'F';
-  return{score,grade,pF,pH,pR,total:apr.length};
+  if(!entregas.length&&!apr.length)return null;
+  const score=Math.round(pF*.5+pR*.3+pH*.2),grade=score>=90?'A':score>=75?'B':score>=60?'C':score>=40?'D':'F';
+  return{score,grade,pF,pH,pR,total:apr.length,totalEntregas:entregas.length};
 }
 function calcScore(uid){
   const{desde,hasta}=getRango();
@@ -3661,7 +3749,7 @@ function renderReporte(){
     const s=calcScore(u.id);
     if(!s){html+=`<div class="scard"><div class="snom">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray3);margin-top:.5rem">Sin tareas completadas en este periodo.</div></div>`;return;}
     const gc=s.pF>=90?'g':s.pF>=70?'w':'b',hc=s.pH>=90?'g':s.pH>=70?'w':'b',rc=s.pR>=90?'g':s.pR>=70?'w':'b';
-    html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Cumplimiento deadline</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Entregas sin cambios</span><span class="smet-val ${rc}">${s.pR}%</span></div><div class="sbar"><div class="sbar-f ${s.pR<70?'b':s.pR<90?'w':''}" style="width:${s.pR}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 45% deadline · 30% sin cambios · 25% estimación</div></div>`;
+    html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Entregas a tiempo</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Entregas sin cambios</span><span class="smet-val ${rc}">${s.pR}%</span></div><div class="sbar"><div class="sbar-f ${s.pR<70?'b':s.pR<90?'w':''}" style="width:${s.pR}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 50% a tiempo · 30% sin cambios · 20% estimación</div></div>`;
   });
   html+=`</div>`;
   const histBase=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
@@ -4516,6 +4604,7 @@ async function moverAColumna(id,colDestino){
     t.estado='revision';
     t.inicioRevision=Date.now();
     await sbGuardarTarea({...t},id);
+    await registrarEntregaRevision(t);
     toast(`"${t.titulo}" → En revisión`);
     await notificarRevision(t);
   } else if(colDestino==='aprobado'){

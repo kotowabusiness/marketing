@@ -158,6 +158,15 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .col-pendientes .card:hover{opacity:.85;}
 .ba-apagado{flex:1;text-align:center;font-size:10px;font-weight:600;color:var(--gray3);padding:6px 8px;background:var(--gray1);border-radius:8px;text-transform:uppercase;letter-spacing:.5px;}
 .empty-col{text-align:center;padding:2rem 1rem;color:var(--gray3);font-size:11px;line-height:1.7;opacity:.7;}
+.btn-clear-fecha{background:none;border:1px solid var(--gray2);color:var(--gray3);padding:6px 11px;border-radius:9px;font-family:var(--font-body);font-size:11px;font-weight:600;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.btn-clear-fecha:hover{border-color:var(--urgente);color:var(--urgente);}
+.col-proy-grupo{display:flex;flex-direction:column;gap:.4rem;margin-bottom:.35rem;}
+.col-proy-hdr{display:flex;align-items:center;gap:.5rem;padding:.45rem .6rem;background:var(--white);border-radius:10px;border:1px solid var(--gray2);cursor:pointer;transition:background .12s;user-select:none;}
+.col-proy-hdr:hover{background:var(--v-50);}
+.col-proy-chevron{font-size:9px;color:var(--gray3);flex-shrink:0;transition:transform .15s;}
+.col-proy-nombre{font-size:11px;font-weight:700;color:var(--ink);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.col-proy-cnt{font-size:10px;font-weight:700;background:var(--gray1);color:var(--gray3);padding:1px 7px;border-radius:99px;flex-shrink:0;}
+.col-proy-body{display:flex;flex-direction:column;gap:.5rem;padding-left:.5rem;border-left:2px solid var(--gray2);margin-left:.5rem;}
 
 /* TARJETA */
 .card{background:var(--white);border-radius:10px;padding:.9rem 1rem;border-left:3px solid var(--gray2);box-shadow:0 1px 3px rgba(26,18,10,.06);transition:transform .1s,box-shadow .1s;}
@@ -1337,7 +1346,11 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg"><label class="flabel">Brief</label><textarea class="fta" id="f-brief" placeholder="Instrucciones, referencias..."></textarea></div>
       <div class="ia-box" id="ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="ia-txt"><span class="ia-load">Analizando...</span></div></div>
       <div class="fg" id="horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="f-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="horas-hint"></span></div></div>
-      <div class="fg"><label class="flabel">Fecha de entrega</label><input type="date" class="fi" id="f-deadline-real">
+      <div class="fg"><label class="flabel">Fecha de entrega</label>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+          <input type="date" class="fi" id="f-deadline-real" style="flex:1;">
+          <button type="button" class="btn-clear-fecha" id="btn-clear-fecha" onclick="limpiarFechaEntrega()" title="Quitar fecha — el pendiente volver\u00e1 a Pendientes">&#10005; Quitar</button>
+        </div>
         <div id="f-deadline-hint" style="display:none;font-size:11px;color:var(--gray3);margin-top:.35rem;">Esta tarea est&aacute; en Hoy, por eso la fecha es hoy. Mu&eacute;vela de vuelta a Pendientes para volver a editar su fecha de entrega.</div>
       </div>
       <div class="fg" id="entrega-calc-grp" style="display:none;">
@@ -2567,17 +2580,56 @@ function render(){
       }
     }
     if(!cards.length){const el=document.createElement('div');el.className='empty-col';el.textContent='Sin tareas';col.appendChild(el);return;}
-    cards.forEach(t=>{
+
+    // Separar tarjetas sin proyecto de las que pertenecen a un proyecto
+    const sinProy=cards.filter(t=>!t.proyId);
+    const conProy=cards.filter(t=>t.proyId);
+
+    // Renderizar primero las tareas sueltas (sin proyecto) normalmente
+    sinProy.forEach(t=>{
       const card=mkCard(t,colId);
-      card.addEventListener('dragstart',e=>{
-        dragKanbanId=t.id;
-        card.classList.add('dragging');
-      });
-      card.addEventListener('dragend',()=>{
-        card.classList.remove('dragging');
-        dragKanbanId=null;
-      });
+      card.addEventListener('dragstart',e=>{dragKanbanId=t.id;card.classList.add('dragging');});
+      card.addEventListener('dragend',()=>{card.classList.remove('dragging');dragKanbanId=null;});
       col.appendChild(card);
+    });
+
+    // Agrupar por proyecto y renderizar cada grupo como bloque colapsable
+    const grupos={};
+    conProy.forEach(t=>{
+      if(!grupos[t.proyId])grupos[t.proyId]=[];
+      grupos[t.proyId].push(t);
+    });
+    Object.entries(grupos).forEach(([proyId,ts])=>{
+      const p=proyectos.find(x=>x.id===proyId);
+      const nombreProy=p?.nombre||'Proyecto';
+      const storageKey=`col_proy_${proyId}_${colId}`;
+      const collapsed=localStorage.getItem(storageKey)==='1';
+
+      const grupo=document.createElement('div');
+      grupo.className='col-proy-grupo';
+
+      const hdr=document.createElement('div');
+      hdr.className='col-proy-hdr';
+      hdr.innerHTML=`<span class="col-proy-chevron">${collapsed?'▶':'▼'}</span><span class="col-proy-nombre">${esc(nombreProy)}</span><span class="col-proy-cnt">${ts.length}</span>`;
+      hdr.addEventListener('click',()=>{
+        const isNowCollapsed=localStorage.getItem(storageKey)==='1';
+        localStorage.setItem(storageKey,isNowCollapsed?'0':'1');
+        render();
+      });
+      grupo.appendChild(hdr);
+
+      if(!collapsed){
+        const body=document.createElement('div');
+        body.className='col-proy-body';
+        ts.forEach(t=>{
+          const card=mkCard(t,colId);
+          card.addEventListener('dragstart',e=>{dragKanbanId=t.id;card.classList.add('dragging');});
+          card.addEventListener('dragend',()=>{card.classList.remove('dragging');dragKanbanId=null;});
+          body.appendChild(card);
+        });
+        grupo.appendChild(body);
+      }
+      col.appendChild(grupo);
     });
   });
   renderCarga();
@@ -3049,6 +3101,9 @@ async function editarTarea(id,e){
   fechaEl.disabled=enHoy;
   const fechaHint=document.getElementById('f-deadline-hint');
   if(fechaHint)fechaHint.style.display=enHoy?'block':'none';
+  // Botón "Quitar fecha": solo visible cuando hay fecha y el campo no está deshabilitado (no está en Hoy)
+  const btnClear=document.getElementById('btn-clear-fecha');
+  if(btnClear)btnClear.style.display=(fechaEl.value&&!enHoy)?'inline-block':'none';
   document.getElementById('btn-del-tarea').style.display='inline-block';
   document.getElementById('btn-del-tarea').dataset.wasVisible='1';
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');
@@ -3070,11 +3125,21 @@ async function editarTarea(id,e){
 async function eliminarTareaById(id){await sbEliminarTarea(id);tareas=tareas.filter(x=>x.id!==id);render();if(proyActualId)renderDetalle();toast('Tarea eliminada');}
 function eliminarTareaActual(){if(editTareaId&&confirm('¿Eliminar esta tarea?')){eliminarTareaById(editTareaId);cerrarModal('modal-tarea');}}
 
+// Borra la fecha de entrega del pendiente abierto en el modal.
+// Al guardar, fecha=null y el pendiente caerá en "Pendientes" en vez de "Esta semana".
+function limpiarFechaEntrega(){
+  document.getElementById('f-deadline-real').value='';
+  document.getElementById('f-deadline-real').disabled=false;
+  document.getElementById('f-deadline-hint').style.display='none';
+}
+
 function abrirModal(){
   editTareaId=null;document.getElementById('mt-ttl').textContent='Nueva tarea';
   ['f-titulo','f-brief','f-deadline-real'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-deadline-real').disabled=false;
   document.getElementById('f-deadline-hint').style.display='none';
+  const btnClearNew=document.getElementById('btn-clear-fecha');
+  if(btnClearNew)btnClearNew.style.display='none';
   document.getElementById('f-estado').value='pendiente';
   document.getElementById('ia-box').style.display='none';document.getElementById('horas-grp').style.display='none';document.getElementById('entrega-box').style.display='none';
   document.getElementById('btn-del-tarea').style.display='none';

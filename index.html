@@ -3303,9 +3303,13 @@ async function guardarTarea(){
   const rondasActuales=(tAnterior?.rondas_cambio||0)+(esRegresoPorCambios?1:0);
   // Si la tarea está fijada a Hoy, la fecha visible sigue siendo hoy sin importar el deadline
   // real guardado (el campo de fecha está deshabilitado en el modal en ese caso, por seguridad).
-  const sigueFijadaHoy=tAnterior?.dia_fijado===hoyStr()&&est!=='revision'&&est!=='aprobado';
-  const fechaFinal=sigueFijadaHoy?hoyStr():deadlineReal;
-  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:fechaFinal,deadline_real:deadlineReal,rondas_cambio:rondasActuales,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,archivos:modalArchivos.length?[...modalArchivos]:null,dia_fijado:tAnterior?.dia_fijado||null};
+  // Si el usuario borró la fecha intencionalmente (deadlineReal=null), hay que respetarlo:
+  // se limpia también dia_fijado para que el pendiente salga de "Hoy" y vuelva a "Pendientes".
+  const usuarioBorroFecha=!deadlineReal&&(tAnterior?.fecha||tAnterior?.deadline_real);
+  const diaFijadoFinal=usuarioBorroFecha?null:(tAnterior?.dia_fijado||null);
+  const sigueFijadaHoy=diaFijadoFinal===hoyStr()&&est!=='revision'&&est!=='aprobado';
+  const fechaFinal=usuarioBorroFecha?null:sigueFijadaHoy?hoyStr():deadlineReal;
+  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:fechaFinal,deadline_real:deadlineReal,rondas_cambio:rondasActuales,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,proyId:editTareaId?tAnterior?.proyId:null,depId:editTareaId?tAnterior?.depId:null,links:modalLinks.length?[...modalLinks]:null,archivos:modalArchivos.length?[...modalArchivos]:null,dia_fijado:diaFijadoFinal};
 
   await ejecutarGuardado(datos);
 }
@@ -3681,9 +3685,11 @@ async function guardarPT(){
   const deadlineReal=document.getElementById('ptf-deadline-real').value||null;
   const esRegresoPorCambiosPT=tAnteriorPT?.estado==='revision'&&est==='pendiente';
   const rondasActualesPT=(tAnteriorPT?.rondas_cambio||0)+(esRegresoPorCambiosPT?1:0);
-  const sigueFijadaHoyPT=tAnteriorPT?.dia_fijado===hoyStr()&&est!=='revision'&&est!=='aprobado';
-  const fechaFinalPT=sigueFijadaHoyPT?hoyStr():deadlineReal;
-  const datos={titulo,responsable:document.getElementById('ptf-resp').value,prioridad:'normal',estado:est,fecha:fechaFinalPT,deadline_real:deadlineReal,rondas_cambio:rondasActualesPT,brief:document.getElementById('ptf-brief').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,dia_fijado:tAnteriorPT?.dia_fijado||null};
+  const usuarioBorroFechaPT=!deadlineReal&&(tAnteriorPT?.fecha||tAnteriorPT?.deadline_real);
+  const diaFijadoFinalPT=usuarioBorroFechaPT?null:(tAnteriorPT?.dia_fijado||null);
+  const sigueFijadaHoyPT=diaFijadoFinalPT===hoyStr()&&est!=='revision'&&est!=='aprobado';
+  const fechaFinalPT=usuarioBorroFechaPT?null:sigueFijadaHoyPT?hoyStr():deadlineReal;
+  const datos={titulo,responsable:document.getElementById('ptf-resp').value,prioridad:'normal',estado:est,fecha:fechaFinalPT,deadline_real:deadlineReal,rondas_cambio:rondasActualesPT,brief:document.getElementById('ptf-brief').value.trim(),depId:document.getElementById('ptf-dep').value||null,proyId:proyActualId,tipo:'otro',horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,dia_fijado:diaFijadoFinalPT};
   const{error,id}=await sbGuardarTarea(datos,editPTId);
   if(error){toast('Error: '+error.message);return;}
   if(editPTId){const idx=tareas.findIndex(t=>t.id===editPTId);if(idx>-1)Object.assign(tareas[idx],{...datos,id:editPTId});toast('Tarea actualizada');}

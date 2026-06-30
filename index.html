@@ -530,7 +530,13 @@ table.rt tr:last-child td{border-bottom:none;}
 .comment-item{display:flex;gap:.6rem;}
 .comment-avatar{width:28px;height:28px;border-radius:50%;background:var(--verde);color:var(--white);font-family:var(--font-display);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .comment-body{flex:1;min-width:0;background:var(--bg-app);border-radius:8px;padding:.5rem .7rem;}
-.comment-hdr{display:flex;align-items:baseline;gap:.5rem;margin-bottom:.15rem;}
+.comment-hdr{display:flex;align-items:center;gap:.5rem;margin-bottom:.15rem;}
+.comment-acciones{margin-left:auto;display:flex;gap:.25rem;opacity:0;transition:opacity .15s;}
+.comment-item:hover .comment-acciones{opacity:1;}
+.comment-btn-accion{background:none;border:none;cursor:pointer;color:var(--gray3);font-size:13px;padding:1px 4px;border-radius:4px;line-height:1;transition:color .12s,background .12s;}
+.comment-btn-accion:hover{color:var(--ink);background:var(--gray1);}
+.comment-btn-accion.danger:hover{color:var(--urgente);background:var(--urgente-lt);}
+.comment-edit-input{width:100%;font-size:12.5px;resize:none;}
 .comment-autor{font-size:11.5px;font-weight:700;color:var(--dark);}
 .comment-fecha{font-size:10px;color:var(--gray3);}
 .comment-texto{font-size:12.5px;color:var(--dark);line-height:1.45;white-space:pre-wrap;word-break:break-word;}
@@ -1361,9 +1367,14 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg">
         <label class="flabel">Links / referencias <span style="font-weight:400;color:var(--gray3)">(Drive, Figma, etc.)</span></label>
         <div id="links-list"></div>
-        <div style="display:flex;gap:.5rem;margin-top:.4rem;">
-          <input type="text" class="fi" id="f-link-input" placeholder="https://drive.google.com/..." style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
-          <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLink()">+ Agregar</button>
+        <div style="display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem;">
+          <div style="display:flex;gap:.5rem;">
+            <input type="text" class="fi" id="f-link-input" placeholder="https://drive.google.com/..." style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
+          </div>
+          <div style="display:flex;gap:.5rem;">
+            <input type="text" class="fi" id="f-link-nombre" placeholder="Nombre (opcional, ej. Arte final)" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
+            <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLink()">+ Agregar</button>
+          </div>
         </div>
       </div>
       <div class="fg">
@@ -1718,6 +1729,8 @@ async function cargarTareas(){
     const sep=brief.indexOf('||LINKS:');
     if(sep>-1){
       try{links=JSON.parse(brief.slice(sep+8));}catch{}
+      // Compatibilidad: normalizar strings legados a objetos {url,nombre}
+      links=links.map(l=>typeof l==='string'?{url:l,nombre:''}:l);
       brief=brief.slice(0,sep);
     }
     if(links.length)tareasLinks[t.id]=links;
@@ -2655,13 +2668,7 @@ function mkCard(t,colId){
     const cls=(d<hoy&&t.estado!=='revision'&&t.estado!=='aprobado')?'vencida':'';
     fHtml=`<span class="card-date ${cls}">&#128197; Entrega: ${lbl}</span>`;
   }
-  // Deadline real (lanzamiento/publicación) — visible en la tarjeta cuando existe y es distinto
-  let dlHtml='';
-  if(t.deadline_real){
-    const dl=new Date(t.deadline_real+'T00:00:00');
-    const lbl=dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
-    dlHtml=`<span class="card-deadline-real">&#127919; Deadline: ${lbl}</span>`;
-  }
+  const dlHtml=''; // deadline_real ya no se muestra en la tarjeta (solo en el modal)
   const overloadHtml=''; // sistema de sobrecarga eliminado
   // En revisión: mostrar cuánto tiempo lleva ahí (productividad de quien aprueba, no del responsable)
   let revHtml='';
@@ -2702,11 +2709,11 @@ function mkCard(t,colId){
   const blHtml=bloq?`<span class="bblq">&#128274;</span>`:'';
   const depHtml=t.depId?(()=>{const dep=tareas.find(x=>x.id===t.depId);return dep?`<div class="card-dep">&#8627; ${esc(dep.titulo)}</div>`:''})():'';
   const linksT=tareasLinks[t.id]||(t.links||[]);
-  const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(url=>{try{const h=new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${h}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
+  const linksHtml=linksT.length?`<div class="card-links">${linksT.slice(0,3).map(l=>{const{url,nombre}=linkToObj(l);try{const lbl=nombre||new URL(url).hostname;return`<div class="card-link-item"><a href="${url}" target="_blank" class="card-link-a" onclick="event.stopPropagation()">&#128279; ${esc(lbl)}</a></div>`;}catch{return'';}}).join('')}${linksT.length>3?`<div style="font-size:9px;color:var(--gray3);">+${linksT.length-3} más</div>`:''}</div>`:'';
   div.innerHTML=`<div class="card-top"><div class="card-ttl">${esc(t.titulo)}</div></div>
 <div class="card-meta"><span class="bt">${esc(getTipoLabel(t.tipo))}</span>${rHtml}${pHtml}${blHtml}</div>
 ${depHtml}${t.brief?`<div class="card-brief">${esc(t.brief)}</div>`:''}${linksHtml}${overloadHtml}
-<div class="card-footer">${fHtml}${dlHtml}${revHtml}${rondasHtml}${atrasoHtml}</div>
+<div class="card-footer">${fHtml}${revHtml}${rondasHtml}${atrasoHtml}</div>
 <div class="card-actions">${btnA}</div>`;
   return div;
 }
@@ -2862,15 +2869,34 @@ function renderComentarios(){
     list.innerHTML='<div class="comments-empty">A&uacute;n no hay comentarios.</div>';
     return;
   }
+  const esGerente=PERFIL?.rol==='gerente'||PERFIL?.rol==='admin';
   list.innerHTML=comentarios.map(c=>{
     const nombre=getUsuarioNombre(c.autor_id)||'—';
     const inicial=nombre.charAt(0).toUpperCase();
     const fecha=fmtNotifTime(c.created_at);
-    return`<div class="comment-item">
+    const esMio=c.autor_id===USER.id;
+    const puedeEditar=esMio;
+    const puedeBorrar=esMio||esGerente;
+    const acciones=(puedeEditar||puedeBorrar)?`<div class="comment-acciones">
+      ${puedeEditar?`<button class="comment-btn-accion" onclick="editarComentario('${c.id}')" title="Editar">&#9998;</button>`:''}
+      ${puedeBorrar?`<button class="comment-btn-accion danger" onclick="borrarComentario('${c.id}')" title="Borrar">&#215;</button>`:''}
+    </div>`:'';
+    return`<div class="comment-item" id="comment-${c.id}">
       <div class="comment-avatar">${inicial}</div>
       <div class="comment-body">
-        <div class="comment-hdr"><span class="comment-autor">${esc(nombre.split(' ')[0])}</span><span class="comment-fecha">${fecha}</span></div>
-        <div class="comment-texto">${esc(c.texto)}</div>
+        <div class="comment-hdr">
+          <span class="comment-autor">${esc(nombre.split(' ')[0])}</span>
+          <span class="comment-fecha">${fecha}</span>
+          ${acciones}
+        </div>
+        <div class="comment-texto" id="comment-texto-${c.id}">${esc(c.texto)}</div>
+        <div class="comment-edit-form" id="comment-edit-${c.id}" style="display:none;">
+          <textarea class="fta comment-edit-input" id="comment-edit-input-${c.id}" rows="2">${esc(c.texto)}</textarea>
+          <div style="display:flex;gap:.4rem;margin-top:.35rem;">
+            <button class="btn-save comment-send" style="padding:5px 12px;font-size:11px;" onclick="guardarEdicionComentario('${c.id}')">Guardar</button>
+            <button class="btn-cancel" style="padding:5px 12px;font-size:11px;" onclick="cancelarEdicionComentario('${c.id}')">Cancelar</button>
+          </div>
+        </div>
       </div>
     </div>`;
   }).join('');
@@ -2891,6 +2917,34 @@ async function agregarComentario(){
 }
 
 // Notifica al responsable y a los aprobadores del departamento, excluyendo a quien comentó.
+function editarComentario(id){
+  document.getElementById(`comment-texto-${id}`).style.display='none';
+  document.getElementById(`comment-edit-${id}`).style.display='block';
+  document.getElementById(`comment-edit-input-${id}`)?.focus();
+}
+function cancelarEdicionComentario(id){
+  document.getElementById(`comment-texto-${id}`).style.display='block';
+  document.getElementById(`comment-edit-${id}`).style.display='none';
+}
+async function guardarEdicionComentario(id){
+  const input=document.getElementById(`comment-edit-input-${id}`);
+  const texto=input?.value.trim();
+  if(!texto)return;
+  const{error}=await sb.from('comentarios').update({texto}).eq('id',id);
+  if(error){toast('Error: '+error.message);return;}
+  const c=comentarios.find(x=>x.id===id);
+  if(c)c.texto=texto;
+  renderComentarios();
+  toast('Comentario actualizado');
+}
+async function borrarComentario(id){
+  if(!confirm('¿Borrar este comentario?'))return;
+  const{error}=await sb.from('comentarios').delete().eq('id',id);
+  if(error){toast('Error: '+error.message);return;}
+  comentarios=comentarios.filter(c=>c.id!==id);
+  renderComentarios();
+}
+
 async function notificarComentario(tareaId,texto){
   if(!notifTipoActivo('comentario'))return;
   const t=tareas.find(x=>x.id===tareaId);if(!t)return;
@@ -3158,11 +3212,14 @@ let modalArchivos = []; // archivos del modal actual
 
 function agregarLink(){
   const input=document.getElementById('f-link-input');
+  const nombreInput=document.getElementById('f-link-nombre');
   const url=input.value.trim();
+  const nombre=nombreInput?.value.trim()||'';
   if(!url)return;
   if(!url.startsWith('http')){toast('El link debe empezar con http o https');return;}
-  modalLinks.push(url);
+  modalLinks.push({url,nombre});
   input.value='';
+  if(nombreInput)nombreInput.value='';
   renderModalLinks();
 }
 
@@ -3190,13 +3247,17 @@ function renderProyLinks(){
   });
 }
 function quitarLinkProy(i){modalProyLinks.splice(i,1);renderProyLinks();}
+// Helper: normaliza un link que puede ser string (legado) u objeto {url,nombre}
+function linkToObj(l){return typeof l==='string'?{url:l,nombre:''}:l;}
+
 function renderModalLinks(){
   const lista=document.getElementById('links-list');if(!lista)return;
   lista.innerHTML='';
-  modalLinks.forEach((url,i)=>{
+  modalLinks.forEach((l,i)=>{
+    const{url,nombre}=linkToObj(l);
     const div=document.createElement('div');div.className='link-item';
-    const hostname=()=>{try{return new URL(url).hostname;}catch{return url;}};
-    div.innerHTML=`<a href="${url}" target="_blank" class="link-url">&#128279; ${hostname()}</a><button class="link-remove" onclick="quitarLink(${i})">&#215;</button>`;
+    let lbl='';try{lbl=nombre||new URL(url).hostname;}catch{lbl=url;}
+    div.innerHTML=`<a href="${url}" target="_blank" class="link-url">&#128279; ${esc(lbl)}</a><button class="link-remove" onclick="quitarLink(${i})">&#215;</button>`;
     lista.appendChild(div);
   });
 }

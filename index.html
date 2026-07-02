@@ -1715,6 +1715,65 @@ async function iniciarApp(user){
   // Sync bottom nav
   const bnavBtn=document.getElementById(`bnav-${vistaGuardada}`);
   if(bnavBtn){document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));bnavBtn.classList.add('active');}
+  iniciarRealtime();
+}
+
+// ══════════════════════════════════════════════════════════
+// REALTIME — mantiene la pantalla actualizada sola cuando otra
+// persona (u otra pestaña) cambia algo, sin necesidad de F5.
+// Estrategia: al llegar cualquier evento en una tabla, recargamos
+// esa tabla desde Supabase y volvemos a pintar la vista activa.
+// Recargar en vez de parchar en memoria evita desincronizaciones
+// (por ejemplo, brief con links/archivos serializados adentro).
+// ══════════════════════════════════════════════════════════
+let _realtimeChannel=null;
+let _rtRenderTimer=null;
+
+// Junta varios eventos que lleguen casi al mismo tiempo (ej. crear un
+// proyecto + su primera tarea) en un solo re-render, para no parpadear.
+function rtRenderDebounced(){
+  clearTimeout(_rtRenderTimer);
+  _rtRenderTimer=setTimeout(()=>{
+    // Si hay un modal de tarea/proyecto abierto, no lo tocamos — evita borrar
+    // texto que la persona está escribiendo justo cuando llega un cambio ajeno.
+    // El tablero de atrás sí se actualiza; el modal se refresca al cerrarlo.
+    const modalAbierto=document.getElementById('modal-tarea')?.classList.contains('open')
+      ||document.getElementById('modal-pt')?.classList.contains('open')
+      ||document.getElementById('modal-proy')?.classList.contains('open');
+    render();
+    if(proyActualId&&!modalAbierto)renderDetalle();
+    const vistaAct=document.querySelector('.vista.active')?.id;
+    if(vistaAct==='vista-miDia')renderMiDia();
+    if(vistaAct==='vista-calendario')renderCal();
+    if(vistaAct==='vista-reportes')renderReporte();
+    if(vistaAct==='vista-proyectos'&&!proyActualId)renderProyectos();
+  },250);
+}
+
+function iniciarRealtime(){
+  if(_realtimeChannel)return; // ya está corriendo (evita doble suscripción)
+  const filtroDept=DEPT_ID?`departamento_id=eq.${DEPT_ID}`:undefined;
+  _realtimeChannel=sb.channel('kotowa-realtime')
+    .on('postgres_changes',{event:'*',schema:'public',table:'tareas',filter:filtroDept},async()=>{
+      await cargarTareas();rtRenderDebounced();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'proyectos',filter:filtroDept},async()=>{
+      await cargarProyectos();rtRenderDebounced();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'notificaciones',filter:filtroDept},async()=>{
+      await cargarNotificaciones();
+      if(document.getElementById('notif-panel')?.classList.contains('open'))renderNotifPanel();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'propuestas',filter:filtroDept},async()=>{
+      await cargarPropuestas();
+      if(document.getElementById('vista-propuestas')?.classList.contains('active'))renderPropuestas();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'comentarios'},async(payload)=>{
+      // Los comentarios no tienen departamento_id propio — filtramos por si aplica a la tarea abierta
+      const tid=payload.new?.tarea_id||payload.old?.tarea_id;
+      if(tid&&tid===editTareaId){await cargarComentarios(tid);renderComentarios();}
+    })
+    .subscribe();
 }
 
 // ══════════════════════════════════════════════════════════

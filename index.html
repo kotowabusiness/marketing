@@ -556,6 +556,14 @@ table.rt tr:last-child td{border-bottom:none;}
 .fg{display:flex;flex-direction:column;gap:.4rem;}
 .flabel{font-size:11px;font-weight:700;color:var(--v-700);text-transform:uppercase;letter-spacing:.6px;}
 .fi,.fs,.fta{font-family:var(--font-body);font-size:13.5px;padding:10px 13px;border:1.5px solid var(--gray2);border-radius:10px;color:var(--ink);background:var(--white);transition:border-color .15s;outline:none;}
+/* COMBOBOX "Depende de" — búsqueda con dropdown propio, reemplaza el <select> nativo */
+.dep-dropdown{position:absolute;top:100%;left:0;right:0;margin-top:4px;background:var(--white);border:1.5px solid var(--gray2);border-radius:10px;box-shadow:0 8px 24px rgba(20,30,25,.14);max-height:260px;overflow-y:auto;z-index:50;}
+.dep-opt{padding:8px 13px;font-family:var(--font-body);font-size:12.5px;color:var(--dark);cursor:pointer;display:flex;align-items:baseline;gap:.4rem;flex-wrap:wrap;line-height:1.4;}
+.dep-opt:hover,.dep-opt.hl{background:var(--v-50);}
+.dep-opt.sel{background:var(--v-100);}
+.dep-opt-proy{font-weight:700;color:var(--v-700);flex-shrink:0;}
+.dep-opt-ninguna{color:var(--gray3);font-style:italic;}
+.dep-empty{padding:.9rem;text-align:center;font-size:11.5px;color:var(--gray3);}
 .fi:focus,.fs:focus,.fta:focus{border-color:var(--verde);}
 .fta{resize:vertical;min-height:70px;}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
@@ -1376,7 +1384,15 @@ table.rt tr:last-child td{border-bottom:none;}
         </div>
         <div id="f-deadline-hint" style="display:none;font-size:11px;color:var(--gray3);margin-top:.35rem;">Esta tarea est&aacute; en Hoy, por eso la fecha es hoy. Mu&eacute;vela de vuelta a Pendientes para volver a editar su fecha de entrega.</div>
       </div>
-      <div class="fg"><label class="flabel">Depende de <span style="font-weight:400;color:var(--gray3)">(opcional — agrupa autom&aacute;ticamente en un proyecto)</span></label><select class="fs" id="f-dep-tarea"><option value="">Ninguna</option></select></div>
+      <div class="fg" style="position:relative;">
+        <label class="flabel">Depende de <span style="font-weight:400;color:var(--gray3)">(opcional — agrupa autom&aacute;ticamente en un proyecto)</span></label>
+        <input type="hidden" id="f-dep-tarea">
+        <input type="text" class="fi" id="f-dep-buscar" placeholder="Ninguna &mdash; escribe para buscar..." autocomplete="off"
+          oninput="depFiltrar('f-dep-buscar','f-dep-lista','f-dep-tarea')"
+          onfocus="depAbrir('f-dep-buscar','f-dep-lista','f-dep-tarea')"
+          onkeydown="depTeclado(event,'f-dep-lista','f-dep-tarea','f-dep-buscar')">
+        <div class="dep-dropdown" id="f-dep-lista" style="display:none;"></div>
+      </div>
       <div class="fg" id="entrega-calc-grp" style="display:none;">
         <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
         <div class="entrega-calc-box" id="entrega-calc-box">&mdash;</div>
@@ -2149,21 +2165,98 @@ function poblarSelectResp(id){
   const val=sel.value;sel.innerHTML='';
   usuarios.forEach(u=>{const o=document.createElement('option');o.value=u.id;o.textContent=u.nombre;if(u.id===val)o.selected=true;sel.appendChild(o);});
 }
-// Puebla el selector "Depende de" con todas las tareas activas excepto la tarea actual
-function poblarSelectDep(selectId, excluirId=null){
-  const sel=document.getElementById(selectId);
-  if(!sel)return;
+// ══════════════════════════════════════════════════════════
+// COMBOBOX "Depende de" — input con búsqueda + dropdown propio.
+// Reemplaza el <select> nativo (con decenas de tareas era difícil de usar).
+// Guarda las opciones ya ordenadas alfabéticamente por título; el campo
+// oculto (hiddenId) conserva el id de la tarea seleccionada, igual que
+// antes, así el resto del código (guardarTarea, etc.) no cambia.
+// ══════════════════════════════════════════════════════════
+let _depOpciones=[]; // [{id, titulo, proyNombre}] de la instancia de combobox abierta actualmente
+let _depHlIdx=-1; // índice resaltado con teclado
+
+function poblarSelectDep(hiddenId, excluirId=null){
   const activas=tareas.filter(t=>t.id!==excluirId&&t.estado!=='aprobado')
+    .map(t=>({id:t.id,titulo:t.titulo,proyNombre:t.proyId?(proyectos.find(p=>p.id===t.proyId)?.nombre||''):''}))
     .sort((a,b)=>a.titulo.localeCompare(b.titulo,'es'));
-  sel.innerHTML='<option value="">Ninguna</option>';
-  activas.forEach(t=>{
-    const o=document.createElement('option');
-    o.value=t.id;
-    const proj=t.proyId?proyectos.find(p=>p.id===t.proyId):null;
-    o.textContent=(proj?`[${esc(proj.nombre)}] `:'')+esc(t.titulo);
-    sel.appendChild(o);
-  });
+  // Guardamos las opciones en el propio input de búsqueda, para que cada combobox
+  // (modal principal vs modal de proyecto, si se usara ahí) tenga su propia lista.
+  const buscarId=hiddenId==='f-dep-tarea'?'f-dep-buscar':null;
+  if(buscarId){
+    const inp=document.getElementById(buscarId);
+    if(inp)inp._depOpciones=activas;
+  }
 }
+
+function depOpcionesDe(buscarId){
+  return document.getElementById(buscarId)?._depOpciones||[];
+}
+
+function depEtiqueta(op){
+  return op.proyNombre?`${op.proyNombre} — ${op.titulo}`:op.titulo;
+}
+
+function depFiltrar(buscarId,listaId,hiddenId){
+  const q=document.getElementById(buscarId).value.trim().toLowerCase();
+  const opciones=depOpcionesDe(buscarId);
+  const filtradas=q?opciones.filter(o=>depEtiqueta(o).toLowerCase().includes(q)):opciones;
+  _depHlIdx=-1;
+  renderDepDropdown(filtradas,listaId,hiddenId,buscarId,q);
+  // Si el usuario borra el texto por completo, también se limpia la selección
+  if(!q)document.getElementById(hiddenId).value='';
+}
+
+function renderDepDropdown(filtradas,listaId,hiddenId,buscarId,q){
+  const cont=document.getElementById(listaId);
+  const valSel=document.getElementById(hiddenId).value;
+  let html='';
+  if(!q){
+    html+=`<div class="dep-opt dep-opt-ninguna${!valSel?' sel':''}" onclick="depSeleccionar(null,'${buscarId}','${listaId}','${hiddenId}')">Ninguna</div>`;
+  }
+  if(!filtradas.length){
+    html+=`<div class="dep-empty">Sin resultados</div>`;
+  } else {
+    filtradas.forEach((op,i)=>{
+      const cls=`dep-opt${op.id===valSel?' sel':''}${i===_depHlIdx?' hl':''}`;
+      html+=`<div class="${cls}" data-idx="${i}" onclick="depSeleccionar('${op.id}','${buscarId}','${listaId}','${hiddenId}')">${op.proyNombre?`<span class="dep-opt-proy">${esc(op.proyNombre)}</span>`:''}<span>${esc(op.titulo)}</span></div>`;
+    });
+  }
+  cont.innerHTML=html;
+  cont.style.display='block';
+  cont.dataset.filtradas=JSON.stringify(filtradas.map(o=>o.id));
+}
+
+function depAbrir(buscarId,listaId,hiddenId){
+  const opciones=depOpcionesDe(buscarId);
+  _depHlIdx=-1;
+  renderDepDropdown(opciones,listaId,hiddenId,buscarId,'');
+}
+
+function depSeleccionar(id,buscarId,listaId,hiddenId){
+  const opciones=depOpcionesDe(buscarId);
+  const op=id?opciones.find(o=>o.id===id):null;
+  document.getElementById(hiddenId).value=id||'';
+  document.getElementById(buscarId).value=op?depEtiqueta(op):'';
+  document.getElementById(listaId).style.display='none';
+}
+
+function depTeclado(e,listaId,hiddenId,buscarId){
+  const cont=document.getElementById(listaId);
+  if(cont.style.display==='none'&&(e.key==='ArrowDown'||e.key==='Enter')){depAbrir(buscarId,listaId,hiddenId);return;}
+  const filtradasIds=JSON.parse(cont.dataset.filtradas||'[]');
+  const opts=[...cont.querySelectorAll('.dep-opt:not(.dep-opt-ninguna)')];
+  if(e.key==='ArrowDown'){e.preventDefault();_depHlIdx=Math.min(_depHlIdx+1,opts.length-1);opts.forEach((o,i)=>o.classList.toggle('hl',i===_depHlIdx));opts[_depHlIdx]?.scrollIntoView({block:'nearest'});}
+  else if(e.key==='ArrowUp'){e.preventDefault();_depHlIdx=Math.max(_depHlIdx-1,0);opts.forEach((o,i)=>o.classList.toggle('hl',i===_depHlIdx));opts[_depHlIdx]?.scrollIntoView({block:'nearest'});}
+  else if(e.key==='Enter'){e.preventDefault();if(_depHlIdx>=0&&filtradasIds[_depHlIdx])depSeleccionar(filtradasIds[_depHlIdx],buscarId,listaId,hiddenId);}
+  else if(e.key==='Escape'){cont.style.display='none';}
+}
+
+// Cerrar el dropdown al hacer click fuera
+document.addEventListener('click',e=>{
+  if(!e.target.closest('#f-dep-buscar')&&!e.target.closest('#f-dep-lista')){
+    const l=document.getElementById('f-dep-lista');if(l)l.style.display='none';
+  }
+});
 
 function poblarSelectTipo(id){
   const sel=document.getElementById(id);if(!sel)return;
@@ -3265,6 +3358,12 @@ async function editarTarea(id,e){
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');poblarSelectDep('f-dep-tarea',id);
   document.getElementById('f-resp').value=t.responsable||'';document.getElementById('f-tipo').value=t.tipo||'otro';
   document.getElementById('f-dep-tarea').value=t.depId||'';
+  const depBuscarEl=document.getElementById('f-dep-buscar');
+  if(depBuscarEl){
+    const depTarea=t.depId?tareas.find(x=>x.id===t.depId):null;
+    depBuscarEl.value=depTarea?depEtiqueta({titulo:depTarea.titulo,proyNombre:depTarea.proyId?(proyectos.find(p=>p.id===depTarea.proyId)?.nombre||''):''}):'';
+  }
+  document.getElementById('f-dep-lista').style.display='none';
   // Cargar links existentes
   modalLinks=tareasLinks[id]?[...tareasLinks[id]]:(t.links?[...t.links]:[]);
   renderModalLinks();
@@ -3306,6 +3405,10 @@ function abrirModal(){
   document.querySelector('.comments-section').style.display='none';
   poblarSelectResp('f-resp');poblarSelectTipo('f-tipo');poblarSelectDep('f-dep-tarea',null);
   document.getElementById('f-dep-tarea').value='';
+  const depBuscarNew=document.getElementById('f-dep-buscar');
+  if(depBuscarNew)depBuscarNew.value='';
+  const depListaNew=document.getElementById('f-dep-lista');
+  if(depListaNew)depListaNew.style.display='none';
   document.getElementById('modal-tarea').classList.add('open');setTimeout(()=>document.getElementById('f-titulo').focus(),60);
 }
 // LINKS

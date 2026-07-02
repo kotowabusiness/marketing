@@ -321,6 +321,42 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .sbar-f{height:100%;border-radius:2px;background:var(--verde);}
 .sbar-f.w{background:var(--warning);}.sbar-f.b{background:var(--urgente);}
 .sfooter{margin-top:.7rem;padding-top:.6rem;border-top:1px solid var(--gray1);font-size:10px;color:var(--gray3);}
+/* REPORTES v2 — tarjeta horizontal por persona (reemplaza el grid de score cards) */
+.rperson-list{display:flex;flex-direction:column;gap:.6rem;margin-bottom:1.25rem;}
+.rperson-card{background:var(--white);border:1px solid var(--gray2);border-radius:14px;padding:.85rem 1.1rem;display:flex;align-items:center;gap:1rem;cursor:pointer;transition:box-shadow .12s,transform .12s;}
+.rperson-card:hover{box-shadow:0 4px 14px rgba(20,30,25,.08);transform:translateY(-1px);}
+.rperson-card.sinDatos{opacity:.6;cursor:default;}
+.rperson-card.sinDatos:hover{box-shadow:none;transform:none;}
+.rperson-avatar{width:40px;height:40px;border-radius:50%;background:var(--v-700);color:var(--white);font-family:var(--font-display);font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rperson-body{flex:1;min-width:0;}
+.rperson-hdr{display:flex;align-items:baseline;gap:8px;margin-bottom:6px;}
+.rperson-nom{font-size:13.5px;font-weight:700;color:var(--dark);}
+.rperson-sub{font-size:11px;color:var(--gray3);}
+.rperson-metrics{display:flex;gap:16px;}
+.rperson-metric{flex:1;}
+.rperson-metric-top{display:flex;justify-content:space-between;font-size:10.5px;color:var(--gray3);margin-bottom:3px;}
+.rperson-metric-val{font-weight:700;color:var(--dark);}
+.rperson-bar{height:4px;background:var(--gray1);border-radius:99px;overflow:hidden;}
+.rperson-bar-f{height:100%;border-radius:99px;background:var(--verde);}
+.rperson-bar-f.warn{background:var(--warning);}.rperson-bar-f.bad{background:var(--urgente);}
+.rperson-grade{text-align:center;flex-shrink:0;width:44px;}
+.rperson-grade-letra{font-size:22px;font-weight:800;font-family:var(--font-display);line-height:1;}
+.rperson-grade-letra.A{color:var(--verde);}.rperson-grade-letra.B{color:var(--azul);}.rperson-grade-letra.C{color:var(--warning);}.rperson-grade-letra.D,.rperson-grade-letra.F{color:var(--urgente);}
+/* Detalle individual */
+.rdet-back{background:none;border:1px solid var(--gray2);padding:6px 12px;border-radius:9px;font-family:var(--font-body);font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);transition:all .12s;}
+.rdet-back:hover{background:var(--verde);color:var(--white);border-color:var(--verde);}
+.rdet-hdr{display:flex;align-items:center;gap:14px;margin-bottom:1.5rem;}
+.rdet-avatar{width:52px;height:52px;border-radius:50%;background:var(--v-700);color:var(--white);font-family:var(--font-display);font-weight:700;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rdet-nom{font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--dark);}
+.rdet-sub{font-size:12px;color:var(--gray3);margin-top:1px;}
+.rdet-grade{text-align:center;}
+.rdet-grade-letra{font-size:32px;font-weight:800;font-family:var(--font-display);line-height:1;}
+.rdet-grade-pct{font-size:11px;color:var(--gray3);margin-top:2px;}
+.rdet-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:.65rem;margin-bottom:1.5rem;}
+.rdet-metric{background:var(--gray1);border-radius:10px;padding:.85rem;}
+.rdet-metric-lbl{font-size:11px;color:var(--gray3);margin-bottom:4px;}
+.rdet-metric-val{font-size:22px;font-weight:800;font-family:var(--font-display);color:var(--dark);}
+.rdet-metric-sub{font-size:10.5px;color:var(--gray3);margin-top:2px;}
 .rsum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.75rem;margin-bottom:1.25rem;}
 .rsum-card{background:var(--white);border-radius:14px;padding:.9rem 1rem;box-shadow:0 1px 2px rgba(20,30,25,.04);border:1px solid var(--gray2);text-align:center;}
 .rsum-n{font-size:26px;font-weight:800;font-family:var(--font-display);color:var(--dark);line-height:1;}
@@ -4101,6 +4137,8 @@ async function agregarTipo(){const nom=document.getElementById('nuevo-tipo-nom')
 async function eliminarTipo(id){if(!confirm('¿Eliminar este tipo?'))return;const{error}=await sbEliminarMatriz(id);if(error){toast('Error: '+error.message);return;}matrizData=matrizData.filter(m=>m.id!==id);renderMatriz();poblarFiltros();toast('Tipo eliminado');}
 
 // REPORTES
+let reporteDetalleUid=null; // uid de la persona abierta en detalle, o null = vista de equipo
+
 function getRango(){const hoy=new Date();hoy.setHours(23,59,59,999);if(periodoActivo==='todo')return{desde:new Date(0),hasta:hoy};if(periodoActivo==='mes')return{desde:new Date(hoy.getFullYear(),hoy.getMonth(),1),hasta:hoy};const lun=new Date(hoy);lun.setHours(0,0,0,0);lun.setDate(hoy.getDate()-(hoy.getDay()===0?6:hoy.getDay()-1));return{desde:lun,hasta:hoy};}
 // Score parametrizable por rango — usado en Reportes y en "Mi día".
 // Ya NO depende de cuánto tarde el gerente en aprobar — eso no es responsabilidad
@@ -4137,13 +4175,20 @@ function calcScore(uid){
   const{desde,hasta}=getRango();
   return calcScorePeriodo(uid,desde,hasta);
 }
+
+// ¿Puede esta persona ver el reporte/score de uid? Colaborador: solo el suyo.
+function puedeVerReporteDe(uid){
+  if(PERFIL?.rol!=='colaborador')return true;
+  return uid===USER.id;
+}
+
 function renderReporte(){
+  // Si hay un detalle abierto, esa es la vista activa
+  if(reporteDetalleUid){renderReporteDetalle(reporteDetalleUid);return;}
   const{desde,hasta}=getRango();
-  const apr=tareas.filter(t=>t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
+  const esColab=PERFIL?.rol==='colaborador';
   const act=tareas.filter(t=>t.estado==='pendiente'||t.estado==='proceso');
   const ven=tareas.filter(t=>t.fecha&&t.estado!=='aprobado'&&new Date(t.fecha+'T23:59:59')<new Date());
-  const hT=act.reduce((s,t)=>s+(t.horas||0),0);
-  const esColab=PERFIL?.rol==='colaborador';
   // Colaborador solo ve sus propias tareas en los resúmenes
   const tareasVis=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
   const aprVis=tareasVis.filter(t=>t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
@@ -4151,21 +4196,88 @@ function renderReporte(){
   const venVis=tareasVis.filter(t=>t.fecha&&t.estado!=='aprobado'&&new Date(t.fecha+'T23:59:59')<new Date());
   const hTVis=actVis.reduce((s,t)=>s+(t.horas||0),0);
   let html=`<div class="rsum-grid"><div class="rsum-card"><div class="rsum-n" style="color:var(--verde)">${aprVis.length}</div><div class="rsum-l">Completadas</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--gold)">${actVis.length}</div><div class="rsum-l">En progreso</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--urgente)">${venVis.length}</div><div class="rsum-l">Vencidas</div></div><div class="rsum-card"><div class="rsum-n">${hTVis.toFixed(0)}</div><div class="rsum-l">Horas en cola</div></div></div>`;
-  html+=`<div class="score-grid">`;
-  // Colaborador solo ve su propio score, gerente y admin ven todos
+
+  // Colaborador solo ve su propia tarjeta; gerente y admin ven a todo el equipo
   const usuariosReporte=esColab?usuarios.filter(u=>u.id===USER.id):usuarios;
+  html+=`<div class="rperson-list">`;
   usuariosReporte.forEach(u=>{
     const s=calcScore(u.id);
-    if(!s){html+=`<div class="scard"><div class="snom">${esc(u.nombre)}</div><div style="font-size:11px;color:var(--gray3);margin-top:.5rem">Sin tareas completadas en este periodo.</div></div>`;return;}
-    const gc=s.pF>=90?'g':s.pF>=70?'w':'b',hc=s.pH>=90?'g':s.pH>=70?'w':'b',rc=s.pR>=90?'g':s.pR>=70?'w':'b';
-    html+=`<div class="scard"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.6rem;"><div><div class="snom">${esc(u.nombre)}</div><div class="ssub">${s.total} tarea${s.total!==1?'s':''} completadas</div></div><div><div class="sgrade ${s.grade}">${s.grade}</div><div style="font-size:10px;text-align:center;color:var(--gray3)">${s.score}%</div></div></div><div class="smet"><div class="smet-row"><span class="smet-lbl">Entregas a tiempo</span><span class="smet-val ${gc}">${s.pF}%</span></div><div class="sbar"><div class="sbar-f ${s.pF<70?'b':s.pF<90?'w':''}" style="width:${s.pF}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Entregas sin cambios</span><span class="smet-val ${rc}">${s.pR}%</span></div><div class="sbar"><div class="sbar-f ${s.pR<70?'b':s.pR<90?'w':''}" style="width:${s.pR}%"></div></div><div class="smet-row" style="margin-top:.3rem;"><span class="smet-lbl">Precisión estimación</span><span class="smet-val ${hc}">${s.pH}%</span></div><div class="sbar"><div class="sbar-f ${s.pH<70?'b':s.pH<90?'w':''}" style="width:${s.pH}%"></div></div></div><div class="sfooter">Score = 50% a tiempo · 30% sin cambios · 20% estimación</div></div>`;
+    const ini=(u.nombre||'?').charAt(0).toUpperCase();
+    if(!s){
+      html+=`<div class="rperson-card sinDatos"><div class="rperson-avatar">${ini}</div><div class="rperson-body"><span class="rperson-nom">${esc(u.nombre)}</span><span class="rperson-sub" style="margin-left:8px;">Sin tareas completadas en este per&iacute;odo</span></div></div>`;
+      return;
+    }
+    const barCls=v=>v>=90?'':v>=70?'warn':'bad';
+    html+=`<div class="rperson-card" onclick="abrirReporteDetalle('${u.id}')">
+      <div class="rperson-avatar">${ini}</div>
+      <div class="rperson-body">
+        <div class="rperson-hdr"><span class="rperson-nom">${esc(u.nombre)}</span><span class="rperson-sub">${s.total} tarea${s.total!==1?'s':''} completadas</span></div>
+        <div class="rperson-metrics">
+          <div class="rperson-metric"><div class="rperson-metric-top"><span>A tiempo</span><span class="rperson-metric-val">${s.pF}%</span></div><div class="rperson-bar"><div class="rperson-bar-f ${barCls(s.pF)}" style="width:${s.pF}%"></div></div></div>
+          <div class="rperson-metric"><div class="rperson-metric-top"><span>Sin cambios</span><span class="rperson-metric-val">${s.pR}%</span></div><div class="rperson-bar"><div class="rperson-bar-f ${barCls(s.pR)}" style="width:${s.pR}%"></div></div></div>
+          <div class="rperson-metric"><div class="rperson-metric-top"><span>Estimaci&oacute;n</span><span class="rperson-metric-val">${s.pH}%</span></div><div class="rperson-bar"><div class="rperson-bar-f ${barCls(s.pH)}" style="width:${s.pH}%"></div></div></div>
+        </div>
+      </div>
+      <div class="rperson-grade"><div class="rperson-grade-letra ${s.grade}">${s.grade}</div></div>
+    </div>`;
   });
   html+=`</div>`;
-  const histBase=esColab?tareas.filter(t=>t.responsable===USER.id):tareas;
-  const hist=histBase.filter(t=>t.aprobadoEn&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime()).sort((a,b)=>b.aprobadoEn-a.aprobadoEn);
-  html+=`<div class="rsec"><div class="rsec-ttl">Historial</div>`;
+  document.getElementById('rep-body').innerHTML=html;
+}
+
+// Detalle de una persona: métricas grandes + su propio historial de entregas.
+// Reemplaza el contenido de la pantalla (no es un modal), con botón de regresar.
+function abrirReporteDetalle(uid){
+  if(!puedeVerReporteDe(uid))return; // blindaje: colaborador no puede abrir el de otros
+  reporteDetalleUid=uid;
+  renderReporteDetalle(uid);
+}
+function cerrarReporteDetalle(){
+  reporteDetalleUid=null;
+  renderReporte();
+}
+function renderReporteDetalle(uid){
+  if(!puedeVerReporteDe(uid)){reporteDetalleUid=null;renderReporte();return;}
+  const u=usuarios.find(x=>x.id===uid);
+  if(!u){reporteDetalleUid=null;renderReporte();return;}
+  const{desde,hasta}=getRango();
+  const s=calcScorePeriodo(uid,desde,hasta);
+  const ini=(u.nombre||'?').charAt(0).toUpperCase();
+  let html=`<button class="rdet-back" onclick="cerrarReporteDetalle()">&larr; Equipo</button>`;
+  html+=`<div class="rdet-hdr" style="margin-top:1rem;">
+    <div class="rdet-avatar">${ini}</div>
+    <div style="flex:1;">
+      <div class="rdet-nom">${esc(u.nombre)}</div>
+      <div class="rdet-sub">${s?`${s.total} tarea${s.total!==1?'s':''} completadas en este per&iacute;odo`:'Sin tareas completadas en este per&iacute;odo'}</div>
+    </div>`;
+  if(s)html+=`<div class="rdet-grade"><div class="rdet-grade-letra ${s.grade}">${s.grade}</div><div class="rdet-grade-pct">${s.score}%</div></div>`;
+  html+=`</div>`;
+
+  if(s){
+    html+=`<div class="rdet-metrics">
+      <div class="rdet-metric"><div class="rdet-metric-lbl">Entregas a tiempo</div><div class="rdet-metric-val">${s.pF}%</div><div class="rdet-metric-sub">${s.totalEntregas} entrega${s.totalEntregas!==1?'s':''} a revisi&oacute;n</div></div>
+      <div class="rdet-metric"><div class="rdet-metric-lbl">Sin rondas de cambio</div><div class="rdet-metric-val">${s.pR}%</div><div class="rdet-metric-sub">de lo aprobado en el per&iacute;odo</div></div>
+      <div class="rdet-metric"><div class="rdet-metric-lbl">Precisi&oacute;n estimaci&oacute;n</div><div class="rdet-metric-val">${s.pH}%</div><div class="rdet-metric-sub">horas reales vs estimadas</div></div>
+    </div>`;
+  }
+
+  const hist=tareas.filter(t=>t.responsable===uid&&t.aprobadoEn&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime()).sort((a,b)=>b.aprobadoEn-a.aprobadoEn);
+  html+=`<div class="rsec"><div class="rsec-ttl">Historial de entregas</div>`;
   if(!hist.length)html+=`<div class="r-empty">Sin tareas aprobadas en este periodo.</div>`;
-  else{html+=`<table class="rt"><thead><tr><th>Tarea</th><th>Responsable</th><th>H. est.</th><th>H. reales</th><th>Deadline</th><th>Cumplimiento</th></tr></thead><tbody>`;hist.forEach(t=>{const rH=t.inicioProcess&&t.aprobadoEn?((t.aprobadoEn-t.inicioProcess)/3600000).toFixed(1):'-';let c='',cls='';if(t.fecha){const ok=t.aprobadoEn<=new Date(t.fecha+'T23:59:59').getTime();if(ok){c='A tiempo';cls='ok';}else{const d=Math.round((t.aprobadoEn-new Date(t.fecha+'T23:59:59').getTime())/86400000);c=`${d}d tarde`;cls='tarde';}}else{c='Sin fecha';cls='puntual';}html+=`<tr><td><strong>${esc(t.titulo)}</strong></td><td>${esc(getUsuarioNombre(t.responsable).split(' ')[0])}</td><td>${t.horas||'-'}h</td><td>${rH}h</td><td style="color:var(--gray3);font-size:11px">${t.fecha||'—'}</td><td><span class="rb ${cls}">${c}</span></td></tr>`;});html+=`</tbody></table>`;}
+  else{
+    html+=`<table class="rt"><thead><tr><th>Tarea</th><th>H. est.</th><th>H. reales</th><th>Deadline</th><th>Cumplimiento</th></tr></thead><tbody>`;
+    hist.forEach(t=>{
+      const rH=t.inicioProcess&&t.aprobadoEn?((t.aprobadoEn-t.inicioProcess)/3600000).toFixed(1):'-';
+      let c='',cls='';
+      if(t.fecha){
+        const ok=t.aprobadoEn<=new Date(t.fecha+'T23:59:59').getTime();
+        if(ok){c='A tiempo';cls='ok';}
+        else{const d=Math.round((t.aprobadoEn-new Date(t.fecha+'T23:59:59').getTime())/86400000);c=`${d}d tarde`;cls='tarde';}
+      }else{c='Sin fecha';cls='puntual';}
+      html+=`<tr><td><strong>${esc(t.titulo)}</strong></td><td>${t.horas||'-'}h</td><td>${rH}h</td><td style="color:var(--gray3);font-size:11px">${t.fecha||'—'}</td><td><span class="rb ${cls}">${c}</span></td></tr>`;
+    });
+    html+=`</tbody></table>`;
+  }
   html+=`</div>`;
   document.getElementById('rep-body').innerHTML=html;
 }

@@ -151,6 +151,10 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .col-pendientes .col-hdr{border-color:var(--gray3);}.col-pendientes .col-ttl{color:var(--gray3);}
 .col-hoy .col-hdr{border-color:#C9A84C;}.col-hoy .col-ttl{color:#B8923A;}
 .col-semana .col-hdr{border-color:var(--v-300);}.col-semana .col-ttl{color:var(--v-600);}
+.col-atrasados{background:var(--urgente-lt);}
+.col-atrasados .col-hdr{border-color:var(--urgente);}
+.col-ttl-atrasados{color:var(--urgente)!important;}
+.col-cnt-atrasados{background:var(--urgente-lt);color:var(--urgente);border-color:var(--urgente);}
 .col-revision .col-hdr{border-color:var(--azul);}.col-revision .col-ttl{color:var(--azul);}
 .col-aprobado .col-hdr{border-color:var(--verde);}.col-aprobado .col-ttl{color:var(--verde);}
 /* Tarjetas "apagadas" en columna Pendientes — no son de hoy */
@@ -1042,6 +1046,7 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
   <div class="board">
     <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></div></div>
+    <div class="col col-atrasados" id="col-atrasados"><div class="col-hdr"><span class="col-ttl col-ttl-atrasados">Atrasados</span><span class="col-cnt col-cnt-atrasados" id="cnt-atrasados">0</span></div></div>
     <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span><span class="col-cnt" id="cnt-hoy">0</span></div></div>
     <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl">Esta semana <span class="col-ttl-fecha" id="col-semana-fecha"></span></span><span class="col-cnt" id="cnt-semana">0</span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></div></div>
@@ -1567,8 +1572,8 @@ let estTimer=null, ptEstTimer=null;
 // "pendientes" y "hoy" son una clasificación derivada del plan del motor sobre
 // tareas con estado pendiente/proceso — NO son estados nuevos en BD.
 const ESTADOS=['pendiente','proceso','revision','aprobado']; // se mantiene para compat (reportes, etc.)
-const COLUMNAS=['pendientes','hoy','semana','revision','aprobado'];
-const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Culminado',pendientes:'Pendientes',semana:'Esta semana',hoy:'Hoy',culminado:'Culminado'};
+const COLUMNAS=['pendientes','atrasados','hoy','semana','revision','aprobado'];
+const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Culminado',pendientes:'Pendientes',atrasados:'Atrasados',semana:'Esta semana',hoy:'Hoy',culminado:'Culminado'};
 const EN={pendiente:'proceso',proceso:'revision',revision:'aprobado',aprobado:null};
 
 // Cache del plan por persona durante un ciclo de render — evita recalcular
@@ -1580,15 +1585,23 @@ function getPlanPersona(resp){
   return _planCache[resp];
 }
 
-// ¿Esta tarea está asignada a HOY? Ahora es 100% manual: solo si tú la fijaste a hoy
-// (arrastrándola o seleccionándola en el modal), nunca porque el motor la haya movido solo.
+// ¿Esta tarea está asignada a HOY? 100% manual: solo si tú la fijaste a hoy.
 function esDeHoy(t){
   if(t.estado!=='pendiente'&&t.estado!=='proceso')return false;
   return t.dia_fijado===hoyStr();
 }
 
-// ¿La fecha de esta tarea cae dentro de los próximos 7 días? (incluye hoy). Esto es
-// automático y solo informativo — nunca mueve nada, solo clasifica visualmente.
+// ¿Esta tarea tiene fecha pasada (atrasada)? Solo aplica a pendientes/proceso
+// que no estén fijadas manualmente a Hoy.
+function esAtrasada(t){
+  if(t.estado!=='pendiente'&&t.estado!=='proceso')return false;
+  if(esDeHoy(t))return false; // si la fijaste a Hoy manualmente, no es "atrasada" — es de hoy
+  if(!t.fecha)return false;
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  return fechaLocal(t.fecha)<hoy;
+}
+
+// ¿La fecha de esta tarea cae dentro de los próximos 7 días? (incluye hoy).
 function esEstaSemana(t){
   if(!t.fecha)return false;
   const hoy=new Date();hoy.setHours(0,0,0,0);
@@ -1603,6 +1616,7 @@ function columnaDe(t){
   if(t.estado==='aprobado')return 'aprobado';
   if(t.estado==='pendiente'||t.estado==='proceso'){
     if(esDeHoy(t))return 'hoy';
+    if(esAtrasada(t))return 'atrasados';
     if(esEstaSemana(t))return 'semana';
     return 'pendientes';
   }
@@ -4748,6 +4762,7 @@ async function moverAColumna(id,colDestino){
     await notificarAprobado(t);
   } else {
     if(colDestino==='semana')toast('"Esta semana" se llena sola según la fecha — no se puede arrastrar aquí');
+    if(colDestino==='atrasados')toast('"Atrasados" se llena sola automáticamente — ponle una nueva fecha para moverlo');
     return;
   }
 

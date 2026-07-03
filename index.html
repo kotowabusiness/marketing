@@ -668,6 +668,36 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-preview-card{background:var(--white);border-radius:10px;padding:.75rem;border-left:4px solid;box-shadow:0 1px 3px rgba(0,0,0,.08);}
 .config-preview-card-title{font-size:12px;font-weight:600;margin-bottom:.35rem;}
 .config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
+/* ── POR TIENDA ── */
+.por-tienda-wrap{padding:1.5rem 2rem 2rem;}
+.tienda-acc{background:var(--white);border:1px solid var(--gray2);border-radius:14px;margin-bottom:.5rem;overflow:hidden;}
+.tienda-acc.vacia{opacity:.55;}
+.tienda-acc-hdr{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;cursor:pointer;transition:background .12s;}
+.tienda-acc-hdr:hover{background:var(--bg-app);}
+.tienda-acc.vacia .tienda-acc-hdr{cursor:default;}
+.tienda-acc.vacia .tienda-acc-hdr:hover{background:none;}
+.tienda-acc-chevron{font-size:10px;color:var(--gray3);flex-shrink:0;width:12px;transition:transform .15s;}
+.tienda-acc-nom{font-size:13.5px;font-weight:700;color:var(--dark);flex:1;}
+.tienda-acc-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:10px;background:var(--gray1);color:var(--gray3);}
+.tienda-acc-cnt{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;}
+.tienda-acc-cnt.hay{background:var(--gold-lt);color:#8A6A1F;}
+.tienda-acc-cnt.vacio{background:var(--gray1);color:var(--gray3);}
+.tienda-acc-body{padding:0 1.1rem .9rem 2.5rem;display:flex;flex-direction:column;gap:.4rem;}
+.tienda-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--bg-app);border-radius:9px;font-size:12px;cursor:pointer;transition:background .12s;}
+.tienda-item:hover{background:var(--v-50);}
+.tienda-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.tienda-item-dot.urgente{background:var(--urgente);}.tienda-item-dot.normal{background:var(--gold);}.tienda-item-dot.baja{background:var(--verde);}.tienda-item-dot.neutro{background:var(--gray3);}
+.tienda-item-ttl{flex:1;color:var(--dark);}
+.tienda-item-resp{font-size:10.5px;color:var(--gray3);flex-shrink:0;}
+.tienda-vacias-toggle{text-align:center;padding:.6rem;font-size:11px;color:var(--gray3);cursor:pointer;}
+.tienda-vacias-toggle:hover{color:var(--verde);}
+/* Chips de tienda dentro del modal de tarea */
+.tienda-chips-wrap{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem;border:1.5px solid var(--gray2);border-radius:10px;min-height:44px;}
+.tienda-chip{display:flex;align-items:center;gap:.3rem;padding:4px 10px;border-radius:20px;background:var(--v-100);color:var(--v-800);font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:background .12s;}
+.tienda-chip:hover{background:var(--v-200);}
+.tienda-chip.selected{background:var(--v-700);color:var(--white);}
+.tienda-chip-tipo{opacity:.65;font-weight:400;font-size:9.5px;}
+
 /* ── CALENDARIO ── */
 .cal-wrap{padding:0;}
 .cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.75rem;}
@@ -952,6 +982,7 @@ table.rt tr:last-child td{border-bottom:none;}
 <div id="mobile-menu" style="display:none;position:fixed;bottom:60px;left:0;right:0;z-index:89;background:var(--white);border-top:1px solid var(--gray2);box-shadow:0 -4px 16px rgba(26,18,10,.1);padding:.75rem 1rem;">
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
     <button onclick="setVistaMobile('calendario',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#128197; Calendario</button>
+    <button onclick="setVistaMobile('porTienda',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#127978; Por Tienda</button>
     <button onclick="setVistaMobile('matriz',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-matriz">&#9201; Tiempos</button>
     <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-admin">&#9881; Admin</button>
     <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Montserrat',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);">&#9166; Salir</button>
@@ -988,6 +1019,7 @@ table.rt tr:last-child td{border-bottom:none;}
       <button class="sb-item" onclick="setVista('tareas',this)"><span class="sb-icon">&#9638;</span> Tablero</button>
       <button class="sb-item" onclick="setVista('proyectos',this)"><span class="sb-icon">&#9723;</span> Proyectos</button>
       <button class="sb-item" id="tab-calendario" onclick="setVista('calendario',this)"><span class="sb-icon">&#9638;</span> Calendario</button>
+      <button class="sb-item" id="tab-tiendas" onclick="setVista('porTienda',this)"><span class="sb-icon">&#127978;</span> Por Tienda</button>
     </nav>
 
     <nav class="sb-nav">
@@ -1164,6 +1196,17 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- POR TIENDA -->
+<div class="vista" id="vista-porTienda">
+  <div class="por-tienda-wrap">
+    <div class="proy-top">
+      <div class="proy-titulo">Pendientes por tienda</div>
+      <input type="text" class="fi" id="tienda-buscar" placeholder="Buscar tienda..." style="max-width:220px;" oninput="renderPorTienda()">
+    </div>
+    <div id="por-tienda-list"></div>
+  </div>
+</div>
+
 <!-- MODAL DÍA CALENDARIO -->
 <div class="modal-ov" id="modal-dia">
   <div class="modal" style="max-width:480px;">
@@ -1211,6 +1254,19 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="admin-section-title">Departamentos</div>
       <div id="depts-list"></div>
       <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalDept()">+ Nuevo departamento</button></div>
+    </div>
+    <div class="admin-section" id="admin-tiendas-section">
+      <div class="admin-section-title">&#127978; Tiendas</div>
+      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Lista de tiendas de tu departamento. Se usa para asociar pendientes a una o varias tiendas y verlos agrupados en la vista "Por Tienda".</div>
+      <div id="admin-tiendas-list" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;"></div>
+      <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
+        <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tienda</div>
+        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
+          <div class="fg" style="flex:1;min-width:180px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="tienda-nom" placeholder="ej. Justo Arosemena"></div>
+          <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tienda-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option></select></div>
+          <button class="btn-save" style="padding:7px 16px;" onclick="agregarTienda()">+ Agregar</button>
+        </div>
+      </div>
     </div>
     <div class="admin-section" id="admin-tipos-section">
       <div class="admin-section-title">&#9201; Tipos de tarea</div>
@@ -1428,6 +1484,10 @@ table.rt tr:last-child td{border-bottom:none;}
           onfocus="depAbrir('f-dep-buscar','f-dep-lista','f-dep-tarea')"
           onkeydown="depTeclado(event,'f-dep-lista','f-dep-tarea','f-dep-buscar')">
         <div class="dep-dropdown" id="f-dep-lista" style="display:none;"></div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Tienda(s) <span style="font-weight:400;color:var(--gray3)">(opcional — puedes elegir varias)</span></label>
+        <div class="tienda-chips-wrap" id="f-tiendas-chips"></div>
       </div>
       <div class="fg" id="entrega-calc-grp" style="display:none;">
         <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
@@ -1750,7 +1810,7 @@ async function iniciarApp(user){
     document.getElementById('tab-matriz').style.display='none';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas()]);
   // Poblar filtros dinámicos
   poblarFiltros();
   poblarFiltrosMobile();
@@ -1797,6 +1857,7 @@ function rtRenderDebounced(){
     const vistaAct=document.querySelector('.vista.active')?.id;
     if(vistaAct==='vista-miDia')renderMiDia();
     if(vistaAct==='vista-calendario')renderCal();
+    if(vistaAct==='vista-porTienda')renderPorTienda();
     if(vistaAct==='vista-reportes')renderReporte();
     if(vistaAct==='vista-proyectos'&&!proyActualId)renderProyectos();
   },250);
@@ -1811,6 +1872,12 @@ function iniciarRealtime(){
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'proyectos',filter:filtroDept},async()=>{
       await cargarProyectos();rtRenderDebounced();
+    })
+    .on('postgres_changes',{event:'*',schema:'public',table:'tiendas',filter:filtroDept},async()=>{
+      await cargarTiendas();
+      const vistaAct=document.querySelector('.vista.active')?.id;
+      if(vistaAct==='vista-porTienda')renderPorTienda();
+      if(vistaAct==='vista-admin')renderAdminTiendas();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'notificaciones',filter:filtroDept},async()=>{
       await cargarNotificaciones();
@@ -1890,6 +1957,7 @@ async function cargarTareas(){
       creadaEn:new Date(t.created_at).getTime(),
       horas:t.horas?parseFloat(t.horas):null,
       dia_fijado:t.dia_fijado||null,
+      tienda_ids:t.tienda_ids||[],
     };
   });
   // Persistir la corrección en Supabase silenciosamente
@@ -2116,7 +2184,53 @@ async function cargarDepts(){
 }
 
 // ══════════════════════════════════════════════════════════
-// GUARDAR EN SUPABASE
+// TIENDAS — lista maestra por departamento, usada para agrupar
+// pendientes en la vista "Por Tienda" y en el filtro multi-select
+// del modal de tarea.
+// ══════════════════════════════════════════════════════════
+let tiendas=[];
+async function cargarTiendas(){
+  try{
+    const q=sb.from('tiendas').select('*').eq('activa',true);
+    if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
+    const{data,error}=await q.order('nombre');
+    if(error){console.log('cargarTiendas:',error.message);tiendas=[];return;}
+    tiendas=data||[];
+  }catch(err){console.log('cargarTiendas error:',err);tiendas=[];}
+}
+function getTiendaNombre(id){return tiendas.find(x=>x.id===id)?.nombre||'—';}
+
+async function agregarTienda(){
+  const nom=document.getElementById('tienda-nom').value.trim();
+  const tipo=document.getElementById('tienda-tipo').value;
+  if(!nom){toast('Ingresa el nombre de la tienda');return;}
+  const deptId=DEPT_ID||(departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id;
+  const{data,error}=await sb.from('tiendas').insert({departamento_id:deptId,nombre:nom,tipo}).select().single();
+  if(error){toast('Error: '+error.message);return;}
+  tiendas.push(data);
+  tiendas.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  document.getElementById('tienda-nom').value='';
+  renderAdminTiendas();
+  toast('Tienda agregada');
+}
+async function eliminarTienda(id,nom){
+  if(!confirm(`¿Eliminar "${nom}"? Los pendientes que la tengan asociada la perderán.`))return;
+  const{error}=await sb.from('tiendas').update({activa:false}).eq('id',id);
+  if(error){toast('Error: '+error.message);return;}
+  tiendas=tiendas.filter(t=>t.id!==id);
+  renderAdminTiendas();
+  toast('Tienda eliminada');
+}
+function renderAdminTiendas(){
+  const list=document.getElementById('admin-tiendas-list');if(!list)return;
+  if(!tiendas.length){list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin tiendas todav&iacute;a &mdash; agrega la primera abajo.</div>';return;}
+  list.innerHTML=tiendas.map(t=>`<div class="pl-card">
+    <div><div class="pl-card-nom">${esc(t.nombre)}</div><div class="pl-card-sub">${t.tipo==='deli_gourmet'?'Deli Gourmet':'Tienda propia'}</div></div>
+    <button class="pl-item-del" onclick="eliminarTienda('${t.id}','${esc(t.nombre)}')" title="Eliminar">&#215;</button>
+  </div>`).join('');
+}
+
+
 // ══════════════════════════════════════════════════════════
 async function sbGuardarTarea(datos,id=null){
   // Si el usuario no tiene departamento asignado, usar mercadeo por defecto
@@ -2144,6 +2258,7 @@ async function sbGuardarTarea(datos,id=null){
     aprobado_en:datos.aprobadoEn||null,
     inicio_revision:datos.inicioRevision||null,
     dia_fijado:datos.dia_fijado||null,
+    tienda_ids:datos.tienda_ids||[],
     updated_at:new Date().toISOString(),
   };
   if(id){const{error}=await sb.from('tareas').update(row).eq('id',id);return{error,id};}
@@ -2293,6 +2408,29 @@ document.addEventListener('click',e=>{
     const l=document.getElementById('f-dep-lista');if(l)l.style.display='none';
   }
 });
+
+// ══════════════════════════════════════════════════════════
+// TIENDA(S) — chips seleccionables en el modal de tarea. Una tarea
+// puede aplicar a varias tiendas a la vez (ej. "cargar piezas digitales"
+// en 5 sucursales), por eso son chips múltiples y no un select simple.
+// ══════════════════════════════════════════════════════════
+let modalTiendaIds=[]; // ids seleccionados en el modal actualmente abierto
+
+function renderTiendaChips(){
+  const cont=document.getElementById('f-tiendas-chips');
+  if(!cont)return;
+  if(!tiendas.length){cont.innerHTML='<span style="font-size:11px;color:var(--gray3);">Sin tiendas configuradas — agrega tiendas en Admin.</span>';return;}
+  cont.innerHTML=tiendas.map(t=>{
+    const sel=modalTiendaIds.includes(t.id);
+    return`<div class="tienda-chip${sel?' selected':''}" onclick="toggleTiendaChip('${t.id}')">${esc(t.nombre)}${t.tipo==='deli_gourmet'?'<span class="tienda-chip-tipo"> · DG</span>':''}</div>`;
+  }).join('');
+}
+function toggleTiendaChip(id){
+  const idx=modalTiendaIds.indexOf(id);
+  if(idx>-1)modalTiendaIds.splice(idx,1);
+  else modalTiendaIds.push(id);
+  renderTiendaChips();
+}
 
 function poblarSelectTipo(id){
   const sel=document.getElementById(id);if(!sel)return;
@@ -3290,8 +3428,8 @@ async function marcarListo(id,e){
 }
 
 // VISTAS
-const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
+const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],porTienda:['General','Por Tienda'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
 function sortTareas(a,b){
   // Tareas sin deadline van siempre al final
   const aD=a.fecha?new Date(a.fecha+'T23:59:59'):null;
@@ -3400,6 +3538,9 @@ async function editarTarea(id,e){
     depBuscarEl.value=depTarea?depEtiqueta({titulo:depTarea.titulo,proyNombre:depTarea.proyId?(proyectos.find(p=>p.id===depTarea.proyId)?.nombre||''):''}):'';
   }
   document.getElementById('f-dep-lista').style.display='none';
+  // Cargar tienda(s) asociadas
+  modalTiendaIds=t.tienda_ids?[...t.tienda_ids]:[];
+  renderTiendaChips();
   // Cargar links existentes
   modalLinks=tareasLinks[id]?[...tareasLinks[id]]:(t.links?[...t.links]:[]);
   renderModalLinks();
@@ -3445,6 +3586,7 @@ function abrirModal(){
   if(depBuscarNew)depBuscarNew.value='';
   const depListaNew=document.getElementById('f-dep-lista');
   if(depListaNew)depListaNew.style.display='none';
+  modalTiendaIds=[];renderTiendaChips();
   document.getElementById('modal-tarea').classList.add('open');setTimeout(()=>document.getElementById('f-titulo').focus(),60);
 }
 // LINKS
@@ -3584,6 +3726,7 @@ async function guardarTarea(){
       brief:tAnterior.brief||'',horas:tAnterior.horas,inicioProcess:tAnterior.inicioProcess,
       aprobadoEn:tAnterior.aprobadoEn,proyId:tAnterior.proyId,depId:tAnterior.depId,
       dia_fijado:tAnterior.dia_fijado||null,
+      tienda_ids:tAnterior.tienda_ids||[],
       links:modalLinks.length?[...modalLinks]:null,
       archivos:modalArchivos.length?[...modalArchivos]:null,
     };
@@ -3614,7 +3757,7 @@ async function guardarTarea(){
   const sigueFijadaHoy=diaFijadoFinal===hoyStr()&&est!=='revision'&&est!=='aprobado';
   const fechaFinal=usuarioBorroFecha?null:sigueFijadaHoy?hoyStr():deadlineReal;
   const depIdSeleccionado=document.getElementById('f-dep-tarea')?.value||null;
-  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:fechaFinal,deadline_real:deadlineReal,rondas_cambio:rondasActuales,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,proyId:editTareaId?tAnterior?.proyId:null,depId:depIdSeleccionado||(editTareaId?tAnterior?.depId:null),links:modalLinks.length?[...modalLinks]:null,archivos:modalArchivos.length?[...modalArchivos]:null,dia_fijado:diaFijadoFinal};
+  const datos={titulo,prioridad:tAnterior?.prioridad||'normal',tipo:document.getElementById('f-tipo').value,responsable:document.getElementById('f-resp').value,estado:est,fecha:fechaFinal,deadline_real:deadlineReal,rondas_cambio:rondasActuales,brief:document.getElementById('f-brief').value.trim(),horas,inicioProcess:ip,aprobadoEn:ae,inicioRevision:ir,proyId:editTareaId?tAnterior?.proyId:null,depId:depIdSeleccionado||(editTareaId?tAnterior?.depId:null),links:modalLinks.length?[...modalLinks]:null,archivos:modalArchivos.length?[...modalArchivos]:null,dia_fijado:diaFijadoFinal,tienda_ids:[...modalTiendaIds]};
 
   await ejecutarGuardado(datos);
 
@@ -4370,6 +4513,13 @@ async function renderAdmin(){
     row.innerHTML=`<span style="font-size:13px;font-weight:600;flex:1;">${esc(d.nombre)}</span><span style="font-size:11px;color:var(--gray3);">/${d.slug}</span>`;
     dl.appendChild(row);
   });
+  // Tiendas — admin y gerente, por departamento
+  const tiendasSection=document.getElementById('admin-tiendas-section');
+  if(tiendasSection){
+    const puedeTiendas=esAdmin||PERFIL?.rol==='gerente';
+    tiendasSection.style.display=puedeTiendas?'':'none';
+    if(puedeTiendas)renderAdminTiendas();
+  }
   // Tipos de tarea — admin y gerente
   const tiposSection=document.getElementById('admin-tipos-section');
   if(tiposSection){renderAdminTipos();}
@@ -4830,6 +4980,85 @@ function tareasDelDia(fechaStr, respFiltro=''){
 function cargaDia(fechaStr, respFiltro=''){
   const ts=tareasDelDia(fechaStr, respFiltro).filter(t=>t.estado!=='aprobado'&&t.estado!=='revision');
   return ts.reduce((s,t)=>s+(t.horas||0),0);
+}
+
+// ══════════════════════════════════════════════════════════
+// POR TIENDA — agrupa los pendientes activos (no aprobados) por
+// tienda asociada. Una tarea con varias tiendas aparece repetida en
+// cada una de sus filas, para que cada tienda vea completo lo que le
+// corresponde. Tiendas sin pendientes se colapsan al final.
+// ══════════════════════════════════════════════════════════
+let tiendasExpandidas={}; // {tiendaId: bool} — recuerda qué acordeones están abiertos
+let mostrarTiendasVacias=false;
+
+function renderPorTienda(){
+  const cont=document.getElementById('por-tienda-list');
+  if(!cont)return;
+  const q=(document.getElementById('tienda-buscar')?.value||'').trim().toLowerCase();
+  if(!tiendas.length){
+    cont.innerHTML='<div class="r-empty">Sin tiendas configuradas todav&iacute;a.<br>Ag&reacute;galas en Admin &rarr; Tiendas para empezar a usar esta vista.</div>';
+    return;
+  }
+  const activas=tareas.filter(t=>t.estado!=='aprobado'&&t.tienda_ids&&t.tienda_ids.length);
+  const tiendasFiltradas=tiendas.filter(t=>!q||t.nombre.toLowerCase().includes(q));
+  const conPend=[],sinPend=[];
+  tiendasFiltradas.forEach(t=>{
+    const ts=activas.filter(x=>x.tienda_ids.includes(t.id)).sort((a,b)=>sortTareas(a,b));
+    (ts.length?conPend:sinPend).push({tienda:t,ts});
+  });
+
+  let html='';
+  conPend.forEach(({tienda,ts})=>{
+    const expandido=tiendasExpandidas[tienda.id]!==false; // por defecto abierta
+    html+=`<div class="tienda-acc">
+      <div class="tienda-acc-hdr" onclick="toggleTiendaAcc('${tienda.id}')">
+        <span class="tienda-acc-chevron" style="transform:rotate(${expandido?90:0}deg)">&#9654;</span>
+        <span class="tienda-acc-nom">${esc(tienda.nombre)}</span>
+        ${tienda.tipo==='deli_gourmet'?'<span class="tienda-acc-tag">Deli Gourmet</span>':''}
+        <span class="tienda-acc-cnt hay">${ts.length} pendiente${ts.length!==1?'s':''}</span>
+      </div>`;
+    if(expandido){
+      html+='<div class="tienda-acc-body">';
+      ts.forEach(t=>{
+        const cpd=colorPorDeadline(t)||'neutro';
+        html+=`<div class="tienda-item" onclick="editarTarea('${t.id}',event)">
+          <span class="tienda-item-dot ${cpd}"></span>
+          <span class="tienda-item-ttl">${esc(t.titulo)}</span>
+          <span class="tienda-item-resp">${esc(getUsuarioNombre(t.responsable).split(' ')[0]||'—')}</span>
+        </div>`;
+      });
+      html+='</div>';
+    }
+    html+='</div>';
+  });
+
+  if(sinPend.length){
+    if(!mostrarTiendasVacias){
+      html+=`<div class="tienda-vacias-toggle" onclick="mostrarTiendasVacias=true;renderPorTienda();">+ ${sinPend.length} tienda${sinPend.length!==1?'s':''} sin pendientes activos (mostrar)</div>`;
+    } else {
+      sinPend.forEach(({tienda})=>{
+        html+=`<div class="tienda-acc vacia">
+          <div class="tienda-acc-hdr">
+            <span class="tienda-acc-chevron"></span>
+            <span class="tienda-acc-nom">${esc(tienda.nombre)}</span>
+            ${tienda.tipo==='deli_gourmet'?'<span class="tienda-acc-tag">Deli Gourmet</span>':''}
+            <span class="tienda-acc-cnt vacio">Sin pendientes</span>
+          </div>
+        </div>`;
+      });
+      html+=`<div class="tienda-vacias-toggle" onclick="mostrarTiendasVacias=false;renderPorTienda();">Ocultar tiendas sin pendientes</div>`;
+    }
+  }
+
+  if(!conPend.length&&!sinPend.length){
+    html='<div class="r-empty">Ninguna tienda coincide con la b&uacute;squeda.</div>';
+  }
+
+  cont.innerHTML=html;
+}
+function toggleTiendaAcc(id){
+  tiendasExpandidas[id]=tiendasExpandidas[id]===false?true:false;
+  renderPorTienda();
 }
 
 function renderCal(){

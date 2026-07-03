@@ -507,6 +507,15 @@ table.rt tr:last-child td{border-bottom:none;}
 .pl-item-hdr{display:grid;grid-template-columns:1.6fr 1fr .9fr .8fr auto;gap:.4rem;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray3);padding-bottom:.4rem;border-bottom:1px solid var(--gray2);margin-bottom:.2rem;}
 .pl-item-del{background:none;border:none;color:var(--urgente);cursor:pointer;font-size:14px;padding:0 4px;}
 .pl-card{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:.65rem .9rem;}
+.pl-card.compact{padding:.5rem .7rem;}
+/* Listado de tiendas en Admin — agrupado por tipo, en columnas */
+.tiendas-grupo{margin-bottom:1rem;}
+.tiendas-grupo:last-child{margin-bottom:0;}
+.tiendas-grupo-ttl{font-size:10.5px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;}
+.tiendas-grupo-cnt{font-size:9.5px;font-weight:700;background:var(--gray1);color:var(--gray3);padding:1px 7px;border-radius:99px;text-transform:none;letter-spacing:0;}
+.tiendas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+@media(max-width:900px){.tiendas-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:640px){.tiendas-grid{grid-template-columns:1fr;}}
 .pl-card-nom{font-size:12.5px;font-weight:600;color:var(--dark);}
 .pl-card-sub{font-size:10px;color:var(--gray3);margin-top:1px;}
 .pl-card-actions{display:flex;gap:.4rem;}
@@ -697,6 +706,8 @@ table.rt tr:last-child td{border-bottom:none;}
 .tienda-chip:hover{background:var(--v-200);}
 .tienda-chip.selected{background:var(--v-700);color:var(--white);}
 .tienda-chip-tipo{opacity:.65;font-weight:400;font-size:9.5px;}
+.tienda-toggle-todas{background:none;border:none;color:var(--v-700);font-family:var(--font-body);font-size:10px;font-weight:700;cursor:pointer;text-transform:none;letter-spacing:0;padding:0;}
+.tienda-toggle-todas:hover{text-decoration:underline;}
 
 /* ── CALENDARIO ── */
 .cal-wrap{padding:0;}
@@ -1486,7 +1497,13 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="dep-dropdown" id="f-dep-lista" style="display:none;"></div>
       </div>
       <div class="fg">
-        <label class="flabel">Tienda(s) <span style="font-weight:400;color:var(--gray3)">(opcional — puedes elegir varias)</span></label>
+        <label class="flabel" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+          <span>Tienda(s) <span style="font-weight:400;color:var(--gray3)">(opcional — puedes elegir varias)</span></span>
+          <span style="display:flex;gap:.6rem;">
+            <button type="button" class="tienda-toggle-todas" onclick="deseleccionarTodasTiendas()" id="f-tiendas-ninguna-btn" style="display:none;">Ninguna</button>
+            <button type="button" class="tienda-toggle-todas" onclick="toggleTodasTiendas()" id="f-tiendas-toggle-btn">Seleccionar todas</button>
+          </span>
+        </label>
         <div class="tienda-chips-wrap" id="f-tiendas-chips"></div>
       </div>
       <div class="fg" id="entrega-calc-grp" style="display:none;">
@@ -1659,6 +1676,19 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg"><label class="flabel">Slug (URL)</label><input type="text" class="fi" id="df-slug" placeholder="ej. operaciones"></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-dept')">Cancelar</button><button class="btn-save" onclick="crearDept()">Crear</button></div>
+  </div>
+</div>
+
+<!-- MODAL EDITAR TIENDA -->
+<div class="modal-ov" id="modal-tienda">
+  <div class="modal">
+    <div class="mhdr"><span class="mttl">Editar tienda</span><button class="mclose" onclick="cerrarModal('modal-tienda')">&#215;</button></div>
+    <div class="mbody">
+      <input type="hidden" id="tf-id">
+      <div class="fg"><label class="flabel">Nombre</label><input type="text" class="fi" id="tf-nom" placeholder="ej. Justo Arosemena"></div>
+      <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tf-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option></select></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-tienda')">Cancelar</button><button class="btn-del" onclick="eliminarTiendaDesdeModal()">Eliminar</button><button class="btn-save" onclick="guardarTiendaEditada()">Guardar</button></div>
   </div>
 </div>
 
@@ -2213,6 +2243,7 @@ async function agregarTienda(){
   renderAdminTiendas();
   toast('Tienda agregada');
 }
+let editTiendaId=null;
 async function eliminarTienda(id,nom){
   if(!confirm(`¿Eliminar "${nom}"? Los pendientes que la tengan asociada la perderán.`))return;
   const{error}=await sb.from('tiendas').update({activa:false}).eq('id',id);
@@ -2224,10 +2255,53 @@ async function eliminarTienda(id,nom){
 function renderAdminTiendas(){
   const list=document.getElementById('admin-tiendas-list');if(!list)return;
   if(!tiendas.length){list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin tiendas todav&iacute;a &mdash; agrega la primera abajo.</div>';return;}
-  list.innerHTML=tiendas.map(t=>`<div class="pl-card">
-    <div><div class="pl-card-nom">${esc(t.nombre)}</div><div class="pl-card-sub">${t.tipo==='deli_gourmet'?'Deli Gourmet':'Tienda propia'}</div></div>
-    <button class="pl-item-del" onclick="eliminarTienda('${t.id}','${esc(t.nombre)}')" title="Eliminar">&#215;</button>
-  </div>`).join('');
+  const propias=tiendas.filter(t=>t.tipo!=='deli_gourmet');
+  const deli=tiendas.filter(t=>t.tipo==='deli_gourmet');
+  const grupoHtml=(titulo,arr)=>{
+    if(!arr.length)return'';
+    return`<div class="tiendas-grupo">
+      <div class="tiendas-grupo-ttl">${titulo} <span class="tiendas-grupo-cnt">${arr.length}</span></div>
+      <div class="tiendas-grid">${arr.map(t=>`<div class="pl-card compact">
+        <div class="pl-card-nom" style="cursor:pointer;" onclick="abrirModalTienda('${t.id}')">${esc(t.nombre)}</div>
+        <button class="pl-item-del" onclick="eliminarTienda('${t.id}','${esc(t.nombre)}')" title="Eliminar">&#215;</button>
+      </div>`).join('')}</div>
+    </div>`;
+  };
+  list.innerHTML=grupoHtml('Tiendas propias',propias)+grupoHtml('Deli Gourmet',deli);
+}
+function abrirModalTienda(id){
+  const t=tiendas.find(x=>x.id===id);if(!t)return;
+  editTiendaId=id;
+  document.getElementById('tf-id').value=id;
+  document.getElementById('tf-nom').value=t.nombre;
+  document.getElementById('tf-tipo').value=t.tipo||'propia';
+  document.getElementById('modal-tienda').classList.add('open');
+  setTimeout(()=>document.getElementById('tf-nom').focus(),60);
+}
+async function guardarTiendaEditada(){
+  const nom=document.getElementById('tf-nom').value.trim();
+  const tipo=document.getElementById('tf-tipo').value;
+  if(!nom){document.getElementById('tf-nom').focus();return;}
+  if(!editTiendaId)return;
+  const{error}=await sb.from('tiendas').update({nombre:nom,tipo}).eq('id',editTiendaId);
+  if(error){toast('Error: '+error.message);return;}
+  const t=tiendas.find(x=>x.id===editTiendaId);
+  if(t){t.nombre=nom;t.tipo=tipo;}
+  tiendas.sort((a,b)=>a.nombre.localeCompare(b.nombre,'es'));
+  cerrarModal('modal-tienda');
+  renderAdminTiendas();
+  toast('Tienda actualizada');
+}
+function eliminarTiendaDesdeModal(){
+  const t=tiendas.find(x=>x.id===editTiendaId);if(!t)return;
+  if(!confirm(`¿Eliminar "${t.nombre}"? Los pendientes que la tengan asociada la perderán.`))return;
+  sb.from('tiendas').update({activa:false}).eq('id',editTiendaId).then(({error})=>{
+    if(error){toast('Error: '+error.message);return;}
+    tiendas=tiendas.filter(x=>x.id!==editTiendaId);
+    cerrarModal('modal-tienda');
+    renderAdminTiendas();
+    toast('Tienda eliminada');
+  });
 }
 
 
@@ -2419,11 +2493,31 @@ let modalTiendaIds=[]; // ids seleccionados en el modal actualmente abierto
 function renderTiendaChips(){
   const cont=document.getElementById('f-tiendas-chips');
   if(!cont)return;
-  if(!tiendas.length){cont.innerHTML='<span style="font-size:11px;color:var(--gray3);">Sin tiendas configuradas — agrega tiendas en Admin.</span>';return;}
+  const btnToggle=document.getElementById('f-tiendas-toggle-btn');
+  const btnNinguna=document.getElementById('f-tiendas-ninguna-btn');
+  if(!tiendas.length){
+    cont.innerHTML='<span style="font-size:11px;color:var(--gray3);">Sin tiendas configuradas — agrega tiendas en Admin.</span>';
+    if(btnToggle)btnToggle.style.display='none';
+    if(btnNinguna)btnNinguna.style.display='none';
+    return;
+  }
+  if(btnToggle){
+    btnToggle.style.display='inline-block';
+    btnToggle.textContent=modalTiendaIds.length===tiendas.length?'Quitar todas':'Seleccionar todas';
+  }
+  if(btnNinguna)btnNinguna.style.display=modalTiendaIds.length>0?'inline-block':'none';
   cont.innerHTML=tiendas.map(t=>{
     const sel=modalTiendaIds.includes(t.id);
     return`<div class="tienda-chip${sel?' selected':''}" onclick="toggleTiendaChip('${t.id}')">${esc(t.nombre)}${t.tipo==='deli_gourmet'?'<span class="tienda-chip-tipo"> · DG</span>':''}</div>`;
   }).join('');
+}
+function toggleTodasTiendas(){
+  modalTiendaIds=modalTiendaIds.length===tiendas.length?[]:tiendas.map(t=>t.id);
+  renderTiendaChips();
+}
+function deseleccionarTodasTiendas(){
+  modalTiendaIds=[];
+  renderTiendaChips();
 }
 function toggleTiendaChip(id){
   const idx=modalTiendaIds.indexOf(id);
@@ -4625,8 +4719,8 @@ async function crearDept(){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea'){setModalSoloLinks(false);comentarios=[];}editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 
 // ══════════════════════════════════════════════════════════

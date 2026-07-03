@@ -1976,8 +1976,8 @@ async function iniciarApp(user){
   document.getElementById('h-user-avatar').textContent=(PERFIL?.nombre||user.email||'?').charAt(0).toUpperCase();
   // Mostrar tab admin solo si es admin o gerente
   if(rolFinal==='admin'||rolFinal==='gerente'){
-    document.getElementById('admin-tab').style.display='inline-block';
-    document.getElementById('tab-propuestas').style.display='inline-block';
+    document.getElementById('admin-tab').style.display='flex';
+    document.getElementById('tab-propuestas').style.display='flex';
   }
   // Ocultar pestaña Tiempos para colaboradores
   // Admin y gerente pueden editar tipos; asistente y colaborador no
@@ -5171,7 +5171,10 @@ function onIconColorChange(){
   document.getElementById('icsel-swatch').style.background=color;
   buscarIconos(); // re-pinta las opciones visibles (si hay búsqueda activa) con el nuevo color
   const actual=configData.iconos_sidebar[colorIconEditando];
-  if(actual)document.getElementById('icsel-preview').innerHTML=`<i class="${claseIconoCompleta(actual.lib,actual.cls)}" style="font-size:28px;color:${color};"></i>`;
+  if(actual){
+    actual.color=color; // el cambio de color debe quedar guardado aunque no vuelvas a tocar un ícono
+    document.getElementById('icsel-preview').innerHTML=`<i class="${claseIconoCompleta(actual.lib,actual.cls)}" style="font-size:28px;color:${color};"></i>`;
+  }
 }
 function elegirIcono(lib,cls){
   const color=document.getElementById('icsel-color').value;

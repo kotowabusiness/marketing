@@ -653,6 +653,20 @@ table.rt tr:last-child td{border-bottom:none;}
 .fi:focus,.fs:focus,.fta:focus{border-color:var(--verde);}
 .fta{resize:vertical;min-height:70px;}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;}
+.frow3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.7rem;}
+/* MODAL DE TAREA — ancho, dos columnas (reemplaza el panel lateral angosto) */
+.modal-tarea-wide{max-width:900px;width:100%;max-height:88vh;display:flex;flex-direction:column;}
+.mtarea-cols{display:grid;grid-template-columns:1.5fr 1fr;overflow-y:auto;flex:1;background:var(--linen);}
+.mtarea-col-main{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:.85rem;border-right:1px solid var(--gray2);}
+.mtarea-col-side{padding:1.4rem 1.5rem;display:flex;flex-direction:column;gap:1.1rem;background:var(--bg-app);}
+.mtarea-col-side .comments-section{border-top:none;padding-top:0;margin-top:0;flex:1;display:flex;flex-direction:column;}
+.mtarea-col-side .comments-list{flex:1;}
+@media(max-width:820px){
+  .modal-tarea-wide{max-width:100%;max-height:100vh;border-radius:0;}
+  .mtarea-cols{grid-template-columns:1fr;overflow-y:visible;}
+  .mtarea-col-main{border-right:none;border-bottom:1px solid var(--gray2);}
+  .frow3{grid-template-columns:1fr;}
+}
 .ia-box{background:var(--v-100);border:1px solid var(--v-200);border-radius:10px;padding:.6rem .75rem;display:flex;align-items:center;gap:.55rem;}
 .ia-ico{font-size:15px;flex-shrink:0;}
 .ia-txt{font-size:11px;color:var(--dark);flex:1;line-height:1.45;}.ia-txt strong{color:var(--verde);}
@@ -1527,87 +1541,94 @@ table.rt tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- MODAL TAREA -->
-<div class="modal-ov side-ov" id="modal-tarea">
-  <div class="modal side-panel">
+<div class="modal-ov" id="modal-tarea">
+  <div class="modal modal-tarea-wide">
     <div class="mhdr"><span class="mttl" id="mt-ttl">Nueva tarea</span><button class="mclose" onclick="cerrarModal('modal-tarea')">&#215;</button></div>
-    <div class="mbody">
-      <input type="hidden" id="f-id">
-      <div class="fg"><label class="flabel">T&iacute;tulo</label><input type="text" class="fi" id="f-titulo" placeholder="ej. Arte campa&ntilde;a Salted Caramel"></div>
-      <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="f-tipo"></select></div>
-      <div class="frow">
-        <div class="fg"><label class="flabel">Responsable</label><select class="fs" id="f-resp" onchange="actualizarVisibilidadEstrellas()"></select></div>
-        <div class="fg"><label class="flabel">Estado</label><select class="fs" id="f-estado" onchange="actualizarVisibilidadEstrellas()"><option value="pendiente">Pendiente</option><option value="revision">En revisi&oacute;n</option><option value="aprobado">Culminado</option></select></div>
-      </div>
-      <div class="fg"><label class="flabel">Brief</label><textarea class="fta" id="f-brief" placeholder="Instrucciones, referencias..."></textarea></div>
-      <div class="ia-box" id="ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="ia-txt"><span class="ia-load">Analizando...</span></div></div>
-      <div class="fg" id="horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="f-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="horas-hint"></span></div></div>
-      <div class="fg"><label class="flabel">Fecha de entrega</label>
-        <div style="display:flex;align-items:center;gap:.5rem;">
-          <input type="date" class="fi" id="f-deadline-real" style="flex:1;">
-          <button type="button" class="btn-clear-fecha" id="btn-clear-fecha" onclick="limpiarFechaEntrega()" title="Quitar fecha — el pendiente volver\u00e1 a Pendientes">&#10005; Quitar</button>
+    <div class="mtarea-cols">
+      <div class="mtarea-col-main">
+        <input type="hidden" id="f-id">
+        <div class="fg"><label class="flabel">T&iacute;tulo</label><input type="text" class="fi" id="f-titulo" placeholder="ej. Arte campa&ntilde;a Salted Caramel"></div>
+        <div class="frow3">
+          <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="f-tipo"></select></div>
+          <div class="fg"><label class="flabel">Responsable</label><select class="fs" id="f-resp" onchange="actualizarVisibilidadEstrellas()"></select></div>
+          <div class="fg"><label class="flabel">Estado</label><select class="fs" id="f-estado" onchange="actualizarVisibilidadEstrellas()"><option value="pendiente">Pendiente</option><option value="revision">En revisi&oacute;n</option><option value="aprobado">Culminado</option></select></div>
         </div>
-        <div id="f-deadline-hint" style="display:none;font-size:11px;color:var(--gray3);margin-top:.35rem;">Esta tarea est&aacute; en Hoy, por eso la fecha es hoy. Mu&eacute;vela de vuelta a Pendientes para volver a editar su fecha de entrega.</div>
-      </div>
-      <div class="fg" style="position:relative;">
-        <label class="flabel">Depende de <span style="font-weight:400;color:var(--gray3)">(opcional — agrupa autom&aacute;ticamente en un proyecto)</span></label>
-        <input type="hidden" id="f-dep-tarea">
-        <input type="text" class="fi" id="f-dep-buscar" placeholder="Ninguna &mdash; escribe para buscar..." autocomplete="off"
-          oninput="depFiltrar('f-dep-buscar','f-dep-lista','f-dep-tarea')"
-          onfocus="depAbrir('f-dep-buscar','f-dep-lista','f-dep-tarea')"
-          onkeydown="depTeclado(event,'f-dep-lista','f-dep-tarea','f-dep-buscar')">
-        <div class="dep-dropdown" id="f-dep-lista" style="display:none;"></div>
-      </div>
-      <div class="fg">
-        <label class="flabel" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
-          <span>Tienda(s) <span style="font-weight:400;color:var(--gray3)">(opcional — puedes elegir varias)</span></span>
-          <span style="display:flex;gap:.6rem;">
-            <button type="button" class="tienda-toggle-todas" onclick="deseleccionarTodasTiendas()" id="f-tiendas-ninguna-btn" style="display:none;">Ninguna</button>
-            <button type="button" class="tienda-toggle-todas" onclick="toggleTodasTiendas()" id="f-tiendas-toggle-btn">Seleccionar todas</button>
-          </span>
-        </label>
-        <div class="tienda-chips-wrap" id="f-tiendas-chips"></div>
-      </div>
-      <div class="fg" id="f-rondas-grp" style="display:none;">
-        <label class="flabel">Rondas de cambio <span style="font-weight:400;color:var(--gray3)">(se suman autom&aacute;ticamente al regresar de revisi&oacute;n — edita aqu&iacute; si necesitas corregirlo)</span></label>
-        <input type="number" class="fi" id="f-rondas" min="0" step="1" style="width:100px;">
-      </div>
-      <div class="fg" id="f-estrellas-grp" style="display:none;">
-        <label class="flabel" id="f-estrellas-lbl">Calidad</label>
-        <div class="estrellas-picker" id="f-estrellas-picker"></div>
-      </div>
-      <div class="fg" id="entrega-calc-grp" style="display:none;">
-        <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
-        <div class="entrega-calc-box" id="entrega-calc-box">&mdash;</div>
-      </div>
-      <div class="entrega-box" id="entrega-box" style="display:none;background:var(--verde-lt);border-color:var(--verde);"><div><div class="elbl">Viabilidad</div><div id="eval" class="eval" style="font-size:12px;">&mdash;</div><div class="edet" id="edet"></div></div><div style="text-align:right"><div class="elbl">Horas en cola</div><div id="cola-info" style="font-size:11px;color:var(--dark);font-weight:600;margin-top:2px">&mdash;</div></div></div>
-      <div class="fg">
-        <label class="flabel">Links / referencias <span style="font-weight:400;color:var(--gray3)">(Drive, Figma, etc.)</span></label>
-        <div id="links-list"></div>
-        <div style="display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem;">
-          <div style="display:flex;gap:.5rem;">
-            <input type="text" class="fi" id="f-link-input" placeholder="https://drive.google.com/..." style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
+        <div class="fg"><label class="flabel">Brief</label><textarea class="fta" id="f-brief" placeholder="Instrucciones, referencias..." style="min-height:56px;"></textarea></div>
+        <div class="ia-box" id="ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="ia-txt"><span class="ia-load">Analizando...</span></div></div>
+        <div class="fg" id="horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="f-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="horas-hint"></span></div></div>
+        <div class="frow">
+          <div class="fg"><label class="flabel">Fecha de entrega</label>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+              <input type="date" class="fi" id="f-deadline-real" style="flex:1;">
+              <button type="button" class="btn-clear-fecha" id="btn-clear-fecha" onclick="limpiarFechaEntrega()" title="Quitar fecha — el pendiente volver\u00e1 a Pendientes">&#10005;</button>
+            </div>
+            <div id="f-deadline-hint" style="display:none;font-size:11px;color:var(--gray3);margin-top:.35rem;">En Hoy — mu&eacute;vela a Pendientes para editar la fecha.</div>
           </div>
-          <div style="display:flex;gap:.5rem;">
-            <input type="text" class="fi" id="f-link-nombre" placeholder="Nombre (opcional, ej. Arte final)" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
-            <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLink()">+ Agregar</button>
+          <div class="fg" style="position:relative;">
+            <label class="flabel">Depende de</label>
+            <input type="hidden" id="f-dep-tarea">
+            <input type="text" class="fi" id="f-dep-buscar" placeholder="Ninguna &mdash; buscar..." autocomplete="off"
+              oninput="depFiltrar('f-dep-buscar','f-dep-lista','f-dep-tarea')"
+              onfocus="depAbrir('f-dep-buscar','f-dep-lista','f-dep-tarea')"
+              onkeydown="depTeclado(event,'f-dep-lista','f-dep-tarea','f-dep-buscar')">
+            <div class="dep-dropdown" id="f-dep-lista" style="display:none;"></div>
           </div>
         </div>
+        <div class="fg">
+          <label class="flabel" style="display:flex;align-items:center;justify-content:space-between;gap:.5rem;">
+            <span>Tienda(s)</span>
+            <span style="display:flex;gap:.6rem;">
+              <button type="button" class="tienda-toggle-todas" onclick="deseleccionarTodasTiendas()" id="f-tiendas-ninguna-btn" style="display:none;">Ninguna</button>
+              <button type="button" class="tienda-toggle-todas" onclick="toggleTodasTiendas()" id="f-tiendas-toggle-btn">Seleccionar todas</button>
+            </span>
+          </label>
+          <div class="tienda-chips-wrap" id="f-tiendas-chips"></div>
+        </div>
+        <div class="frow">
+          <div class="fg" id="f-rondas-grp" style="display:none;">
+            <label class="flabel">Rondas de cambio</label>
+            <input type="number" class="fi" id="f-rondas" min="0" step="1">
+          </div>
+          <div class="fg" id="f-estrellas-grp" style="display:none;">
+            <label class="flabel" id="f-estrellas-lbl">Calidad</label>
+            <div class="estrellas-picker" id="f-estrellas-picker"></div>
+          </div>
+        </div>
+        <div class="fg" id="entrega-calc-grp" style="display:none;">
+          <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
+          <div class="entrega-calc-box" id="entrega-calc-box">&mdash;</div>
+        </div>
+        <div class="entrega-box" id="entrega-box" style="display:none;background:var(--verde-lt);border-color:var(--verde);"><div><div class="elbl">Viabilidad</div><div id="eval" class="eval" style="font-size:12px;">&mdash;</div><div class="edet" id="edet"></div></div><div style="text-align:right"><div class="elbl">Horas en cola</div><div id="cola-info" style="font-size:11px;color:var(--dark);font-weight:600;margin-top:2px">&mdash;</div></div></div>
+        <div id="modal-solo-links-msg" style="display:none;font-size:11px;color:var(--gray3);background:var(--bg-app);border-radius:9px;padding:.5rem .7rem;">Solo puedes agregar o quitar links de este pendiente.</div>
       </div>
-      <div class="fg">
-        <label class="flabel">Archivos de preview <span style="font-weight:400;color:var(--gray3)">(im&aacute;genes o PDF, hasta 100MB)</span></label>
-        <div id="files-list"></div>
-        <input type="file" id="f-file-input" accept="image/*,application/pdf" multiple style="display:none;" onchange="subirArchivos(this.files)">
-        <button class="btn-cancel" id="f-file-btn" style="width:100%;margin-top:.4rem;" onclick="document.getElementById('f-file-input').click()">&#128206; Subir archivo</button>
-        <div id="f-file-progress" style="display:none;font-size:11px;color:var(--gray3);margin-top:.4rem;">Subiendo&hellip;</div>
-      </div>
-      <div id="modal-solo-links-msg" style="display:none;font-size:11px;color:var(--gray3);background:var(--bg-app);border-radius:9px;padding:.5rem .7rem;margin-top:-.5rem;">Solo puedes agregar o quitar links de este pendiente.</div>
-
-      <div class="fg comments-section">
-        <label class="flabel">Comentarios</label>
-        <div id="comments-list" class="comments-list"></div>
-        <div class="comment-input-row">
-          <textarea class="fta comment-input" id="comment-input" placeholder="Escribe un comentario..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();agregarComentario();}"></textarea>
-          <button class="btn-save comment-send" onclick="agregarComentario()">Enviar</button>
+      <div class="mtarea-col-side">
+        <div class="fg">
+          <label class="flabel">Links / referencias <span style="font-weight:400;color:var(--gray3)">(Drive, Figma, etc.)</span></label>
+          <div id="links-list"></div>
+          <div style="display:flex;flex-direction:column;gap:.35rem;margin-top:.4rem;">
+            <div style="display:flex;gap:.5rem;">
+              <input type="text" class="fi" id="f-link-input" placeholder="https://drive.google.com/..." style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
+            </div>
+            <div style="display:flex;gap:.5rem;">
+              <input type="text" class="fi" id="f-link-nombre" placeholder="Nombre (opcional)" style="flex:1;font-size:12px;" onkeydown="if(event.key==='Enter'){event.preventDefault();agregarLink();}">
+              <button class="btn-save" style="padding:7px 12px;white-space:nowrap;" onclick="agregarLink()">+ Agregar</button>
+            </div>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="flabel">Archivos de preview <span style="font-weight:400;color:var(--gray3)">(hasta 100MB)</span></label>
+          <div id="files-list"></div>
+          <input type="file" id="f-file-input" accept="image/*,application/pdf" multiple style="display:none;" onchange="subirArchivos(this.files)">
+          <button class="btn-cancel" id="f-file-btn" style="width:100%;margin-top:.4rem;" onclick="document.getElementById('f-file-input').click()">&#128206; Subir archivo</button>
+          <div id="f-file-progress" style="display:none;font-size:11px;color:var(--gray3);margin-top:.4rem;">Subiendo&hellip;</div>
+        </div>
+        <div class="fg comments-section">
+          <label class="flabel">Comentarios</label>
+          <div id="comments-list" class="comments-list"></div>
+          <div class="comment-input-row">
+            <textarea class="fta comment-input" id="comment-input" placeholder="Escribe un comentario..." rows="2" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();agregarComentario();}"></textarea>
+            <button class="btn-save comment-send" onclick="agregarComentario()">Enviar</button>
+          </div>
         </div>
       </div>
     </div>

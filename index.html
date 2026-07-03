@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <title>Kotowa — Gestión</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css">
 <style>
@@ -512,7 +512,7 @@ table.rt tr:last-child td{border-bottom:none;}
 .pl-item-del{background:none;border:none;color:var(--urgente);cursor:pointer;font-size:14px;padding:0 4px;}
 /* SELECTOR DE ÍCONOS */
 .icsel-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;max-height:280px;overflow-y:auto;}
-.icsel-opt{background:var(--white);border:1px solid var(--gray2);border-radius:9px;padding:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;}
+.icsel-opt{background:var(--white);border:1px solid var(--gray2);border-radius:9px;height:52px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;}
 .icsel-opt:hover{border-color:var(--v-700);background:var(--v-50);transform:translateY(-1px);}
 .pl-card{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:.65rem .9rem;}
 .pl-card.compact{padding:.5rem .7rem;}
@@ -1731,7 +1731,7 @@ table.rt tr:last-child td{border-bottom:none;}
         <label class="flabel">Buscar &iacute;cono <span style="font-weight:400;color:var(--gray3)">(t&eacute;rmino en ingl&eacute;s, ej. calendar, store, clock)</span></label>
         <input type="text" class="fi" id="icsel-buscar" placeholder="ej. calendar" oninput="buscarIconos()">
       </div>
-      <div id="icsel-resultados" class="icsel-grid"></div>
+      <div id="icsel-resultados"></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-icono')">Cancelar</button><button class="btn-save" onclick="guardarIconoSidebar()">Guardar</button></div>
   </div>
@@ -5153,9 +5153,9 @@ function abrirSelectorIcono(vista){
 function buscarIconos(){
   const q=document.getElementById('icsel-buscar').value.trim().toLowerCase();
   const cont=document.getElementById('icsel-resultados');
-  if(!q){cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Escribe un t&eacute;rmino en ingl&eacute;s para buscar (ej. calendar, store, clock)...</div>';return;}
+  if(!q){cont.className='';cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Escribe un t&eacute;rmino en ingl&eacute;s para buscar (ej. calendar, store, clock)...</div>';return;}
   const coincidencias=CATALOGO_ICONOS.filter(x=>x.term.includes(q));
-  if(!coincidencias.length){cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin resultados. Prueba con otro t&eacute;rmino en ingl&eacute;s.</div>';return;}
+  if(!coincidencias.length){cont.className='';cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin resultados. Prueba con otro t&eacute;rmino en ingl&eacute;s.</div>';return;}
   const color=document.getElementById('icsel-color').value;
   let html='';
   coincidencias.forEach(m=>{
@@ -5163,12 +5163,13 @@ function buscarIconos(){
     html+=`<div class="icsel-opt" onclick="elegirIcono('fa','${m.fa}')" title="Font Awesome · ${m.term}"><i class="${claseIconoCompleta('fa',m.fa)}" style="font-size:20px;color:${color};"></i></div>`;
     html+=`<div class="icsel-opt" onclick="elegirIcono('bx','${m.bx}')" title="Boxicons · ${m.term}"><i class="${claseIconoCompleta('bx',m.bx)}" style="font-size:22px;color:${color};"></i></div>`;
   });
+  cont.className='icsel-grid';
   cont.innerHTML=html;
 }
 function onIconColorChange(){
   const color=document.getElementById('icsel-color').value;
   document.getElementById('icsel-swatch').style.background=color;
-  buscarIconos(); // re-pinta las opciones con el nuevo color
+  buscarIconos(); // re-pinta las opciones visibles (si hay búsqueda activa) con el nuevo color
   const actual=configData.iconos_sidebar[colorIconEditando];
   if(actual)document.getElementById('icsel-preview').innerHTML=`<i class="${claseIconoCompleta(actual.lib,actual.cls)}" style="font-size:28px;color:${color};"></i>`;
 }

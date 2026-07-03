@@ -11,6 +11,9 @@
 <link rel="manifest" href="manifest.json">
 <title>Kotowa — Gestión</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/2.44.0/iconfont/tabler-icons.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:wght@400;700&family=Montserrat:wght@300;400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap');
 :root{
@@ -62,7 +65,8 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .sb-item{display:flex;align-items:center;gap:.65rem;padding:.6rem .75rem;border-radius:10px;font-family:var(--font-body);font-size:12.5px;font-weight:600;color:var(--sidebar-text);cursor:pointer;transition:background .15s,color .15s;border:none;background:none;text-align:left;width:100%;position:relative;}
 .sb-item:hover{background:var(--v-50);color:var(--ink);}
 .sb-item.active{background:var(--v-700);color:var(--white);box-shadow:0 2px 8px rgba(0,97,77,.25);}
-.sb-icon{font-size:14px;width:18px;text-align:center;flex-shrink:0;}
+.sb-icon{font-size:14px;width:20px;height:20px;text-align:center;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.sb-icon svg{display:block;}
 .sb-item.admin-tab{color:rgba(201,168,76,.85);}
 .sb-item.admin-tab.active{background:var(--gold);color:var(--dark);}
 .sb-badge{position:static!important;margin-left:auto;background:var(--urgente);color:var(--white);font-size:9px;font-weight:700;border-radius:10px;min-width:16px;height:16px;display:flex;align-items:center;justify-content:center;padding:0 4px;border:none!important;}
@@ -506,6 +510,10 @@ table.rt tr:last-child td{border-bottom:none;}
 .pl-item-row input,.pl-item-row select{font-family:var(--font-body);font-size:11px;padding:5px 7px;border:1px solid var(--gray2);border-radius:8px;background:var(--white);width:100%;}
 .pl-item-hdr{display:grid;grid-template-columns:1.6fr 1fr .9fr .8fr auto;gap:.4rem;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray3);padding-bottom:.4rem;border-bottom:1px solid var(--gray2);margin-bottom:.2rem;}
 .pl-item-del{background:none;border:none;color:var(--urgente);cursor:pointer;font-size:14px;padding:0 4px;}
+/* SELECTOR DE ÍCONOS */
+.icsel-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:.4rem;max-height:280px;overflow-y:auto;}
+.icsel-opt{background:var(--white);border:1px solid var(--gray2);border-radius:9px;padding:.6rem;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .12s;}
+.icsel-opt:hover{border-color:var(--v-700);background:var(--v-50);transform:translateY(-1px);}
 .pl-card{display:flex;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:.65rem .9rem;}
 .pl-card.compact{padding:.5rem .7rem;}
 /* Listado de tiendas en Admin — agrupado por tipo, en columnas */
@@ -1033,19 +1041,19 @@ table.rt tr:last-child td{border-bottom:none;}
 
     <nav class="sb-nav">
       <div class="sb-section-lbl">General</div>
-      <button class="sb-item active" onclick="setVista('miDia',this)"><span class="sb-icon">&#8962;</span> Mi d&iacute;a</button>
-      <button class="sb-item" onclick="setVista('tareas',this)"><span class="sb-icon">&#9638;</span> Tablero</button>
-      <button class="sb-item" onclick="setVista('proyectos',this)"><span class="sb-icon">&#9723;</span> Proyectos</button>
-      <button class="sb-item" id="tab-calendario" onclick="setVista('calendario',this)"><span class="sb-icon">&#9638;</span> Calendario</button>
-      <button class="sb-item" id="tab-tiendas" onclick="setVista('porTienda',this)"><span class="sb-icon">&#127978;</span> Por Tienda</button>
+      <button class="sb-item active" onclick="setVista('miDia',this)"><span class="sb-icon" id="sbicon-miDia"><svg viewBox="0 0 70 76" width="20" height="20"><path d="M35 4C15 6 2 22 4 42C2 60 16 74 35 76C54 74 68 60 66 42C68 22 55 6 35 4Z" fill="#4A90D9"/><circle cx="35" cy="38" r="17" fill="#F7EDE1"/><circle cx="35" cy="38" r="11" fill="#4A90D9"/><line x1="35" y1="10" x2="35" y2="18" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="58" x2="35" y2="66" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="8" y1="38" x2="16" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="54" y1="38" x2="62" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/></svg></span> Mi d&iacute;a</button>
+      <button class="sb-item" onclick="setVista('tareas',this)"><span class="sb-icon" id="sbicon-tareas"><svg viewBox="0 0 64 79" width="20" height="20"><path d="M13 20C9 20 6 24 6 28L6 68C6 74 11 79 17 79L53 79C59 79 64 74 64 68L64 28C64 24 61 20 57 20L51 20L51 13C51 10 49 8 46 8C43 8 41 10 41 13L41 20L29 20L29 13C29 10 27 8 24 8C21 8 19 10 19 13L19 20Z" fill="#E8804D"/><rect x="6" y="20" width="58" height="11" fill="#C96436"/><circle cx="24" cy="13" r="4.5" fill="#C96436"/><circle cx="46" cy="13" r="4.5" fill="#C96436"/></svg></span> Tablero</button>
+      <button class="sb-item" onclick="setVista('proyectos',this)"><span class="sb-icon" id="sbicon-proyectos"><svg viewBox="0 0 68 69" width="20" height="20"><path d="M12 26L34 12L58 26L58 60C58 65 54 69 49 69L19 69C14 69 10 65 10 60Z" fill="#5AA469"/><rect x="24" y="42" width="20" height="27" fill="#3D7A48"/><circle cx="34" cy="8" r="5" fill="#5AA469"/></svg></span> Proyectos</button>
+      <button class="sb-item" id="tab-calendario" onclick="setVista('calendario',this)"><span class="sb-icon" id="sbicon-calendario"><svg viewBox="0 0 66 78" width="20" height="20"><path d="M11 22C7 22 4 26 4 30L4 68C4 73 8 78 14 78L56 78C61 78 66 73 66 68L66 30C66 26 62 22 58 22L52 22L52 15C52 11 49 9 46 9C42 9 40 11 40 15L40 22L30 22L30 15C30 11 27 9 24 9C20 9 18 11 18 15L18 22Z" fill="#D65C7A"/><rect x="4" y="22" width="62" height="12" fill="#B03F5C"/><circle cx="24" cy="15" r="4.5" fill="#B03F5C"/><circle cx="46" cy="15" r="4.5" fill="#B03F5C"/><circle cx="35" cy="55" r="12" fill="#B03F5C"/></svg></span> Calendario</button>
+      <button class="sb-item" id="tab-tiendas" onclick="setVista('porTienda',this)"><span class="sb-icon" id="sbicon-porTienda"><svg viewBox="0 0 70 68" width="20" height="20"><path d="M35 4C17 6 6 20 8 38C10 54 22 66 35 68C48 66 60 54 62 38C64 20 53 6 35 4Z" fill="#8AB84A"/><path d="M25 30C22 40 22 50 27 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M45 30C48 40 48 50 43 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="35" cy="34" r="6" fill="#F7EDE1"/></svg></span> Por Tienda</button>
     </nav>
 
     <nav class="sb-nav">
       <div class="sb-section-lbl">Equipo</div>
-      <button class="sb-item" id="tab-matriz" onclick="setVista('matriz',this)"><span class="sb-icon">&#9201;</span> Tiempos</button>
-      <button class="sb-item" onclick="setVista('reportes',this)"><span class="sb-icon">&#9685;</span> Reportes</button>
-      <button class="sb-item" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)"><span class="sb-icon">&#10003;</span> Propuestas<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
-      <button class="sb-item admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)"><span class="sb-icon">&#9881;</span> Admin</button>
+      <button class="sb-item" id="tab-matriz" onclick="setVista('matriz',this)"><span class="sb-icon" id="sbicon-matriz"><svg viewBox="0 0 70 70" width="20" height="20"><circle cx="35" cy="35" r="31" fill="#F0B93D"/><circle cx="35" cy="35" r="24" fill="#D89818"/><line x1="35" y1="35" x2="35" y2="20" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="35" x2="46" y2="40" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><circle cx="35" cy="35" r="3" fill="#F7EDE1"/></svg></span> Tiempos</button>
+      <button class="sb-item" onclick="setVista('reportes',this)"><span class="sb-icon" id="sbicon-reportes"><svg viewBox="0 0 62 74" width="20" height="20"><path d="M14 68L14 40C14 36 17 33 21 33L27 33C31 33 34 36 34 40L34 68Z" fill="#9B7FD4"/><path d="M36 68L36 24C36 20 39 17 43 17L49 17C53 17 56 20 56 24L56 68Z" fill="#7A5FC0"/><rect x="8" y="68" width="54" height="6" rx="3" fill="#6B4FAD"/></svg></span> Reportes</button>
+      <button class="sb-item" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)"><span class="sb-icon" id="sbicon-propuestas"><svg viewBox="0 0 70 72" width="20" height="20"><path d="M35 4C15 6 3 21 5 40C3 57 16 70 35 72C54 70 67 57 65 40C67 21 55 6 35 4Z" fill="#4AB894"/><path d="M20 37L30 47L52 22" stroke="#F7EDE1" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Propuestas<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
+      <button class="sb-item admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)"><span class="sb-icon" id="sbicon-admin"><svg viewBox="0 0 70 70" width="20" height="20"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg></span> Admin</button>
     </nav>
 
     <div style="flex:1"></div>
@@ -1347,6 +1355,12 @@ table.rt tr:last-child td{border-bottom:none;}
           <input type="checkbox" id="notif-cfg-comentario" onchange="toggleNotifConfig('notif_comentario',this)">
         </label>
       </div>
+    </div>
+
+    <div class="admin-section" id="admin-iconos-section">
+      <div class="admin-section-title">&#128161; &Iacute;conos del sidebar</div>
+      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Elige el &iacute;cono y color de cada secci&oacute;n del men&uacute; lateral. Click en cualquiera para cambiarlo.</div>
+      <div id="admin-iconos-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"></div>
     </div>
 
     <div class="admin-section" id="config-visual-section">
@@ -1699,6 +1713,30 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
+<!-- MODAL SELECTOR DE ÍCONO -->
+<div class="modal-ov" id="modal-icono">
+  <div class="modal" style="max-width:560px;">
+    <div class="mhdr"><span class="mttl">Elegir &iacute;cono</span><button class="mclose" onclick="cerrarModal('modal-icono')">&#215;</button></div>
+    <div class="mbody">
+      <div style="display:flex;align-items:center;gap:1rem;padding:.75rem;background:var(--bg-app);border-radius:10px;">
+        <div id="icsel-preview" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <label class="flabel" style="margin-bottom:.3rem;display:block;">Color del &iacute;cono</label>
+          <div class="color-picker-wrap">
+            <div class="color-swatch" id="icsel-swatch" style="width:32px;height:32px;"><input type="color" id="icsel-color" value="#2C725A" oninput="onIconColorChange()"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fg">
+        <label class="flabel">Buscar &iacute;cono <span style="font-weight:400;color:var(--gray3)">(t&eacute;rmino en ingl&eacute;s, ej. calendar, store, clock)</span></label>
+        <input type="text" class="fi" id="icsel-buscar" placeholder="ej. calendar" oninput="buscarIconos()">
+      </div>
+      <div id="icsel-resultados" class="icsel-grid"></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-icono')">Cancelar</button><button class="btn-save" onclick="guardarIconoSidebar()">Guardar</button></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <div class="file-preview-overlay" id="file-preview-overlay" onclick="cerrarPreviewArchivo()">
   <div id="file-preview-content"></div>
@@ -1719,6 +1757,106 @@ const sb = createClient(SUPA_URL, SUPA_KEY);
 // ══════════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ══════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// CATÁLOGO DE ÍCONOS — selector de Admin para personalizar el sidebar.
+// Cada entrada es un término técnico (inglés) con su clase real en cada
+// librería (Tabler / Font Awesome / Boxicons). El buscador filtra por
+// coincidencia de substring sobre el término. No es el catálogo completo
+// de las 3 librerías (serían miles) — es un set curado amplio cubriendo
+// las categorías típicas de una app de gestión (calendario, negocio,
+// personas, objetos, navegación, comunicación, archivos, etc.)
+// ══════════════════════════════════════════════════════════
+const CATALOGO_ICONOS=[
+  {term:'sun',tabler:'ti-sun',fa:'fa-solid fa-sun',bx:'bx bxs-sun'},
+  {term:'moon',tabler:'ti-moon',fa:'fa-solid fa-moon',bx:'bx bxs-moon'},
+  {term:'home',tabler:'ti-home',fa:'fa-solid fa-house',bx:'bx bxs-home'},
+  {term:'dashboard',tabler:'ti-layout-dashboard',fa:'fa-solid fa-gauge',bx:'bx bxs-dashboard'},
+  {term:'kanban',tabler:'ti-layout-kanban',fa:'fa-solid fa-table-columns',bx:'bx bxs-dashboard'},
+  {term:'board',tabler:'ti-layout-board',fa:'fa-solid fa-chalkboard',bx:'bx bxs-widget'},
+  {term:'calendar',tabler:'ti-calendar',fa:'fa-solid fa-calendar-days',bx:'bx bxs-calendar'},
+  {term:'calendar-event',tabler:'ti-calendar-event',fa:'fa-solid fa-calendar-check',bx:'bx bxs-calendar-check'},
+  {term:'clock',tabler:'ti-clock',fa:'fa-solid fa-clock',bx:'bx bxs-time-five'},
+  {term:'stopwatch',tabler:'ti-stopwatch',fa:'fa-solid fa-stopwatch',bx:'bx bxs-stopwatch'},
+  {term:'hourglass',tabler:'ti-hourglass',fa:'fa-solid fa-hourglass',bx:'bx bxs-hourglass'},
+  {term:'folder',tabler:'ti-folder',fa:'fa-solid fa-folder',bx:'bx bxs-folder'},
+  {term:'folders',tabler:'ti-folders',fa:'fa-solid fa-folder-tree',bx:'bx bxs-folder-open'},
+  {term:'briefcase',tabler:'ti-briefcase',fa:'fa-solid fa-briefcase',bx:'bx bxs-briefcase'},
+  {term:'building',tabler:'ti-building',fa:'fa-solid fa-building',bx:'bx bxs-building'},
+  {term:'store',tabler:'ti-building-store',fa:'fa-solid fa-store',bx:'bx bxs-store'},
+  {term:'shop',tabler:'ti-shopping-bag',fa:'fa-solid fa-shop',bx:'bx bxs-shopping-bag'},
+  {term:'coffee',tabler:'ti-coffee',fa:'fa-solid fa-mug-hot',bx:'bx bxs-coffee'},
+  {term:'cup',tabler:'ti-cup',fa:'fa-solid fa-mug-saucer',bx:'bx bxs-drink'},
+  {term:'chart',tabler:'ti-chart-bar',fa:'fa-solid fa-chart-column',bx:'bx bxs-bar-chart-alt-2'},
+  {term:'chart-line',tabler:'ti-chart-line',fa:'fa-solid fa-chart-line',bx:'bx bxs-line-chart'},
+  {term:'chart-pie',tabler:'ti-chart-pie',fa:'fa-solid fa-chart-pie',bx:'bx bxs-pie-chart-alt'},
+  {term:'trending-up',tabler:'ti-trending-up',fa:'fa-solid fa-arrow-trend-up',bx:'bx bxs-trending-up'},
+  {term:'report',tabler:'ti-report',fa:'fa-solid fa-file-lines',bx:'bx bxs-report'},
+  {term:'checklist',tabler:'ti-checklist',fa:'fa-solid fa-list-check',bx:'bx bxs-check-square'},
+  {term:'check',tabler:'ti-check',fa:'fa-solid fa-check',bx:'bx bx-check'},
+  {term:'clipboard',tabler:'ti-clipboard',fa:'fa-solid fa-clipboard',bx:'bx bxs-clipboard'},
+  {term:'clipboard-check',tabler:'ti-clipboard-check',fa:'fa-solid fa-clipboard-check',bx:'bx bxs-checkbox-checked'},
+  {term:'list',tabler:'ti-list',fa:'fa-solid fa-list',bx:'bx bx-list-ul'},
+  {term:'settings',tabler:'ti-settings',fa:'fa-solid fa-gear',bx:'bx bxs-cog'},
+  {term:'gear',tabler:'ti-settings',fa:'fa-solid fa-gear',bx:'bx bxs-cog'},
+  {term:'tool',tabler:'ti-tool',fa:'fa-solid fa-screwdriver-wrench',bx:'bx bxs-wrench'},
+  {term:'user',tabler:'ti-user',fa:'fa-solid fa-user',bx:'bx bxs-user'},
+  {term:'users',tabler:'ti-users',fa:'fa-solid fa-users',bx:'bx bxs-group'},
+  {term:'user-circle',tabler:'ti-user-circle',fa:'fa-solid fa-circle-user',bx:'bx bxs-user-circle'},
+  {term:'map-pin',tabler:'ti-map-pin',fa:'fa-solid fa-location-dot',bx:'bx bxs-map'},
+  {term:'map',tabler:'ti-map',fa:'fa-solid fa-map',bx:'bx bxs-map-alt'},
+  {term:'truck',tabler:'ti-truck',fa:'fa-solid fa-truck',bx:'bx bxs-truck'},
+  {term:'package',tabler:'ti-package',fa:'fa-solid fa-box',bx:'bx bxs-package'},
+  {term:'bell',tabler:'ti-bell',fa:'fa-solid fa-bell',bx:'bx bxs-bell'},
+  {term:'mail',tabler:'ti-mail',fa:'fa-solid fa-envelope',bx:'bx bxs-envelope'},
+  {term:'message',tabler:'ti-message-circle',fa:'fa-solid fa-message',bx:'bx bxs-message-rounded'},
+  {term:'send',tabler:'ti-send',fa:'fa-solid fa-paper-plane',bx:'bx bxs-send'},
+  {term:'star',tabler:'ti-star',fa:'fa-solid fa-star',bx:'bx bxs-star'},
+  {term:'heart',tabler:'ti-heart',fa:'fa-solid fa-heart',bx:'bx bxs-heart'},
+  {term:'flag',tabler:'ti-flag',fa:'fa-solid fa-flag',bx:'bx bxs-flag'},
+  {term:'target',tabler:'ti-target',fa:'fa-solid fa-bullseye',bx:'bx bxs-target-lock'},
+  {term:'rocket',tabler:'ti-rocket',fa:'fa-solid fa-rocket',bx:'bx bxs-rocket'},
+  {term:'bulb',tabler:'ti-bulb',fa:'fa-solid fa-lightbulb',bx:'bx bxs-bulb'},
+  {term:'file',tabler:'ti-file',fa:'fa-solid fa-file',bx:'bx bxs-file'},
+  {term:'file-text',tabler:'ti-file-text',fa:'fa-solid fa-file-lines',bx:'bx bxs-file-doc'},
+  {term:'photo',tabler:'ti-photo',fa:'fa-solid fa-image',bx:'bx bxs-image'},
+  {term:'camera',tabler:'ti-camera',fa:'fa-solid fa-camera',bx:'bx bxs-camera'},
+  {term:'video',tabler:'ti-video',fa:'fa-solid fa-video',bx:'bx bxs-video'},
+  {term:'music',tabler:'ti-music',fa:'fa-solid fa-music',bx:'bx bxs-music'},
+  {term:'link',tabler:'ti-link',fa:'fa-solid fa-link',bx:'bx bxs-link-alt'},
+  {term:'download',tabler:'ti-download',fa:'fa-solid fa-download',bx:'bx bxs-download'},
+  {term:'upload',tabler:'ti-upload',fa:'fa-solid fa-upload',bx:'bx bxs-upload'},
+  {term:'search',tabler:'ti-search',fa:'fa-solid fa-magnifying-glass',bx:'bx bx-search'},
+  {term:'filter',tabler:'ti-filter',fa:'fa-solid fa-filter',bx:'bx bxs-filter-alt'},
+  {term:'plus',tabler:'ti-plus',fa:'fa-solid fa-plus',bx:'bx bx-plus'},
+  {term:'edit',tabler:'ti-edit',fa:'fa-solid fa-pen',bx:'bx bxs-edit'},
+  {term:'trash',tabler:'ti-trash',fa:'fa-solid fa-trash',bx:'bx bxs-trash'},
+  {term:'lock',tabler:'ti-lock',fa:'fa-solid fa-lock',bx:'bx bxs-lock'},
+  {term:'unlock',tabler:'ti-lock-open',fa:'fa-solid fa-lock-open',bx:'bx bxs-lock-open'},
+  {term:'shield',tabler:'ti-shield',fa:'fa-solid fa-shield',bx:'bx bxs-shield'},
+  {term:'key',tabler:'ti-key',fa:'fa-solid fa-key',bx:'bx bxs-key'},
+  {term:'globe',tabler:'ti-world',fa:'fa-solid fa-globe',bx:'bx bxs-globe'},
+  {term:'leaf',tabler:'ti-leaf',fa:'fa-solid fa-leaf',bx:'bx bxs-leaf'},
+  {term:'plant',tabler:'ti-plant',fa:'fa-solid fa-seedling',bx:'bx bxs-flower'},
+  {term:'tree',tabler:'ti-tree',fa:'fa-solid fa-tree',bx:'bx bxs-tree'},
+  {term:'car',tabler:'ti-car',fa:'fa-solid fa-car',bx:'bx bxs-car'},
+  {term:'plane',tabler:'ti-plane',fa:'fa-solid fa-plane',bx:'bx bxs-plane-alt'},
+  {term:'phone',tabler:'ti-phone',fa:'fa-solid fa-phone',bx:'bx bxs-phone'},
+  {term:'device-laptop',tabler:'ti-device-laptop',fa:'fa-solid fa-laptop',bx:'bx bxs-laptop'},
+  {term:'wallet',tabler:'ti-wallet',fa:'fa-solid fa-wallet',bx:'bx bxs-wallet'},
+  {term:'credit-card',tabler:'ti-credit-card',fa:'fa-solid fa-credit-card',bx:'bx bxs-credit-card'},
+  {term:'gift',tabler:'ti-gift',fa:'fa-solid fa-gift',bx:'bx bxs-gift'},
+  {term:'trophy',tabler:'ti-trophy',fa:'fa-solid fa-trophy',bx:'bx bxs-trophy'},
+  {term:'archive',tabler:'ti-archive',fa:'fa-solid fa-box-archive',bx:'bx bxs-archive'},
+  {term:'inbox',tabler:'ti-inbox',fa:'fa-solid fa-inbox',bx:'bx bxs-inbox'},
+  {term:'database',tabler:'ti-database',fa:'fa-solid fa-database',bx:'bx bxs-data'},
+  {term:'refresh',tabler:'ti-refresh',fa:'fa-solid fa-arrows-rotate',bx:'bx bx-refresh'},
+  {term:'sync',tabler:'ti-refresh-dot',fa:'fa-solid fa-rotate',bx:'bx bx-sync'},
+  {term:'layers',tabler:'ti-stack-2',fa:'fa-solid fa-layer-group',bx:'bx bxs-layer'},
+  {term:'compass',tabler:'ti-compass',fa:'fa-solid fa-compass',bx:'bx bxs-compass'},
+  {term:'grid',tabler:'ti-layout-grid',fa:'fa-solid fa-table-cells',bx:'bx bxs-grid'},
+];
+let colorIconEditando=null; // qué sección de sidebar está eligiendo ícono ahora
+
 let USER = null, PERFIL = null, DEPT_ID = null;
 let tareas=[], proyectos=[], matrizData=[], usuarios=[], departamentos=[];
 let notificaciones=[];
@@ -4631,6 +4769,14 @@ async function renderAdmin(){
   const tiposSection=document.getElementById('admin-tipos-section');
   if(tiposSection){renderAdminTipos();}
 
+  // Íconos del sidebar — admin y gerente
+  const iconosSection=document.getElementById('admin-iconos-section');
+  if(iconosSection){
+    const puedeIconos=esAdmin||PERFIL?.rol==='gerente';
+    iconosSection.style.display=puedeIconos?'':'none';
+    if(puedeIconos)renderAdminIconos();
+  }
+
   // Configuración visual — solo admin
   const configSection=document.getElementById('config-visual-section');
   if(configSection){
@@ -4732,8 +4878,8 @@ async function crearDept(){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea'){setModalSoloLinks(false);comentarios=[];}editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 
 // ══════════════════════════════════════════════════════════
@@ -4744,6 +4890,17 @@ let configData = {
   color_fondo_app:'#FAFBFA', color_fondo_columnas:'#EEF0EF', color_texto:'#1B2420', color_texto_sidebar:'#8C9690',
   font_display:'Poppins', font_body:'Montserrat', nombre_app:'Mercadeo',
   notif_revision:true, notif_aprobado:true, notif_cambios:true, notif_desbloqueo:true,
+  iconos_sidebar:{
+    miDia:{lib:'tabler',cls:'ti-sun',color:'#2C725A'},
+    tareas:{lib:'tabler',cls:'ti-layout-kanban',color:'#BD8643'},
+    proyectos:{lib:'tabler',cls:'ti-folder',color:'#8A9A5B'},
+    calendario:{lib:'tabler',cls:'ti-calendar',color:'#C0392B'},
+    porTienda:{lib:'tabler',cls:'ti-building-store',color:'#2471A3'},
+    matriz:{lib:'tabler',cls:'ti-clock',color:'#8A6A1F'},
+    reportes:{lib:'tabler',cls:'ti-chart-bar',color:'#639922'},
+    propuestas:{lib:'tabler',cls:'ti-checklist',color:'#D4537E'},
+    admin:{lib:'tabler',cls:'ti-settings',color:'#5F5E5A'},
+  },
 };
 let configDirty = false;
 
@@ -4751,6 +4908,7 @@ async function cargarConfig(){
   if(!DEPT_ID) return;
   const{data}=await sb.from('configuracion').select('*').eq('departamento_id',DEPT_ID).single();
   if(data){
+    const iconosDefault=configData.iconos_sidebar;
     configData={
       color_primario:data.color_primario||'#00614D',
       color_acento:data.color_acento||'#C9A84C',
@@ -4766,9 +4924,11 @@ async function cargarConfig(){
       notif_aprobado:data.notif_aprobado!==false,
       notif_cambios:data.notif_cambios!==false,
       notif_desbloqueo:data.notif_desbloqueo!==false,
+      iconos_sidebar:{...iconosDefault,...(data.iconos_sidebar||{})},
     };
     aplicarConfig();
   }
+  aplicarIconosSidebar();
 }
 
 function aplicarConfig(){
@@ -4920,10 +5080,12 @@ async function guardarConfig(){
     notif_aprobado:configData.notif_aprobado,
     notif_cambios:configData.notif_cambios,
     notif_desbloqueo:configData.notif_desbloqueo,
+    iconos_sidebar:configData.iconos_sidebar,
     updated_at:new Date().toISOString()
   },{onConflict:'departamento_id'});
   if(error){toast('Error: '+error.message);return;}
   aplicarConfig();
+  aplicarIconosSidebar();
   configDirty=false;
   toast('✓ Configuración guardada');
   // Actualizar subtítulo del sidebar
@@ -4932,10 +5094,107 @@ async function guardarConfig(){
 
 function resetConfig(){
   if(!confirm('¿Restablecer la configuración por defecto?')) return;
-  configData={color_primario:'#00614D',color_acento:'#C9A84C',color_fondo:'#FAF7F2',font_display:'Poppins',font_body:'Montserrat',nombre_app:'Mercadeo'};
+  configData={
+    color_primario:'#00614D',color_acento:'#C9A84C',color_fondo:'#FAF7F2',
+    color_fondo_app:'#FAFBFA',color_fondo_columnas:'#EEF0EF',color_texto:'#1B2420',color_texto_sidebar:'#8C9690',
+    font_display:'Poppins',font_body:'Montserrat',nombre_app:'Mercadeo',
+    notif_revision:true,notif_aprobado:true,notif_cambios:true,notif_desbloqueo:true,
+    iconos_sidebar:{
+      miDia:{lib:'tabler',cls:'ti-sun',color:'#2C725A'},
+      tareas:{lib:'tabler',cls:'ti-layout-kanban',color:'#BD8643'},
+      proyectos:{lib:'tabler',cls:'ti-folder',color:'#8A9A5B'},
+      calendario:{lib:'tabler',cls:'ti-calendar',color:'#C0392B'},
+      porTienda:{lib:'tabler',cls:'ti-building-store',color:'#2471A3'},
+      matriz:{lib:'tabler',cls:'ti-clock',color:'#8A6A1F'},
+      reportes:{lib:'tabler',cls:'ti-chart-bar',color:'#639922'},
+      propuestas:{lib:'tabler',cls:'ti-checklist',color:'#D4537E'},
+      admin:{lib:'tabler',cls:'ti-settings',color:'#5F5E5A'},
+    },
+  };
   renderConfigPanel();
   aplicarConfig();
+  aplicarIconosSidebar();
+  renderAdminIconos();
   configDirty=true;
+}
+
+// ══════════════════════════════════════════════════════════
+// ÍCONOS DEL SIDEBAR — personalizables desde Admin: librería
+// (Tabler / Font Awesome / Boxicons) + color, por sección.
+// ══════════════════════════════════════════════════════════
+function claseIconoCompleta(lib,cls){
+  if(lib==='fa')return cls; // ya viene completa, ej "fa-solid fa-sun"
+  if(lib==='bx')return cls; // ya viene completa, ej "bx bxs-sun"
+  return `ti ${cls}`; // tabler necesita el prefijo "ti"
+}
+function aplicarIconosSidebar(){
+  const cfg=configData.iconos_sidebar;
+  if(!cfg)return;
+  Object.keys(cfg).forEach(vista=>{
+    const el=document.getElementById(`sbicon-${vista}`);
+    if(!el)return;
+    const{lib,cls,color}=cfg[vista];
+    el.innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:18px;color:${color};" aria-hidden="true"></i>`;
+  });
+}
+
+// ── Selector de ícono (modal en Admin) ──
+function abrirSelectorIcono(vista){
+  colorIconEditando=vista;
+  document.getElementById('icsel-buscar').value='';
+  document.getElementById('icsel-resultados').innerHTML='<div class="prop-empty" style="padding:1rem;">Escribe un t&eacute;rmino en ingl&eacute;s para buscar (ej. calendar, store, clock)...</div>';
+  const actual=configData.iconos_sidebar[vista];
+  document.getElementById('icsel-color').value=actual?.color||'#2C725A';
+  document.getElementById('icsel-swatch').style.background=actual?.color||'#2C725A';
+  document.getElementById('icsel-preview').innerHTML=actual?`<i class="${claseIconoCompleta(actual.lib,actual.cls)}" style="font-size:28px;color:${actual.color};"></i>`:'';
+  document.getElementById('modal-icono').classList.add('open');
+  setTimeout(()=>document.getElementById('icsel-buscar').focus(),60);
+}
+function buscarIconos(){
+  const q=document.getElementById('icsel-buscar').value.trim().toLowerCase();
+  const cont=document.getElementById('icsel-resultados');
+  if(!q){cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Escribe un t&eacute;rmino en ingl&eacute;s para buscar (ej. calendar, store, clock)...</div>';return;}
+  const coincidencias=CATALOGO_ICONOS.filter(x=>x.term.includes(q));
+  if(!coincidencias.length){cont.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin resultados. Prueba con otro t&eacute;rmino en ingl&eacute;s.</div>';return;}
+  const color=document.getElementById('icsel-color').value;
+  let html='';
+  coincidencias.forEach(m=>{
+    html+=`<div class="icsel-opt" onclick="elegirIcono('tabler','${m.tabler}')" title="Tabler · ${m.term}"><i class="${claseIconoCompleta('tabler',m.tabler)}" style="font-size:22px;color:${color};"></i></div>`;
+    html+=`<div class="icsel-opt" onclick="elegirIcono('fa','${m.fa}')" title="Font Awesome · ${m.term}"><i class="${claseIconoCompleta('fa',m.fa)}" style="font-size:20px;color:${color};"></i></div>`;
+    html+=`<div class="icsel-opt" onclick="elegirIcono('bx','${m.bx}')" title="Boxicons · ${m.term}"><i class="${claseIconoCompleta('bx',m.bx)}" style="font-size:22px;color:${color};"></i></div>`;
+  });
+  cont.innerHTML=html;
+}
+function onIconColorChange(){
+  const color=document.getElementById('icsel-color').value;
+  document.getElementById('icsel-swatch').style.background=color;
+  buscarIconos(); // re-pinta las opciones con el nuevo color
+  const actual=configData.iconos_sidebar[colorIconEditando];
+  if(actual)document.getElementById('icsel-preview').innerHTML=`<i class="${claseIconoCompleta(actual.lib,actual.cls)}" style="font-size:28px;color:${color};"></i>`;
+}
+function elegirIcono(lib,cls){
+  const color=document.getElementById('icsel-color').value;
+  configData.iconos_sidebar[colorIconEditando]={lib,cls,color};
+  document.getElementById('icsel-preview').innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:28px;color:${color};"></i>`;
+  toast('Selecci&oacute;n lista — dale Guardar para confirmar');
+}
+async function guardarIconoSidebar(){
+  cerrarModal('modal-icono');
+  await guardarConfig();
+  renderAdminIconos();
+}
+function renderAdminIconos(){
+  const cont=document.getElementById('admin-iconos-list');if(!cont)return;
+  const nombres={miDia:'Mi día',tareas:'Tablero',proyectos:'Proyectos',calendario:'Calendario',porTienda:'Por Tienda',matriz:'Tiempos',reportes:'Reportes',propuestas:'Propuestas',admin:'Admin'};
+  cont.innerHTML=Object.keys(nombres).map(v=>{
+    const ic=configData.iconos_sidebar[v];
+    return`<div class="pl-card compact" style="cursor:pointer;" onclick="abrirSelectorIcono('${v}')">
+      <div style="display:flex;align-items:center;gap:.6rem;">
+        <i class="${claseIconoCompleta(ic.lib,ic.cls)}" style="font-size:19px;color:${ic.color};"></i>
+        <span class="pl-card-nom">${nombres[v]}</span>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 // ══════════════════════════════════════════════════════════

@@ -679,29 +679,36 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
 /* ── POR TIENDA ── */
 .por-tienda-wrap{padding:1.5rem 2rem 2rem;}
-.tienda-acc{background:var(--white);border:1px solid var(--gray2);border-radius:14px;margin-bottom:.5rem;overflow:hidden;}
-.tienda-acc.vacia{opacity:.55;}
-.tienda-acc-hdr{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;cursor:pointer;transition:background .12s;}
-.tienda-acc-hdr:hover{background:var(--bg-app);}
-.tienda-acc.vacia .tienda-acc-hdr{cursor:default;}
-.tienda-acc.vacia .tienda-acc-hdr:hover{background:none;}
-.tienda-acc-chevron{font-size:10px;color:var(--gray3);flex-shrink:0;width:12px;transition:transform .15s;}
-.tienda-acc-nom{font-size:13.5px;font-weight:700;color:var(--dark);flex:1;}
-.tienda-acc-tag{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 8px;border-radius:10px;background:var(--gray1);color:var(--gray3);}
+.tiendas-grupo{margin-bottom:1.25rem;}
+.tiendas-grupo:last-child{margin-bottom:0;}
+.tiendas-grupo-ttl{font-size:10.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.55rem;}
+.tiendas-cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.55rem;}
+@media(max-width:900px){.tiendas-cards-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:640px){.tiendas-cards-grid{grid-template-columns:repeat(2,1fr);}}
+.tienda-card{background:var(--white);border:1px solid var(--gray2);border-radius:10px;padding:.6rem .8rem;display:flex;align-items:center;justify-content:space-between;gap:.5rem;cursor:pointer;transition:all .12s;}
+.tienda-card:hover{border-color:var(--v-300);}
+.tienda-card.selected{border-color:var(--v-700);background:var(--v-50);}
+.tienda-card.vacia{opacity:.5;}
+.tienda-card-nom{font-size:12.5px;font-weight:600;color:var(--dark);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tienda-card-cnt{font-size:10.5px;font-weight:700;flex-shrink:0;}
+.tienda-card-cnt.hay{color:#8A6A1F;}
+.tienda-card-cnt.vacio{color:var(--gray3);}
+.tienda-detalle{background:var(--white);border:1px solid var(--gray2);border-radius:14px;padding:1rem 1.1rem;margin-top:1.25rem;}
+.tienda-detalle-ttl{font-size:14px;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.6rem;margin-bottom:.75rem;padding-bottom:.65rem;border-bottom:1px solid var(--gray1);}
+.tienda-detalle-lista{display:flex;flex-direction:column;gap:.4rem;}
 .tienda-acc-cnt{font-size:10px;font-weight:700;padding:2px 9px;border-radius:10px;}
 .tienda-acc-cnt.hay{background:var(--gold-lt);color:#8A6A1F;}
-.tienda-acc-cnt.vacio{background:var(--gray1);color:var(--gray3);}
-.tienda-acc-body{padding:0 1.1rem .9rem 2.5rem;display:flex;flex-direction:column;gap:.4rem;}
 .tienda-item{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;background:var(--bg-app);border-radius:9px;font-size:12px;cursor:pointer;transition:background .12s;}
 .tienda-item:hover{background:var(--v-50);}
 .tienda-item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .tienda-item-dot.urgente{background:var(--urgente);}.tienda-item-dot.normal{background:var(--gold);}.tienda-item-dot.baja{background:var(--verde);}.tienda-item-dot.neutro{background:var(--gray3);}
 .tienda-item-ttl{flex:1;color:var(--dark);}
 .tienda-item-resp{font-size:10.5px;color:var(--gray3);flex-shrink:0;}
-.tienda-vacias-toggle{text-align:center;padding:.6rem;font-size:11px;color:var(--gray3);cursor:pointer;}
-.tienda-vacias-toggle:hover{color:var(--verde);}
 /* Chips de tienda dentro del modal de tarea */
-.tienda-chips-wrap{display:flex;flex-wrap:wrap;gap:.4rem;padding:.6rem;border:1.5px solid var(--gray2);border-radius:10px;min-height:44px;}
+.tienda-chips-wrap{display:flex;flex-direction:column;gap:.55rem;padding:.6rem;border:1.5px solid var(--gray2);border-radius:10px;min-height:44px;}
+.tienda-chips-grupo{display:flex;flex-direction:column;gap:.35rem;}
+.tienda-chips-grupo-ttl{font-size:9.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;}
+.tienda-chips-grupo-row{display:flex;flex-wrap:wrap;gap:.4rem;}
 .tienda-chip{display:flex;align-items:center;gap:.3rem;padding:4px 10px;border-radius:20px;background:var(--v-100);color:var(--v-800);font-size:11px;font-weight:600;cursor:pointer;user-select:none;transition:background .12s;}
 .tienda-chip:hover{background:var(--v-200);}
 .tienda-chip.selected{background:var(--v-700);color:var(--white);}
@@ -1274,7 +1281,7 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tienda</div>
         <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
           <div class="fg" style="flex:1;min-width:180px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="tienda-nom" placeholder="ej. Justo Arosemena"></div>
-          <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tienda-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option></select></div>
+          <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tienda-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option><option value="oficina">Oficina</option></select></div>
           <button class="btn-save" style="padding:7px 16px;" onclick="agregarTienda()">+ Agregar</button>
         </div>
       </div>
@@ -1686,7 +1693,7 @@ table.rt tr:last-child td{border-bottom:none;}
     <div class="mbody">
       <input type="hidden" id="tf-id">
       <div class="fg"><label class="flabel">Nombre</label><input type="text" class="fi" id="tf-nom" placeholder="ej. Justo Arosemena"></div>
-      <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tf-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option></select></div>
+      <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tf-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option><option value="oficina">Oficina</option></select></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-tienda')">Cancelar</button><button class="btn-del" onclick="eliminarTiendaDesdeModal()">Eliminar</button><button class="btn-save" onclick="guardarTiendaEditada()">Guardar</button></div>
   </div>
@@ -2255,8 +2262,9 @@ async function eliminarTienda(id,nom){
 function renderAdminTiendas(){
   const list=document.getElementById('admin-tiendas-list');if(!list)return;
   if(!tiendas.length){list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin tiendas todav&iacute;a &mdash; agrega la primera abajo.</div>';return;}
-  const propias=tiendas.filter(t=>t.tipo!=='deli_gourmet');
+  const propias=tiendas.filter(t=>t.tipo==='propia'||!t.tipo);
   const deli=tiendas.filter(t=>t.tipo==='deli_gourmet');
+  const oficina=tiendas.filter(t=>t.tipo==='oficina');
   const grupoHtml=(titulo,arr)=>{
     if(!arr.length)return'';
     return`<div class="tiendas-grupo">
@@ -2267,7 +2275,7 @@ function renderAdminTiendas(){
       </div>`).join('')}</div>
     </div>`;
   };
-  list.innerHTML=grupoHtml('Tiendas propias',propias)+grupoHtml('Deli Gourmet',deli);
+  list.innerHTML=grupoHtml('Tiendas propias',propias)+grupoHtml('Deli Gourmet',deli)+grupoHtml('Oficina',oficina);
 }
 function abrirModalTienda(id){
   const t=tiendas.find(x=>x.id===id);if(!t)return;
@@ -2506,10 +2514,15 @@ function renderTiendaChips(){
     btnToggle.textContent=modalTiendaIds.length===tiendas.length?'Quitar todas':'Seleccionar todas';
   }
   if(btnNinguna)btnNinguna.style.display=modalTiendaIds.length>0?'inline-block':'none';
-  cont.innerHTML=tiendas.map(t=>{
+  const propias=tiendas.filter(t=>t.tipo==='propia'||!t.tipo);
+  const deli=tiendas.filter(t=>t.tipo==='deli_gourmet');
+  const oficina=tiendas.filter(t=>t.tipo==='oficina');
+  const chipsDe=arr=>arr.map(t=>{
     const sel=modalTiendaIds.includes(t.id);
-    return`<div class="tienda-chip${sel?' selected':''}" onclick="toggleTiendaChip('${t.id}')">${esc(t.nombre)}${t.tipo==='deli_gourmet'?'<span class="tienda-chip-tipo"> · DG</span>':''}</div>`;
+    return`<div class="tienda-chip${sel?' selected':''}" onclick="toggleTiendaChip('${t.id}')">${esc(t.nombre)}</div>`;
   }).join('');
+  const grupoDe=(titulo,arr)=>arr.length?`<div class="tienda-chips-grupo"><div class="tienda-chips-grupo-ttl">${titulo}</div><div class="tienda-chips-grupo-row">${chipsDe(arr)}</div></div>`:'';
+  cont.innerHTML=grupoDe('Tiendas propias',propias)+grupoDe('Deli Gourmet',deli)+grupoDe('Oficina',oficina);
 }
 function toggleTodasTiendas(){
   modalTiendaIds=modalTiendaIds.length===tiendas.length?[]:tiendas.map(t=>t.id);
@@ -5078,12 +5091,12 @@ function cargaDia(fechaStr, respFiltro=''){
 
 // ══════════════════════════════════════════════════════════
 // POR TIENDA — agrupa los pendientes activos (no aprobados) por
-// tienda asociada. Una tarea con varias tiendas aparece repetida en
-// cada una de sus filas, para que cada tienda vea completo lo que le
-// corresponde. Tiendas sin pendientes se colapsan al final.
+// tienda asociada. Una tarea con varias tiendas cuenta en cada una
+// de sus tiendas. Tarjetas compactas en grid, agrupadas por tipo
+// (propia / Deli Gourmet / Oficina); al hacer click en una tienda,
+// su detalle (lista de pendientes) aparece debajo.
 // ══════════════════════════════════════════════════════════
-let tiendasExpandidas={}; // {tiendaId: bool} — recuerda qué acordeones están abiertos
-let mostrarTiendasVacias=false;
+let tiendaSeleccionadaId=null;
 
 function renderPorTienda(){
   const cont=document.getElementById('por-tienda-list');
@@ -5094,25 +5107,41 @@ function renderPorTienda(){
     return;
   }
   const activas=tareas.filter(t=>t.estado!=='aprobado'&&t.tienda_ids&&t.tienda_ids.length);
+  const conteoDe=tId=>activas.filter(x=>x.tienda_ids.includes(tId)).length;
   const tiendasFiltradas=tiendas.filter(t=>!q||t.nombre.toLowerCase().includes(q));
-  const conPend=[],sinPend=[];
-  tiendasFiltradas.forEach(t=>{
-    const ts=activas.filter(x=>x.tienda_ids.includes(t.id)).sort((a,b)=>sortTareas(a,b));
-    (ts.length?conPend:sinPend).push({tienda:t,ts});
-  });
 
-  let html='';
-  conPend.forEach(({tienda,ts})=>{
-    const expandido=tiendasExpandidas[tienda.id]!==false; // por defecto abierta
-    html+=`<div class="tienda-acc">
-      <div class="tienda-acc-hdr" onclick="toggleTiendaAcc('${tienda.id}')">
-        <span class="tienda-acc-chevron" style="transform:rotate(${expandido?90:0}deg)">&#9654;</span>
-        <span class="tienda-acc-nom">${esc(tienda.nombre)}</span>
-        ${tienda.tipo==='deli_gourmet'?'<span class="tienda-acc-tag">Deli Gourmet</span>':''}
-        <span class="tienda-acc-cnt hay">${ts.length} pendiente${ts.length!==1?'s':''}</span>
-      </div>`;
-    if(expandido){
-      html+='<div class="tienda-acc-body">';
+  const propias=tiendasFiltradas.filter(t=>t.tipo==='propia'||!t.tipo);
+  const deli=tiendasFiltradas.filter(t=>t.tipo==='deli_gourmet');
+  const oficina=tiendasFiltradas.filter(t=>t.tipo==='oficina');
+
+  const cardDe=t=>{
+    const cnt=conteoDe(t.id);
+    const sel=t.id===tiendaSeleccionadaId;
+    return`<div class="tienda-card${cnt?'':' vacia'}${sel?' selected':''}" onclick="seleccionarTienda('${t.id}')">
+      <span class="tienda-card-nom">${esc(t.nombre)}</span>
+      <span class="tienda-card-cnt ${cnt?'hay':'vacio'}">${cnt||'—'}</span>
+    </div>`;
+  };
+  const grupoDe=(titulo,arr)=>arr.length?`<div class="tiendas-grupo">
+    <div class="tiendas-grupo-ttl">${titulo}</div>
+    <div class="tiendas-cards-grid">${arr.map(cardDe).join('')}</div>
+  </div>`:'';
+
+  let html=grupoDe('Tiendas propias',propias)+grupoDe('Deli Gourmet',deli)+grupoDe('Oficina',oficina);
+  if(!propias.length&&!deli.length&&!oficina.length){
+    html='<div class="r-empty">Ninguna tienda coincide con la b&uacute;squeda.</div>';
+  }
+
+  // Detalle de la tienda seleccionada, debajo del grid
+  if(tiendaSeleccionadaId&&tiendas.find(t=>t.id===tiendaSeleccionadaId)){
+    const tienda=tiendas.find(t=>t.id===tiendaSeleccionadaId);
+    const ts=activas.filter(x=>x.tienda_ids.includes(tienda.id)).sort((a,b)=>sortTareas(a,b));
+    html+=`<div class="tienda-detalle">
+      <div class="tienda-detalle-ttl">${esc(tienda.nombre)} <span class="tienda-acc-cnt hay">${ts.length} pendiente${ts.length!==1?'s':''}</span></div>`;
+    if(!ts.length){
+      html+='<div class="r-empty" style="padding:1.5rem 1rem;">Sin pendientes activos en esta tienda.</div>';
+    } else {
+      html+='<div class="tienda-detalle-lista">';
       ts.forEach(t=>{
         const cpd=colorPorDeadline(t)||'neutro';
         html+=`<div class="tienda-item" onclick="editarTarea('${t.id}',event)">
@@ -5124,34 +5153,12 @@ function renderPorTienda(){
       html+='</div>';
     }
     html+='</div>';
-  });
-
-  if(sinPend.length){
-    if(!mostrarTiendasVacias){
-      html+=`<div class="tienda-vacias-toggle" onclick="mostrarTiendasVacias=true;renderPorTienda();">+ ${sinPend.length} tienda${sinPend.length!==1?'s':''} sin pendientes activos (mostrar)</div>`;
-    } else {
-      sinPend.forEach(({tienda})=>{
-        html+=`<div class="tienda-acc vacia">
-          <div class="tienda-acc-hdr">
-            <span class="tienda-acc-chevron"></span>
-            <span class="tienda-acc-nom">${esc(tienda.nombre)}</span>
-            ${tienda.tipo==='deli_gourmet'?'<span class="tienda-acc-tag">Deli Gourmet</span>':''}
-            <span class="tienda-acc-cnt vacio">Sin pendientes</span>
-          </div>
-        </div>`;
-      });
-      html+=`<div class="tienda-vacias-toggle" onclick="mostrarTiendasVacias=false;renderPorTienda();">Ocultar tiendas sin pendientes</div>`;
-    }
-  }
-
-  if(!conPend.length&&!sinPend.length){
-    html='<div class="r-empty">Ninguna tienda coincide con la b&uacute;squeda.</div>';
   }
 
   cont.innerHTML=html;
 }
-function toggleTiendaAcc(id){
-  tiendasExpandidas[id]=tiendasExpandidas[id]===false?true:false;
+function seleccionarTienda(id){
+  tiendaSeleccionadaId=tiendaSeleccionadaId===id?null:id;
   renderPorTienda();
 }
 

@@ -394,6 +394,36 @@ table.rt tr:last-child td{border-bottom:none;}
 .page-ttl{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--ink);line-height:1.2;}
 .midia-greeting-sub{font-size:13px;color:var(--gray3);margin-top:.3rem;font-weight:500;}
 
+/* Hero de saludo — protagonista de Mi día */
+.midia-hero{padding:.5rem 0 1.25rem;}
+.midia-hero-fecha{font-size:11px;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.midia-hero-saludo{font-family:var(--font-display);font-weight:500;font-size:28px;color:var(--dark);margin-bottom:6px;line-height:1.2;}
+.midia-hero-sub{font-size:14px;color:var(--gray3);}
+
+/* Píldoras: racha, comentarios sin leer */
+.midia-pills{display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.5rem;}
+.midia-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:500;cursor:default;}
+.midia-pill i{font-size:14px;}
+.midia-pill.success{background:var(--verde-lt);color:var(--verde);}
+.midia-pill.accent{background:var(--v-100);color:var(--v-800);cursor:pointer;}
+.midia-pill.accent:hover{background:var(--v-200);}
+
+/* Próximos días — lista simple de texto, no tarjetas pesadas */
+.midia-proximos{display:flex;flex-direction:column;gap:2px;}
+.midia-proximo-item{display:flex;align-items:center;gap:10px;padding:.5rem 0;cursor:pointer;border-bottom:1px solid var(--gray1);}
+.midia-proximo-item:last-child{border-bottom:none;}
+.midia-proximo-item:hover .midia-proximo-ttl{color:var(--v-700);}
+.midia-proximo-dia{font-size:11px;color:var(--gray3);width:64px;flex-shrink:0;text-transform:capitalize;}
+.midia-proximo-ttl{font-size:12.5px;color:var(--dark);transition:color .1s;}
+
+/* Vista de equipo (pestaña Equipo en Mi día, solo admin/gerente) */
+.midia-equipo-list{display:flex;flex-direction:column;gap:.5rem;}
+.midia-equipo-item{display:flex;align-items:center;gap:.7rem;padding:.7rem .9rem;background:var(--white);border:1px solid var(--gray2);border-radius:10px;cursor:pointer;transition:border-color .1s;}
+.midia-equipo-item:hover{border-color:#D8D5CE;}
+.midia-equipo-avatar{width:30px;height:30px;border-radius:50%;background:var(--v-700);color:var(--white);font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.midia-equipo-nom{font-size:13px;font-weight:500;color:var(--dark);}
+.midia-equipo-meta{font-size:11px;color:var(--gray3);margin-left:auto;}
+
 /* Stat cards */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
 .stat-card{background:var(--white);border:1px solid var(--gray2);border-radius:16px;padding:1.1rem 1.2rem;box-shadow:0 1px 2px rgba(20,30,25,.04);}
@@ -506,6 +536,10 @@ table.rt tr:last-child td{border-bottom:none;}
 /* ADMIN */
 .admin-wrap{padding:1.5rem 2rem 2rem;}
 .admin-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin-bottom:1.5rem;overflow-x:auto;}
+.midia-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin-bottom:1.5rem;}
+.midia-tab-btn{background:none;border:none;padding:.6rem 1rem;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--gray3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;}
+.midia-tab-btn:hover{color:var(--dark);}
+.midia-tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
 .admin-tab-btn{background:none;border:none;padding:.6rem 1rem;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--gray3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;}
 .admin-tab-btn:hover{color:var(--dark);}
 .admin-tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
@@ -796,12 +830,12 @@ table.rt tr:last-child td{border-bottom:none;}
 .tienda-toggle-todas:hover{text-decoration:underline;}
 
 /* ── CALENDARIO ── */
-.cal-wrap{padding:0;}
+.cal-wrap{padding:0;height:calc(100vh - 160px);min-height:500px;display:flex;flex-direction:column;}
 /* LAYOUT: sidebar (mini-cal + sin fecha) + calendario principal */
-.cal-layout{display:flex;gap:1.25rem;align-items:flex-start;}
-.cal-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem;position:sticky;top:1rem;max-height:calc(100vh - 2rem);overflow-y:auto;}
-.cal-main{flex:1;min-width:0;}
-@media(max-width:900px){.cal-layout{flex-direction:column;}.cal-sidebar{width:100%;position:static;max-height:none;}}
+.cal-layout{display:flex;gap:1.25rem;align-items:stretch;flex:1;min-height:0;}
+.cal-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem;position:sticky;top:80px;max-height:100%;overflow:hidden;}
+.cal-main{flex:1;min-width:0;display:flex;flex-direction:column;min-height:0;}
+@media(max-width:900px){.cal-layout{flex-direction:column;}.cal-sidebar{width:100%;position:static;max-height:none;}.cal-wrap{height:auto;min-height:0;}}
 /* Mini calendario */
 .cal-mini{background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:.85rem;flex-shrink:0;}
 .cal-mini-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
@@ -819,14 +853,15 @@ table.rt tr:last-child td{border-bottom:none;}
 /* Sin fecha asignada — lista con scroll propio, para que no estire toda la página */
 .cal-sinfecha{display:flex;flex-direction:column;min-height:0;flex:1;}
 .cal-sinfecha-ttl{font-size:10.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem;flex-shrink:0;}
-#cal-sinfecha-list{overflow-y:auto;max-height:340px;padding-right:2px;}
+#cal-sinfecha-list{overflow-y:auto;flex:1;min-height:0;padding-right:2px;}
 .cal-sf-item{background:var(--white);border:1px solid var(--gray2);border-radius:10px;padding:.55rem .7rem;margin-bottom:.5rem;cursor:grab;transition:box-shadow .12s;}
 .cal-sf-item:hover{box-shadow:0 2px 8px rgba(20,30,25,.08);}
 .cal-sf-item.dragging{opacity:.4;}
 .cal-sf-ttl{font-size:11.5px;color:var(--dark);margin-bottom:2px;line-height:1.3;}
 .cal-sf-meta{font-size:9.5px;color:var(--gray3);}
 .cal-sf-empty{font-size:11px;color:var(--gray3);padding:.5rem 0;}
-.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.75rem;}
+.cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.75rem;flex-shrink:0;}
+#cal-container{flex:1;min-height:0;display:flex;flex-direction:column;}
 .cal-nav{display:flex;align-items:center;gap:.6rem;}
 .cal-mes{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--ink);min-width:190px;text-align:center;}
 .cal-nav-btn{background:var(--white);border:1px solid var(--gray2);border-radius:9px;padding:6px 13px;cursor:pointer;font-size:13px;color:var(--ink);font-family:var(--font-body);font-weight:600;transition:all .12s;}
@@ -836,9 +871,9 @@ table.rt tr:last-child td{border-bottom:none;}
 .cal-vista-btn.active{background:var(--v-700);color:var(--white);box-shadow:0 2px 6px rgba(0,97,77,.2);}
 .cal-filtro{display:flex;align-items:center;gap:.5rem;}
 /* GRID MES */
-.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:1px;background:var(--gray2);border-radius:16px;overflow:hidden;border:1px solid var(--gray2);}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:auto repeat(6,1fr);gap:1px;background:var(--gray2);border-radius:16px;overflow:hidden;border:1px solid var(--gray2);flex:1;min-height:0;}
 .cal-dow{background:var(--white);color:var(--gray3);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;text-align:center;padding:10px 4px;}
-.cal-dia{background:var(--white);min-height:96px;padding:7px;cursor:pointer;transition:background .12s;position:relative;display:flex;flex-direction:column;gap:3px;}
+.cal-dia{background:var(--white);min-height:0;padding:7px;cursor:pointer;transition:background .12s;position:relative;display:flex;flex-direction:column;gap:3px;overflow:hidden;}
 .cal-dia:hover{background:var(--v-50);}
 .cal-dia.otro-mes{background:var(--gray1);opacity:.45;}
 .cal-dia.domingo{background:var(--bg-app);}
@@ -853,8 +888,8 @@ table.rt tr:last-child td{border-bottom:none;}
 /* DRAG OVER */
 .cal-dia.drag-over{background:var(--gold-lt)!important;outline:2px dashed var(--gold);}
 /* GRID SEMANA */
-.sem-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.6rem;}
-.sem-col{background:var(--white);border-radius:14px;border:1px solid var(--gray2);min-height:400px;display:flex;flex-direction:column;overflow:hidden;}
+.sem-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:.6rem;flex:1;min-height:0;}
+.sem-col{background:var(--white);border-radius:14px;border:1px solid var(--gray2);min-height:0;display:flex;flex-direction:column;overflow:hidden;}
 .sem-col.hoy-col{border-color:var(--v-700);border-width:1.5px;box-shadow:0 2px 10px rgba(0,97,77,.1);}
 .sem-col.domingo-col{background:var(--bg-app);opacity:.55;}
 .sem-hdr{padding:.65rem .5rem;border-bottom:1px solid var(--gray1);text-align:center;background:var(--gray1);}
@@ -865,7 +900,7 @@ table.rt tr:last-child td{border-bottom:none;}
 .sem-col.hoy-col .sem-num{color:var(--white);}
 .sem-horas{font-size:9px;font-weight:600;text-align:center;padding:4px 6px 0;}
 .sem-horas.ok{color:var(--v-700);}.sem-horas.warn{color:var(--warning);}.sem-horas.over{color:var(--urgente);}
-.sem-chips{padding:.5rem .5rem;display:flex;flex-direction:column;gap:5px;flex:1;}
+.sem-chips{padding:.5rem .5rem;display:flex;flex-direction:column;gap:5px;flex:1;overflow-y:auto;min-height:0;}
 .sem-chip{font-size:10.5px;font-weight:600;padding:7px 9px;border-radius:9px;cursor:grab;line-height:1.35;transition:transform .12s;}
 .sem-chip:hover{opacity:.9;transform:translateY(-1px);}
 .sem-chip-top{display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:9px;font-weight:600;}
@@ -1148,7 +1183,7 @@ table.rt tr:last-child td{border-bottom:none;}
     <nav class="sb-nav">
       <div class="sb-section-lbl">Equipo</div>
       <button class="sb-item" id="tab-matriz" onclick="setVista('matriz',this)"><span class="sb-icon" id="sbicon-matriz"><svg viewBox="0 0 70 70" width="20" height="20"><circle cx="35" cy="35" r="31" fill="#F0B93D"/><circle cx="35" cy="35" r="24" fill="#D89818"/><line x1="35" y1="35" x2="35" y2="20" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="35" x2="46" y2="40" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><circle cx="35" cy="35" r="3" fill="#F7EDE1"/></svg></span> Tiempos</button>
-      <button class="sb-item" onclick="setVista('reportes',this)"><span class="sb-icon" id="sbicon-reportes"><svg viewBox="0 0 62 74" width="20" height="20"><path d="M14 68L14 40C14 36 17 33 21 33L27 33C31 33 34 36 34 40L34 68Z" fill="#9B7FD4"/><path d="M36 68L36 24C36 20 39 17 43 17L49 17C53 17 56 20 56 24L56 68Z" fill="#7A5FC0"/><rect x="8" y="68" width="54" height="6" rx="3" fill="#6B4FAD"/></svg></span> Reportes</button>
+      <button class="sb-item" id="sb-btn-reportes" onclick="setVista('reportes',this)"><span class="sb-icon" id="sbicon-reportes"><svg viewBox="0 0 62 74" width="20" height="20"><path d="M14 68L14 40C14 36 17 33 21 33L27 33C31 33 34 36 34 40L34 68Z" fill="#9B7FD4"/><path d="M36 68L36 24C36 20 39 17 43 17L49 17C53 17 56 20 56 24L56 68Z" fill="#7A5FC0"/><rect x="8" y="68" width="54" height="6" rx="3" fill="#6B4FAD"/></svg></span> Reportes</button>
       <button class="sb-item" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)"><span class="sb-icon" id="sbicon-propuestas"><svg viewBox="0 0 70 72" width="20" height="20"><path d="M35 4C15 6 3 21 5 40C3 57 16 70 35 72C54 70 67 57 65 40C67 21 55 6 35 4Z" fill="#4AB894"/><path d="M20 37L30 47L52 22" stroke="#F7EDE1" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Propuestas<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
       <button class="sb-item admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)"><span class="sb-icon" id="sbicon-admin"><svg viewBox="0 0 70 70" width="20" height="20"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg></span> Admin</button>
     </nav>
@@ -1189,6 +1224,10 @@ table.rt tr:last-child td{border-bottom:none;}
 <div class="content">
 <div class="vista active" id="vista-miDia">
   <div class="midia-wrap">
+    <div class="midia-tabs" id="midia-tabs" style="display:none;">
+      <button class="midia-tab-btn active" onclick="setMiDiaTab('yo',this)">Yo</button>
+      <button class="midia-tab-btn" onclick="setMiDiaTab('equipo',this)">Equipo</button>
+    </div>
     <div id="midia-content"></div>
   </div>
 </div>
@@ -3252,8 +3291,63 @@ function renderCarga(){
 // Muestra el plan de hoy (completado/proceso/pendiente) y los próximos
 // días "apagados" que se activan si el trabajo de hoy ya está completo.
 // ══════════════════════════════════════════════════════════
+// Racha: días consecutivos (empezando ayer) donde todo lo fijado a ese día quedó resuelto
+// (en revisión o aprobado), sin nada pendiente/proceso colgado. Corta en el primer día que falle.
+let miDiaTabActual='yo'; // 'yo' | 'equipo' — solo admin/gerente ven la pestaña Equipo
+
+function setMiDiaTab(tab,btn){
+  miDiaTabActual=tab;
+  document.querySelectorAll('#midia-tabs .midia-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMiDia();
+}
+
+// Vista de equipo: para admin/gerente, resumen de cómo va cada persona hoy, sin
+// reemplazar la Mi día personal — es una pestaña aparte, nunca la vista por defecto.
+function renderMiDiaEquipo(){
+  const hStr=hoyStr();
+  let html=`<div class="midia-hero" style="margin-bottom:1.5rem;">
+    <div class="midia-hero-saludo" style="font-size:20px;">El d&iacute;a del equipo</div>
+    <div class="midia-hero-sub">C&oacute;mo va cada persona hoy</div>
+  </div>`;
+  html+=`<div class="midia-equipo-list">`;
+  usuarios.forEach(u=>{
+    const tareasHoyU=tareas.filter(t=>t.responsable===u.id&&t.dia_fijado===hStr&&(t.estado==='pendiente'||t.estado==='proceso'));
+    const enRevisionU=tareas.filter(t=>t.responsable===u.id&&t.estado==='revision').length;
+    const ini=(u.nombre||'?').charAt(0).toUpperCase();
+    html+=`<div class="midia-equipo-item" onclick="abrirReporteDetalle('${u.id}');setVista('reportes',document.getElementById('sb-btn-reportes'))">
+      <div class="midia-equipo-avatar">${ini}</div>
+      <span class="midia-equipo-nom">${esc(u.nombre)}</span>
+      <span class="midia-equipo-meta">${tareasHoyU.length} tarea${tareasHoyU.length!==1?'s':''} para hoy${enRevisionU?` &middot; ${enRevisionU} en revisi&oacute;n`:''}</span>
+    </div>`;
+  });
+  html+=`</div>`;
+  document.getElementById('midia-content').innerHTML=html;
+}
+
+function calcularRacha(resp){
+  let racha=0;
+  let cursor=addDias(new Date(new Date().setHours(0,0,0,0)),-1);
+  for(let i=0;i<30;i++){
+    if(horasDia(cursor)<=0){cursor=addDias(cursor,-1);continue;} // saltar domingos
+    const fStr=fechaStr(cursor);
+    const tareasDia=tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr);
+    if(!tareasDia.length)break; // día sin nada fijado corta la racha (no cuenta ni suma ni resta)
+    const todoResuelto=tareasDia.every(t=>t.estado==='revision'||t.estado==='aprobado');
+    if(!todoResuelto)break;
+    racha++;
+    cursor=addDias(cursor,-1);
+  }
+  return racha;
+}
+
 function renderMiDia(){
-  // "Mi día" es siempre personal — nunca muestra el día de otra persona, sin importar el rol.
+  const puedeVerEquipo=PERFIL?.rol==='admin'||PERFIL?.rol==='gerente';
+  const tabsEl=document.getElementById('midia-tabs');
+  if(tabsEl)tabsEl.style.display=puedeVerEquipo?'flex':'none';
+  if(miDiaTabActual==='equipo'&&puedeVerEquipo){renderMiDiaEquipo();return;}
+
+  // "Yo" — siempre personal, del usuario logueado.
   const resp=USER.id;
   const hoy=new Date();hoy.setHours(0,0,0,0);
   const hStr=hoyStr();
@@ -3287,44 +3381,74 @@ function renderMiDia(){
   const horaActual=new Date().getHours();
   const saludoBase=horaActual<12?'Buenos d&iacute;as':horaActual<19?'Buenas tardes':'Buenas noches';
   let situacion=[];
-  if(pendientesHoy.length||enProceso.length)situacion.push(`${pendientesHoy.length+enProceso.length} tarea${(pendientesHoy.length+enProceso.length)!==1?'s':''} para hoy`);
-  if(enRevisionAhora.length)situacion.push(`${enRevisionAhora.length} en revisi&oacute;n`);
-  const situacionTxt=situacion.length?situacion.join(' &middot; '):'Sin pendientes activos por ahora';
+  if(pendientesHoy.length||enProceso.length)situacion.push(`tienes ${pendientesHoy.length+enProceso.length} tarea${(pendientesHoy.length+enProceso.length)!==1?'s':''} para hoy`);
+  if(enRevisionAhora.length)situacion.push(`${enRevisionAhora.length} esperando revisi&oacute;n`);
+  const situacionTxt=situacion.length?`Hoy ${situacion.join(' y ')}.`:'Sin pendientes activos por ahora.';
 
-  let html=`<div class="page-hdr">
-    <div class="page-eyebrow">${hoy.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'})}</div>
-    <div class="page-ttl">${saludoBase}, ${esc(nombrePila)} &#128075;</div>
-    <div class="midia-greeting-sub">${situacionTxt}</div>
+  let html=`<div class="midia-hero">
+    <div class="midia-hero-fecha">${hoy.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long'})}</div>
+    <div class="midia-hero-saludo">${saludoBase}, ${esc(nombrePila)}</div>
+    <div class="midia-hero-sub">${situacionTxt}</div>
   </div>`;
 
-  // ── STAT CARDS ──
-  html+=`<div class="stats-row">
-    <div class="stat-card filled">
-      <div class="stat-top"><div class="stat-icon-circle">&#9989;</div></div>
-      <div class="stat-n">${completadasSemana}</div>
-      <div class="stat-lbl">Completadas esta semana</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon-circle">&#128203;</div></div>
-      <div class="stat-n">${pendientesHoy.length+enProceso.length}</div>
-      <div class="stat-lbl">Tareas para hoy</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon-circle">&#128065;</div></div>
-      <div class="stat-n">${enRevisionAhora.length}</div>
-      <div class="stat-lbl">Esperando revisi&oacute;n</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-top"><div class="stat-icon-circle">&#128197;</div>${venceHoy?'<span class="stat-trend down">Hoy</span>':''}</div>
-      <div class="stat-n">${venceHoy}</div>
-      <div class="stat-lbl">Vence hoy</div>
-    </div>
+  // ── PÍLDORAS: racha + comentarios sin leer ──
+  const racha=calcularRacha(resp);
+  const comentariosSinLeer=notificaciones.filter(n=>n.tipo==='comentario'&&!n.leido).length;
+  if(racha>0||comentariosSinLeer>0){
+    html+=`<div class="midia-pills">`;
+    if(racha>0)html+=`<div class="midia-pill success"><i class="ti ti-flame"></i>${racha} d&iacute;a${racha!==1?'s':''} seguido${racha!==1?'s':''} al d&iacute;a</div>`;
+    if(comentariosSinLeer>0)html+=`<div class="midia-pill accent" onclick="toggleNotifPanel()"><i class="ti ti-message-circle"></i>${comentariosSinLeer} comentario${comentariosSinLeer!==1?'s':''} nuevo${comentariosSinLeer!==1?'s':''}</div>`;
+    html+=`</div>`;
+  }
+
+  // ── PARA HOY (grid de cards) ──
+  html+=`<div class="section-hdr" style="margin-top:1.75rem;">
+    <div class="section-ttl">Para hoy<span class="section-pill active">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''}</span></div>
   </div>`;
+  if(!tareasHoy.length){
+    html+=`<div class="midia-empty">Sin pendientes para hoy. Buen momento para revisar lo de ma&ntilde;ana.</div>`;
+  } else {
+    html+=`<div class="midia-task-grid">`;
+    [...enProceso,...pendientesHoy,...completadas].forEach(t=>{
+      html+=mkMiDiaCard(t,resp);
+    });
+    html+=`</div>`;
+  }
+
+  // ── PRÓXIMOS DÍAS (lista simple de texto, no tarjetas) ──
+  const proximos=[];
+  let cursorProx=addDias(hoy,1);
+  let diasRevisados=0,diasEncontrados=0;
+  while(diasEncontrados<4&&diasRevisados<10){
+    if(horasDia(cursorProx)>0){
+      const fStr=fechaStr(cursorProx);
+      const tareasDia=tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr&&(t.estado==='pendiente'||t.estado==='proceso'));
+      if(tareasDia.length){
+        proximos.push({fecha:cursorProx,tareas:tareasDia});
+        diasEncontrados++;
+      }
+    }
+    cursorProx=addDias(cursorProx,1);
+    diasRevisados++;
+  }
+  if(proximos.length){
+    html+=`<div class="section-hdr" style="margin-top:1.75rem;"><div class="section-ttl">Pr&oacute;ximos d&iacute;as</div></div>`;
+    html+=`<div class="midia-proximos">`;
+    proximos.forEach(({fecha,tareas:ts})=>{
+      const esMañana=fecha.getTime()===addDias(hoy,1).getTime();
+      const lbl=esMañana?'Ma&ntilde;ana':fecha.toLocaleDateString('es-PA',{weekday:'long'});
+      ts.forEach(t=>{
+        html+=`<div class="midia-proximo-item" onclick="editarTarea('${t.id}',event)">
+          <span class="midia-proximo-dia">${lbl}</span>
+          <span class="midia-proximo-ttl">${esc(t.titulo)}</span>
+        </div>`;
+      });
+    });
+    html+=`</div>`;
+  }
 
   // ── GRID: gráfica de semana + performance ──
-  html+=`<div class="mid-grid">`;
-
-  // Gráfica de semana (lunes a sábado) — conteo de tareas fijadas por día, ya no horas
+  html+=`<div class="mid-grid" style="margin-top:1.75rem;">`;
   html+=`<div class="panel">
     <div class="panel-hdr"><div class="panel-ttl">Carga de la semana</div></div>
     <div class="bars">`;
@@ -3393,53 +3517,6 @@ function renderMiDia(){
   }
   html+=`</div>`; // fin mid-grid
 
-  // ── PARA HOY (grid de cards) ──
-  html+=`<div class="section-hdr">
-    <div class="section-ttl">Para hoy<span class="section-pill active">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''}</span></div>
-  </div>`;
-  if(!tareasHoy.length){
-    html+=`<div class="midia-empty">Sin pendientes para hoy. ¡Buen momento para revisar lo de mañana!</div>`;
-  } else {
-    html+=`<div class="midia-task-grid">`;
-    [...enProceso,...pendientesHoy,...completadas].forEach(t=>{
-      html+=mkMiDiaCard(t,resp);
-    });
-    html+=`</div>`;
-  }
-
-  // ── DÍAS FUTUROS (apagados, se activan si hoy ya se completó) ──
-  let cursor=addDias(hoy,1);
-  let diasMostrados=0;
-  while(diasMostrados<4){
-    const cap=horasDia(cursor);
-    if(cap<=0){cursor=addDias(cursor,1);continue;} // saltar domingos
-    const fStr=fechaStr(cursor);
-    const tareasDia=tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr&&(t.estado==='pendiente'||t.estado==='proceso'));
-    const esMañana=diasMostrados===0;
-    const activo=esMañana&&trabajoHoyCompleto;
-    const lbl=cursor.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
-
-    html+=`<div class="midia-section-hdr" style="margin-top:1.5rem;${activo?'':'opacity:.6;'}">
-      <div class="midia-section-ttl">${esMañana?'Ma&ntilde;ana':''} ${lbl}<span class="midia-section-badge">${tareasDia.length} pendiente${tareasDia.length!==1?'s':''}</span></div>
-    </div>`;
-
-    if(!tareasDia.length){
-      html+=`<div class="midia-empty">Sin pendientes asignados.</div>`;
-    } else {
-      html+=`<div class="midia-task-grid${activo?'':' dimmed-grid'}">`;
-      tareasDia.forEach(t=>{
-        html+=mkMiDiaCard(t,resp,!activo);
-      });
-      html+=`</div>`;
-    }
-    if(activo){
-      html+=`<div style="font-size:11px;color:var(--gold);font-weight:700;text-align:center;padding:.6rem;">&#10024; Terminaste lo de hoy &mdash; puedes adelantar esto</div>`;
-    }
-
-    cursor=addDias(cursor,1);
-    diasMostrados++;
-  }
-
   document.getElementById('midia-content').innerHTML=html;
 }
 
@@ -3466,18 +3543,18 @@ function mkMiDiaCard(t,resp,dimmed=false){
     dateTxt=diffDias===0?'Vence hoy':diffDias<0?`Venci&oacute; ${dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`:dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
     dateCls=diffDias<0?'vencida':diffDias===0?'vence-hoy':'';
   }
-  const fijadoTag=t.dia_fijado?' &#128204;':'';
+  const fijadoTag=t.dia_fijado?' <i class="ti ti-pin" style="font-size:11px;color:var(--gray3);vertical-align:-1px;" aria-hidden="true"></i>':'';
   const puedeAvanzar=t.responsable===resp&&(t.estado==='pendiente'||t.estado==='proceso');
   return`<div class="midia-task-card ${cpd}${dimmed?' dimmed':''}" onclick="editarTarea('${t.id}',event)">
     <div class="midia-task-top">
-      <span class="midia-task-check${done?' done':''}">${done?'&#10003;':''}</span>
+      <span class="midia-task-check${done?' done':''}">${done?'<i class="ti ti-check" style="font-size:13px;" aria-hidden="true"></i>':''}</span>
       <span class="midia-task-resp" title="${esc(getUsuarioNombre(t.responsable)||'')}">${inicial}</span>
     </div>
     <div class="midia-task-body">
       <div class="midia-task-title${done?' done':''}">${esc(t.titulo)}${fijadoTag}</div>
       <div class="midia-task-meta">
         <span class="midia-task-tag">${esc(getTipoLabel(t.tipo))}</span>
-        ${dateTxt?`<span class="midia-task-date ${dateCls}">&#128197; ${dateTxt}</span>`:''}
+        ${dateTxt?`<span class="midia-task-date ${dateCls}"><i class="ti ti-calendar" style="font-size:11px;vertical-align:-1px;" aria-hidden="true"></i> ${dateTxt}</span>`:''}
       </div>
     </div>
     ${(puedeAvanzar&&!done)?`<div class="midia-task-bottom"><button class="midia-btn-listo" onclick="marcarListo('${t.id}',event)">Listo &rarr;</button></div>`:''}

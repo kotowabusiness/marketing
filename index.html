@@ -1231,7 +1231,7 @@ table.rt tr:last-child td{border-bottom:none;}
   <div class="board">
     <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></span></div></div>
     <div class="col col-atrasados" id="col-atrasados"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl col-ttl-atrasados">Atrasados</span><span class="col-cnt col-cnt-atrasados" id="cnt-atrasados">0</span></span></div></div>
-    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-cnt" id="cnt-hoy">0</span></span><span class="col-horas-aviso" id="hoy-horas-aviso" style="display:none;"></span></div></div>
+    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-cnt" id="cnt-hoy">0</span></span></div></div>
     <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Esta semana <span class="col-ttl-fecha" id="col-semana-fecha"></span></span><span class="col-cnt" id="cnt-semana">0</span></span></div></div>
     <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></span></div></div>
     <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></span></div></div>
@@ -1271,7 +1271,6 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="rsec-ttl">Agregar tipo personalizado</div>
       <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
         <div class="fg" style="flex:1;min-width:160px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="nuevo-tipo-nom" placeholder="ej. Fotograf&iacute;a de producto"></div>
-        <div class="fg"><label class="flabel">Horas base</label><input type="number" class="fi" id="nuevo-tipo-h" min=".5" max="40" step=".5" value="2" style="width:80px;"></div>
         <div class="fg" style="flex:1;min-width:160px;"><label class="flabel">Descripci&oacute;n</label><input type="text" class="fi" id="nuevo-tipo-desc" placeholder="Breve descripci&oacute;n"></div>
         <button class="btn-save" style="padding:8px 18px;" onclick="agregarTipo()">Agregar</button>
       </div>
@@ -1400,7 +1399,6 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tipo</div>
         <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
           <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="admin-tipo-nom" placeholder="ej. Fotografía"></div>
-          <div class="fg"><label class="flabel">Horas base</label><input type="number" class="fi" id="admin-tipo-h" min=".5" max="40" step=".5" value="2" style="width:75px;"></div>
           <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Descripción</label><input type="text" class="fi" id="admin-tipo-desc" placeholder="Breve descripción"></div>
           <button class="btn-save" style="padding:7px 16px;" onclick="adminAgregarTipo()">+ Agregar</button>
         </div>
@@ -1639,7 +1637,6 @@ table.rt tr:last-child td{border-bottom:none;}
         </div>
         <div class="fg"><label class="flabel">Brief</label><textarea class="fta" id="f-brief" placeholder="Instrucciones, referencias..." style="min-height:56px;"></textarea></div>
         <div class="ia-box" id="ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="ia-txt"><span class="ia-load">Analizando...</span></div></div>
-        <div class="fg" id="horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="f-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="horas-hint"></span></div></div>
         <div class="frow">
           <div class="fg"><label class="flabel">Fecha de entrega</label>
             <div style="display:flex;align-items:center;gap:.5rem;">
@@ -1682,7 +1679,6 @@ table.rt tr:last-child td{border-bottom:none;}
           <label class="flabel">Fecha de entrega a revisi&oacute;n <span style="font-weight:400;color:var(--gray3)">(calculada)</span></label>
           <div class="entrega-calc-box" id="entrega-calc-box">&mdash;</div>
         </div>
-        <div class="entrega-box" id="entrega-box" style="display:none;background:var(--verde-lt);border-color:var(--verde);"><div><div class="elbl">Viabilidad</div><div id="eval" class="eval" style="font-size:12px;">&mdash;</div><div class="edet" id="edet"></div></div><div style="text-align:right"><div class="elbl">Horas en cola</div><div id="cola-info" style="font-size:11px;color:var(--dark);font-weight:600;margin-top:2px">&mdash;</div></div></div>
         <div id="modal-solo-links-msg" style="display:none;font-size:11px;color:var(--gray3);background:var(--bg-app);border-radius:9px;padding:.5rem .7rem;">Solo puedes agregar o quitar links de este pendiente.</div>
       </div>
       <div class="mtarea-col-side">
@@ -1811,7 +1807,6 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg"><label class="flabel">Depende de</label><select class="fs" id="ptf-dep"><option value="">Ninguna</option></select></div>
       <div class="fg"><label class="flabel">Brief / notas</label><textarea class="fta" id="ptf-brief" placeholder="Instrucciones..."></textarea></div>
       <div class="ia-box" id="pt-ia-box" style="display:none"><span class="ia-ico">&#129302;</span><div class="ia-txt" id="pt-ia-txt"><span class="ia-load">Analizando...</span></div></div>
-      <div class="fg" id="pt-horas-grp" style="display:none"><label class="flabel">Horas estimadas</label><div class="horas-wrap"><input type="number" class="fi" id="ptf-horas" min=".5" max="40" step=".5" value="2"><span class="horas-hint" id="pt-horas-hint"></span></div></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-pt')">Cancelar</button><button class="btn-del" id="btn-del-pt" style="display:none" onclick="eliminarPTActual()">Eliminar</button><button class="btn-save" onclick="guardarPT()">Guardar</button></div>
   </div>
@@ -2047,15 +2042,6 @@ const ESTADOS=['pendiente','proceso','revision','aprobado']; // se mantiene para
 const COLUMNAS=['pendientes','atrasados','hoy','semana','revision','aprobado'];
 const EL={pendiente:'Pendiente',proceso:'En proceso',revision:'En revisión',aprobado:'Culminado',pendientes:'Pendientes',atrasados:'Atrasados',semana:'Esta semana',hoy:'Hoy',culminado:'Culminado'};
 const EN={pendiente:'proceso',proceso:'revision',revision:'aprobado',aprobado:null};
-
-// Cache del plan por persona durante un ciclo de render — evita recalcular
-// planificarPersona() una vez por cada tarea (N llamadas -> 1 por persona).
-let _planCache={};
-function clearPlanCache(){_planCache={};}
-function getPlanPersona(resp){
-  if(!_planCache[resp])_planCache[resp]=planificarPersona(resp);
-  return _planCache[resp];
-}
 
 // ¿Esta tarea está asignada a HOY? 100% manual: solo si tú la fijaste a hoy.
 function esDeHoy(t){
@@ -2835,14 +2821,10 @@ async function sbEliminarProy(id){
   await sb.from('tareas').delete().eq('proyecto_id',id);
   return await sb.from('proyectos').delete().eq('id',id);
 }
-async function sbGuardarMatriz(key,horas,id){
-  const{error}=await sb.from('matriz').update({horas}).eq('id',id);
-  return{error};
-}
-async function sbAgregarMatriz(nom,horas,desc){
+async function sbAgregarMatriz(nom,desc){
   const deptId3 = DEPT_ID || (departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id;
   const key='t'+Date.now();
-  const{error}=await sb.from('matriz').insert({departamento_id:deptId3,key,nom,horas,descripcion:desc||''});
+  const{error}=await sb.from('matriz').insert({departamento_id:deptId3,key,nom,horas:1,descripcion:desc||''});
   return{error};
 }
 async function sbEliminarMatriz(id){return await sb.from('matriz').delete().eq('id',id);}
@@ -3165,102 +3147,9 @@ function calcularFechaEntrega(deadlineRealStr, horas, rondaActual=0){
   return fechaStr(ajustada<hoy0?hoy0:ajustada);
 }
 
-// ──────────────────────────────────────────────────────────
-// MOTOR: planificarPersona
-// Ya NO reparte automáticamente las tareas sin día fijado entre hoy y el deadline.
-// Solo coloca en el plan las que TÚ fijaste manualmente (dia_fijado) — arrastrando la
-// tarjeta en el Tablero. Las demás se quedan en "Pendientes" hasta que las fijes a un día.
-// Devuelve:
-//   plan: {[fechaStr]: {horas, capacidad, excede, bloques:[{tareaId,horas,esFijado}]}}
-//   porTarea: {[tareaId]: {dias:[fechaStr,...], viable:bool, diasNecesarios, diasDisponibles}}
-// extra: tarea hipotética adicional a incluir en la simulación
-// ──────────────────────────────────────────────────────────
-function planificarPersona(resp, excluirId=null, extra=null){
-  let activas=tareas.filter(t=>
-    t.responsable===resp &&
-    (t.estado==='pendiente'||t.estado==='proceso') &&
-    t.id!==excluirId &&
-    t.fecha && t.horas &&
-    !esBloqueada(t)
-  );
-  if(extra)activas=[...activas,extra];
-
-  const fijadas=activas.filter(t=>t.dia_fijado);
-  const libres=activas.filter(t=>!t.dia_fijado);
-
-  const plan={}; // fechaStr -> {horas, capacidad, excede, bloques:[]}
-  function addBloque(fecha,tareaId,horas,esFijado){
-    if(!plan[fecha]){
-      const dt=fechaLocal(fecha);
-      plan[fecha]={horas:0,capacidad:horasDia(dt),excede:false,bloques:[]};
-    }
-    plan[fecha].horas+=horas;
-    plan[fecha].bloques.push({tareaId,horas,esFijado});
-  }
-
-  const porTarea={};
-
-  // Colocar las fijadas tal cual (informativo, no bloquea)
-  fijadas.forEach(t=>{
-    addBloque(t.dia_fijado,t.id,t.horas,true);
-    porTarea[t.id]={dias:[t.dia_fijado],viable:true,diasNecesarios:1,diasDisponibles:1};
-  });
-
-  // Las libres no se asignan a ningún día — quedan en Pendientes hasta que se fijen manualmente.
-  // Igual se reporta info útil para el modal (cuántos días tomaría, viabilidad teórica de cara al deadline).
-  libres.forEach(t=>{
-    const diasNecesarios=Math.ceil(t.horas/HORAS_DIA);
-    const hoy=new Date();hoy.setHours(0,0,0,0);
-    const deadline=fechaLocal(t.fecha);
-    const diasDisponibles=Math.max(0,Math.round((deadline-hoy)/86400000))+1;
-    porTarea[t.id]={dias:[],viable:diasDisponibles>=diasNecesarios,diasNecesarios,diasDisponibles};
-  });
-
-  // Marcar si un día excede capacidad (informativo, nunca bloquea)
-  Object.entries(plan).forEach(([f,v])=>{ v.excede = v.horas > v.capacidad; });
-
-  return{plan,porTarea};
-}
-
-// Calcula carga de trabajo por día para un responsable (compat con calendario/UI)
-// Retorna: {[fechaStr]: {horas, tareas[], excede, capacidad}}
-function calcCargaDiaria(resp, excluirId=null){
-  const{plan}=planificarPersona(resp, excluirId);
-  const carga={};
-  Object.entries(plan).forEach(([f,v])=>{
-    carga[f]={
-      horas:v.horas,
-      capacidad:v.capacidad,
-      excede:v.excede,
-      tareas:v.bloques.map(b=>tareas.find(x=>x.id===b.tareaId)).filter(Boolean),
-    };
-  });
-  return carga;
-}
-
-// Para una tarea dada: ¿el motor logra ubicar todas sus horas antes del deadline?
-function esViable(t){
-  if(!t.horas||!t.fecha)return null;
-  if(t.estado==='aprobado'||t.estado==='revision')return true;
-  const{porTarea}=planificarPersona(t.responsable);
-  return porTarea[t.id]?.viable ?? true;
-}
-
-// Horas totales comprometidas para un responsable en tareas activas
-function horasComprometidas(resp, excluirId=null){
-  return tareas.filter(t=>
-    t.responsable===resp &&
-    (t.estado==='pendiente'||t.estado==='proceso') &&
-    t.id!==excluirId && t.horas
-  ).reduce((s,t)=>s+(t.horas||0),0);
-}
-
-// ¿Cuándo es el día más próximo disponible para X horas? (para sugerencias)
 // ══════════════════════════════════════════════════════════
 // RENDER TABLERO
 // ══════════════════════════════════════════════════════════
-// (Compat: ya no retorna ningún chip — el sistema de sobrecarga fue eliminado)
-// y el resto de metadata las maneja mkCard para evitar duplicación.
 function filtradas(){
   const hoy=new Date();hoy.setHours(0,0,0,0);
   const lun=new Date(hoy);lun.setDate(hoy.getDate()-(hoy.getDay()===0?6:hoy.getDay()-1));
@@ -3279,21 +3168,15 @@ function filtradas(){
   });
 }
 function renderCarga(){
-  // Carga del día de hoy por persona
-  const hoy=new Date();hoy.setHours(0,0,0,0);
-  const hoyStr=hoy.toISOString().split('T')[0];
-  const maxHoy=horasDia(hoy);
-
+  // Carga del día de hoy por persona — conteo de tareas, ya no horas
+  const hStr=hoyStr();
   document.getElementById('carga-bar').innerHTML=usuarios.map(u=>{
-    const carga=calcCargaDiaria(u.id);
-    const hoyData=carga[hoyStr]||{horas:0,tareas:[]};
-    const hoyH=hoyData.horas;
-    const pct=maxHoy>0?Math.min(100,Math.round(hoyH/maxHoy*100)):0;
-    const cls=hoyH>maxHoy?'over':pct>80?'warn':'';
-    const totalH=horasComprometidas(u.id);
+    const hoyN=tareas.filter(t=>t.responsable===u.id&&t.dia_fijado===hStr&&(t.estado==='pendiente'||t.estado==='proceso')).length;
+    const totalN=tareas.filter(t=>t.responsable===u.id&&(t.estado==='pendiente'||t.estado==='proceso')).length;
+    const pct=totalN>0?Math.min(100,Math.round(hoyN/totalN*100)):0;
     return`<div class="cp">
-      <div class="cpn"><span>${u.nombre.split(' ')[0]}</span><span class="cph">${hoyH}h hoy · ${totalH}h total</span></div>
-      <div class="cpt"><div class="cpf ${cls}" style="width:${pct}%"></div></div>
+      <div class="cpn"><span>${u.nombre.split(' ')[0]}</span><span class="cph">${hoyN} hoy &middot; ${totalN} total</span></div>
+      <div class="cpt"><div class="cpf" style="width:${pct}%"></div></div>
     </div>`;
   }).join('');
 }
@@ -3309,15 +3192,13 @@ function renderMiDia(){
   const hStr=hoyStr();
   const nombrePila=(getUsuarioNombre(resp)||'').split(' ')[0]||'';
 
-  const{plan}=planificarPersona(resp);
-  const hoyPlan=plan[hStr]||{horas:0,capacidad:horasDia(hoy),bloques:[]};
-
-  // Tareas de hoy: completadas, en proceso, pendientes — según el plan + tareas activas con fecha=hoy
-  const idsHoy=new Set(hoyPlan.bloques.map(b=>b.tareaId));
-  tareas.forEach(t=>{
-    if(t.responsable===resp&&t.fecha===hStr&&(t.estado==='revision'||t.estado==='aprobado'))idsHoy.add(t.id);
-  });
-  const tareasHoy=[...idsHoy].map(id=>tareas.find(t=>t.id===id)).filter(Boolean);
+  // Tareas de hoy: fijadas manualmente a "Hoy" (dia_fijado), más las que ya avanzaron
+  // a revisión/aprobado con fecha de hoy (para que no desaparezcan de la vista al completarlas).
+  const tareasHoy=tareas.filter(t=>
+    t.responsable===resp &&
+    ((t.estado==='pendiente'||t.estado==='proceso')&&esDeHoy(t)) ||
+    (t.responsable===resp&&t.fecha===hStr&&(t.estado==='revision'||t.estado==='aprobado'))
+  );
 
   const completadas=tareasHoy.filter(t=>t.estado==='revision'||t.estado==='aprobado');
   const enProceso=tareasHoy.filter(t=>t.estado==='proceso');
@@ -3329,9 +3210,6 @@ function renderMiDia(){
 
   // ¿Terminó el trabajo de hoy? (no quedan pendientes ni en proceso para hoy)
   const trabajoHoyCompleto=pendientesHoy.length===0&&enProceso.length===0&&tareasHoy.length>0;
-
-  const totalHoyH=hoyPlan.horas;
-  const capHoyH=hoyPlan.capacidad;
 
   // ── PERFORMANCE + resumen semanal (lunes a hoy) ──
   const lunSemana=new Date(hoy);lunSemana.setDate(hoy.getDate()-(hoy.getDay()===0?6:hoy.getDay()-1));
@@ -3379,27 +3257,29 @@ function renderMiDia(){
   // ── GRID: gráfica de semana + performance ──
   html+=`<div class="mid-grid">`;
 
-  // Gráfica de semana (lunes a sábado)
+  // Gráfica de semana (lunes a sábado) — conteo de tareas fijadas por día, ya no horas
   html+=`<div class="panel">
-    <div class="panel-hdr"><div class="panel-ttl">Carga de la semana</div><span class="panel-pill">Cap. ${HORAS_DIA}h / d&iacute;a</span></div>
+    <div class="panel-hdr"><div class="panel-ttl">Carga de la semana</div></div>
     <div class="bars">`;
   let cursorSem=new Date(lunSemana);
   const diasLbl=['Lun','Mar','Mi&eacute;','Jue','Vie','S&aacute;b'];
+  const maxTareasDia=Math.max(1,...[0,1,2,3,4,5].map(i=>{
+    const d=addDias(lunSemana,i);const fStr=fechaStr(d);
+    return tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr&&(t.estado==='pendiente'||t.estado==='proceso')).length;
+  }));
   for(let i=0;i<6;i++){
     const fStr=fechaStr(cursorSem);
     const esHoy=fStr===hStr;
     const esPasado=cursorSem<hoy;
-    const dPlan=plan[fStr]||{horas:0,capacidad:horasDia(cursorSem),bloques:[]};
-    const cap=dPlan.capacidad||1;
-    const pct=Math.min(100,Math.round((dPlan.horas/cap)*100));
-    const over=dPlan.horas>dPlan.capacidad;
+    const nDia=tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr&&(t.estado==='pendiente'||t.estado==='proceso')).length;
+    const pct=Math.round((nDia/maxTareasDia)*100);
     let fillCls='',fillH=4,fillBg='var(--gray2)';
-    if(dPlan.horas>0){
-      fillCls=over?'over':esHoy?'today':esPasado?'done':'future';
-      fillH=Math.max(pct,6);
+    if(nDia>0){
+      fillCls=esHoy?'today':esPasado?'done':'future';
+      fillH=Math.max(pct,15);
     }
     html+=`<div class="bar-col">
-      <div class="bar-track" title="${dPlan.horas}h de ${cap}h"><div class="bar-fill ${fillCls}" style="height:${fillH}%${fillCls?'':`;background:${fillBg}`}"></div></div>
+      <div class="bar-track" title="${nDia} tarea${nDia!==1?'s':''}"><div class="bar-fill ${fillCls}" style="height:${fillH}%${fillCls?'':`;background:${fillBg}`}"></div></div>
       <div class="bar-lbl${esHoy?' today':''}">${diasLbl[i]}</div>
     </div>`;
     cursorSem=addDias(cursorSem,1);
@@ -3448,14 +3328,14 @@ function renderMiDia(){
 
   // ── PARA HOY (grid de cards) ──
   html+=`<div class="section-hdr">
-    <div class="section-ttl">Para hoy<span class="section-pill active">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''} &middot; ${totalHoyH}h de ${capHoyH}h</span></div>
+    <div class="section-ttl">Para hoy<span class="section-pill active">${tareasHoy.length} pendiente${tareasHoy.length!==1?'s':''}</span></div>
   </div>`;
   if(!tareasHoy.length){
     html+=`<div class="midia-empty">Sin pendientes para hoy. ¡Buen momento para revisar lo de mañana!</div>`;
   } else {
     html+=`<div class="midia-task-grid">`;
     [...enProceso,...pendientesHoy,...completadas].forEach(t=>{
-      html+=mkMiDiaCard(t,hoyPlan,resp);
+      html+=mkMiDiaCard(t,resp);
     });
     html+=`</div>`;
   }
@@ -3467,23 +3347,21 @@ function renderMiDia(){
     const cap=horasDia(cursor);
     if(cap<=0){cursor=addDias(cursor,1);continue;} // saltar domingos
     const fStr=fechaStr(cursor);
-    const diaPlan=plan[fStr]||{horas:0,capacidad:cap,bloques:[]};
+    const tareasDia=tareas.filter(t=>t.responsable===resp&&t.dia_fijado===fStr&&(t.estado==='pendiente'||t.estado==='proceso'));
     const esMañana=diasMostrados===0;
     const activo=esMañana&&trabajoHoyCompleto;
     const lbl=cursor.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
-    const over=diaPlan.horas>diaPlan.capacidad;
 
     html+=`<div class="midia-section-hdr" style="margin-top:1.5rem;${activo?'':'opacity:.6;'}">
-      <div class="midia-section-ttl">${esMañana?'Ma&ntilde;ana':''} ${lbl}<span class="midia-section-badge${over?' over':''}">${diaPlan.horas}h / ${diaPlan.capacidad}h${over?' &#9888;':''}</span></div>
+      <div class="midia-section-ttl">${esMañana?'Ma&ntilde;ana':''} ${lbl}<span class="midia-section-badge">${tareasDia.length} pendiente${tareasDia.length!==1?'s':''}</span></div>
     </div>`;
 
-    if(!diaPlan.bloques.length){
+    if(!tareasDia.length){
       html+=`<div class="midia-empty">Sin pendientes asignados.</div>`;
     } else {
       html+=`<div class="midia-task-grid${activo?'':' dimmed-grid'}">`;
-      diaPlan.bloques.forEach(b=>{
-        const t=tareas.find(x=>x.id===b.tareaId);if(!t)return;
-        html+=mkMiDiaCard(t,diaPlan,resp,!activo);
+      tareasDia.forEach(t=>{
+        html+=mkMiDiaCard(t,resp,!activo);
       });
       html+=`</div>`;
     }
@@ -3499,9 +3377,7 @@ function renderMiDia(){
 }
 
 // Construye una card de tarea para "Mi día" (grid 2-3 por fila, estilo friendly)
-function mkMiDiaCard(t,diaPlan,resp,dimmed=false){
-  const bloque=diaPlan.bloques?.find(b=>b.tareaId===t.id);
-  const hLbl=bloque?`${bloque.horas}h`:(t.horas?`${t.horas}h`:'');
+function mkMiDiaCard(t,resp,dimmed=false){
   const done=t.estado==='revision'||t.estado==='aprobado';
   const cpd=colorPorDeadline(t);
   const inicial=(getUsuarioNombre(t.responsable)||'?').charAt(0).toUpperCase();
@@ -3523,7 +3399,7 @@ function mkMiDiaCard(t,diaPlan,resp,dimmed=false){
     dateTxt=diffDias===0?'Vence hoy':diffDias<0?`Venci&oacute; ${dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'})}`:dl.toLocaleDateString('es-PA',{day:'numeric',month:'short'});
     dateCls=diffDias<0?'vencida':diffDias===0?'vence-hoy':'';
   }
-  const fijadoTag=(bloque?.esFijado||t.dia_fijado)?' &#128204;':'';
+  const fijadoTag=t.dia_fijado?' &#128204;':'';
   const puedeAvanzar=t.responsable===resp&&(t.estado==='pendiente'||t.estado==='proceso');
   return`<div class="midia-task-card ${cpd}${dimmed?' dimmed':''}" onclick="editarTarea('${t.id}',event)">
     <div class="midia-task-top">
@@ -3535,7 +3411,6 @@ function mkMiDiaCard(t,diaPlan,resp,dimmed=false){
       <div class="midia-task-meta">
         <span class="midia-task-tag">${esc(getTipoLabel(t.tipo))}</span>
         ${dateTxt?`<span class="midia-task-date ${dateCls}">&#128197; ${dateTxt}</span>`:''}
-        ${hLbl?`<span class="midia-task-date">${hLbl}</span>`:''}
       </div>
     </div>
     ${(puedeAvanzar&&!done)?`<div class="midia-task-bottom"><button class="midia-btn-listo" onclick="marcarListo('${t.id}',event)">Listo &rarr;</button></div>`:''}
@@ -3544,7 +3419,6 @@ function mkMiDiaCard(t,diaPlan,resp,dimmed=false){
 
 
 function render(){
-  clearPlanCache();
   const lista=filtradas();
   const urg=lista.filter(t=>colorPorDeadline(t)==='urgente'&&t.estado!=='aprobado'&&t.estado!=='revision').length;
   document.getElementById('counter').innerHTML=`<strong>${lista.length}</strong> tarea${lista.length!==1?'s':''}${urg?` &nbsp;&middot;&nbsp; <span class="urg">${urg} urgente${urg>1?'s':''}</span>`:''}`;
@@ -3565,20 +3439,6 @@ function render(){
     [...col.children].forEach(el=>{if(!el.classList.contains('col-hdr'))el.remove();});
     const cards=lista.filter(t=>columnaDe(t)===colId).sort((a,b)=>sortTareas(a,b));
     document.getElementById(`cnt-${colId}`).textContent=cards.length;
-    if(colId==='hoy'){
-      // Alerta informativa de horas asignadas hoy — nunca bloquea, solo avisa
-      const totalH=cards.reduce((s,t)=>s+(t.horas||0),0);
-      const cap=horasDia(new Date());
-      const elH=document.getElementById('hoy-horas-aviso');
-      if(elH){
-        if(totalH>0){
-          const over=totalH>cap;
-          elH.textContent=`${totalH}h asignadas${cap?` de ${cap}h`:''}${over?' ⚠':''}`;
-          elH.className=`col-horas-aviso${over?' over':''}`;
-          elH.style.display='inline-block';
-        } else elH.style.display='none';
-      }
-    }
     if(!cards.length){const el=document.createElement('div');el.className='empty-col';el.textContent='Sin tareas';col.appendChild(el);return;}
 
     // Separar tarjetas sin proyecto de las que pertenecen a un proyecto
@@ -4126,7 +3986,7 @@ async function avanzar(id,e){
 async function avanzarPT(id,e){e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;if(esBloqueada(t)){toast('Bloqueada. Completa la anterior primero.');return;}const next=EN[t.estado];if(!next)return;if(next==='proceso'&&!t.inicioProcess)t.inicioProcess=Date.now();if(next==='aprobado')t.aprobadoEn=Date.now();t.estado=next;await sbGuardarTarea({...t},id);render();renderDetalle();toast(`"${t.titulo}" → ${EL[next]}`);}
 
 // Campos del modal de tarea que se deshabilitan en modo "solo links" (colaborador)
-const MODAL_TAREA_CAMPOS=['f-titulo','f-tipo','f-resp','f-estado','f-brief','f-horas','f-deadline-real'];
+const MODAL_TAREA_CAMPOS=['f-titulo','f-tipo','f-resp','f-estado','f-brief','f-deadline-real'];
 
 // activo=true -> modo solo-links (colaborador): deshabilita todo excepto agregar/quitar links
 function setModalSoloLinks(activo){
@@ -4210,7 +4070,7 @@ function abrirModal(){
   const btnClearNew=document.getElementById('btn-clear-fecha');
   if(btnClearNew)btnClearNew.style.display='none';
   document.getElementById('f-estado').value='pendiente';
-  document.getElementById('ia-box').style.display='none';document.getElementById('horas-grp').style.display='none';document.getElementById('entrega-box').style.display='none';
+  document.getElementById('ia-box').style.display='none';
   document.getElementById('btn-del-tarea').style.display='none';
   document.getElementById('f-link-input').value='';
   modalLinks=[];renderModalLinks();
@@ -4443,7 +4303,7 @@ function renderPropuestasBadge(){
 
 const FIELD_LABELS={
   titulo:'T&iacute;tulo', prioridad:'Prioridad', tipo:'Tipo', responsable:'Responsable',
-  estado:'Estado', fecha:'Deadline', brief:'Brief', horas:'Horas estimadas', links:'Links',
+  estado:'Estado', fecha:'Deadline', brief:'Brief', links:'Links',
 };
 
 function fmtFieldVal(campo,val){
@@ -4452,9 +4312,8 @@ function fmtFieldVal(campo,val){
   if(campo==='tipo')return esc(getTipoLabel(val));
   if(campo==='estado')return EL[val]||val;
   if(campo==='prioridad')return val.charAt(0).toUpperCase()+val.slice(1);
-  if(campo==='horas')return `${val}h`;
-  if(campo==='links')return Array.isArray(val)&&val.length?`${val.length} link(s)`:'sin links';
   if(campo==='fecha')return fechaLocal(val).toLocaleDateString('es-PA',{day:'numeric',month:'short',year:'numeric'});
+  if(campo==='links')return Array.isArray(val)&&val.length?`${val.length} link(s)`:'sin links';
   return esc(String(val));
 }
 
@@ -4473,7 +4332,7 @@ function renderPropuestas(){
       body=`<div class="prop-full">
         <b>${esc(d.titulo)}</b><br>
         Tipo: ${esc(getTipoLabel(d.tipo))} &middot; Responsable: ${esc(getUsuarioNombre(d.responsable))}<br>
-        ${d.fecha?`Deadline: ${fechaLocal(d.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short',year:'numeric'})}`:'Sin deadline'}${d.horas?` &middot; ${d.horas}h estimadas`:''}<br>
+        ${d.fecha?`Deadline: ${fechaLocal(d.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short',year:'numeric'})}`:'Sin deadline'}<br>
         ${d.brief?`Brief: ${esc(d.brief)}`:''}
       </div>`;
     } else {
@@ -4620,10 +4479,14 @@ function calcDLAlerta(p){
   if(!p.deadline)return null;
   const ts=tareasDeProy(p.id).filter(t=>t.estado!=='aprobado');
   if(!ts.length)return{ok:true,msg:'✓ Todo completado'};
-  const totalH=ts.reduce((s,t)=>s+(t.horas||0),0);
-  const inviables=ts.filter(t=>t.fecha&&t.horas&&esViable(t)===false);
-  if(!inviables.length)return{ok:true,msg:`✓ Viable · ${totalH.toFixed(0)}h estimadas`};
-  return{ok:false,warn:inviables.length<=2,msg:`⚠ ${inviables.length} pendiente${inviables.length>1?'s':''} sin tiempo suficiente · ${totalH.toFixed(0)}h totales`};
+  const dl=fechaLocal(p.deadline);
+  const sinFecha=ts.filter(t=>!t.fecha).length;
+  const vencidas=ts.filter(t=>t.fecha&&fechaLocal(t.fecha)>dl).length;
+  if(!sinFecha&&!vencidas)return{ok:true,msg:`✓ ${ts.length} pendiente${ts.length!==1?'s':''} dentro del plazo`};
+  const partes=[];
+  if(vencidas)partes.push(`${vencidas} despu&eacute;s del lanzamiento`);
+  if(sinFecha)partes.push(`${sinFecha} sin fecha`);
+  return{ok:false,warn:(vencidas+sinFecha)<=2,msg:`⚠ ${partes.join(' · ')}`};
 }
 // Duplica un proyecto completo: mismo nombre (+ "copia"), descripción y deadline,
 // y todas sus tareas como nuevas pendientes (sin fechas, estado, ni avance previo),
@@ -4819,20 +4682,19 @@ async function guardarProy(){
   cerrarModal('modal-proy');renderProyectos();render();
 }
 async function eliminarProyectoActual(){if(!editProyId||!confirm('¿Eliminar este proyecto y TODAS sus tareas?'))return;await sbEliminarProy(editProyId);proyectos=proyectos.filter(p=>p.id!==editProyId);tareas=tareas.filter(t=>t.proyId!==editProyId);cerrarModal('modal-proy');if(proyActualId===editProyId)cerrarDetalle();else renderProyectos();toast('Proyecto eliminado');editProyId=null;}
-function abrirModalPT(){editPTId=null;document.getElementById('mpt-ttl').textContent='Nueva tarea';['ptf-titulo','ptf-brief','ptf-deadline-real'].forEach(id=>document.getElementById(id).value='');document.getElementById('ptf-deadline-real').disabled=false;document.getElementById('ptf-deadline-hint').style.display='none';document.getElementById('ptf-entrega-calc-grp').style.display='none';document.getElementById('ptf-estado').value='pendiente';document.getElementById('ptf-horas').value='2';document.getElementById('pt-ia-box').style.display='none';document.getElementById('pt-horas-grp').style.display='none';document.getElementById('btn-del-pt').style.display='none';poblarSelectResp('ptf-resp');const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');setTimeout(()=>document.getElementById('ptf-titulo').focus(),60);}
+function abrirModalPT(){editPTId=null;document.getElementById('mpt-ttl').textContent='Nueva tarea';['ptf-titulo','ptf-brief','ptf-deadline-real'].forEach(id=>document.getElementById(id).value='');document.getElementById('ptf-deadline-real').disabled=false;document.getElementById('ptf-deadline-hint').style.display='none';document.getElementById('ptf-entrega-calc-grp').style.display='none';document.getElementById('ptf-estado').value='pendiente';document.getElementById('pt-ia-box').style.display='none';document.getElementById('btn-del-pt').style.display='none';poblarSelectResp('ptf-resp');const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.titulo;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');setTimeout(()=>document.getElementById('ptf-titulo').focus(),60);}
 function editarPT(id,e){e&&e.stopPropagation();const t=tareas.find(x=>x.id===id);if(!t)return;editPTId=id;document.getElementById('mpt-ttl').textContent='Editar tarea';document.getElementById('ptf-titulo').value=t.titulo;document.getElementById('ptf-estado').value=t.estado||'pendiente';const enHoyPT=columnaDe(t)==='hoy';const fEl=document.getElementById('ptf-deadline-real');fEl.value=t.deadline_real||t.fecha||'';fEl.disabled=enHoyPT;document.getElementById('ptf-deadline-hint').style.display=enHoyPT?'block':'none';document.getElementById('ptf-brief').value=t.brief||'';document.getElementById('btn-del-pt').style.display='inline-block';poblarSelectResp('ptf-resp');document.getElementById('ptf-resp').value=t.responsable||'';const sel=document.getElementById('ptf-dep');sel.innerHTML='<option value="">Ninguna</option>';tareasDeProy().filter(x=>x.id!==id).forEach(x=>{const o=document.createElement('option');o.value=x.id;o.textContent=x.titulo;if(x.id===t.depId)o.selected=true;sel.appendChild(o);});document.getElementById('modal-pt').classList.add('open');}
 function recalcEntregaPT(){
   const deadlineReal=document.getElementById('ptf-deadline-real').value;
-  const h=parseFloat(document.getElementById('ptf-horas')?.value)||null;
   const tAct=editPTId?tareas.find(x=>x.id===editPTId):null;
   const rondas=tAct?.rondas_cambio||0;
   const calcGrp=document.getElementById('ptf-entrega-calc-grp');
   const calcBox=document.getElementById('ptf-entrega-calc-box');
   if(deadlineReal){
-    const fecha=calcularFechaEntrega(deadlineReal,h,rondas);
+    const fecha=calcularFechaEntrega(deadlineReal,null,rondas);
     calcGrp.style.display='block';
     const fLbl=fechaLocal(fecha).toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'short'});
-    calcBox.innerHTML=`${fLbl}<span class="sub">Margen de ${margenRevision(h)} d&iacute;a${margenRevision(h)!==1?'s':''} antes del deadline real${rondas?` &middot; ronda ${rondas+1} de cambios`:''}</span>`;
+    calcBox.innerHTML=`${fLbl}<span class="sub">Margen de ${margenRevision(null)} d&iacute;a${margenRevision(null)!==1?'s':''} antes del deadline real${rondas?` &middot; ronda ${rondas+1} de cambios`:''}</span>`;
   } else {
     calcGrp.style.display='none';
   }
@@ -4906,7 +4768,7 @@ function renderGantt(){
     for(let i=0;i<totalDias;i++){const d=new Date(minF);d.setDate(d.getDate()+i);if(d.getDay()===1||d.getDate()===1){const s=document.createElement('div');s.className='gstripe';s.style.left=(i*dW)+'px';tl.appendChild(s);}}
     if(hoyOff>=0&&hoyOff<=totalDias*dW){const tl2=document.createElement('div');tl2.className='gtoday';tl2.style.left=hoyOff+'px';tl.appendChild(tl2);}
     if(dlOff>=0){const dlL=document.createElement('div');dlL.style.cssText=`position:absolute;top:0;bottom:0;width:2px;background:var(--urgente);opacity:.3;left:${dlOff}px;`;tl.appendChild(dlL);}
-    if(t.fecha){const ff=new Date(t.fecha+'T00:00:00');const right=Math.round((ff-minF)/86400000)*dW;const dur=t.horas?Math.max(1,Math.ceil(t.horas/9)):1;const left=Math.max(0,right-dur*dW);const width=Math.max(dW,right-left);const bar=document.createElement('div');const cls=bloq?'bloqueada':colorPorDeadline(t)==='urgente'?'urgente-bar':t.estado;bar.className=`gbar ${cls}`;bar.style.left=left+'px';bar.style.width=width+'px';bar.textContent=width>60?t.titulo:'';bar.title=`${t.titulo} | ${EL[t.estado]} | ${t.fecha}`;bar.onclick=e=>{e.stopPropagation();editarPT(t.id,e);};tl.appendChild(bar);}
+    if(t.fecha){const ff=new Date(t.fecha+'T00:00:00');const right=Math.round((ff-minF)/86400000)*dW;const left=Math.max(0,right-dW);const width=Math.max(dW,right-left);const bar=document.createElement('div');const cls=bloq?'bloqueada':colorPorDeadline(t)==='urgente'?'urgente-bar':t.estado;bar.className=`gbar ${cls}`;bar.style.left=left+'px';bar.style.width=width+'px';bar.textContent=width>60?t.titulo:'';bar.title=`${t.titulo} | ${EL[t.estado]} | ${t.fecha}`;bar.onclick=e=>{e.stopPropagation();editarPT(t.id,e);};tl.appendChild(bar);}
     row.appendChild(lbl);row.appendChild(tl);inner.appendChild(row);
   });
   setTimeout(()=>{if(scroll&&hoyOff>0)scroll.scrollLeft=Math.max(0,hoyOff-gNomW-80);},50);
@@ -4918,13 +4780,12 @@ function renderMatriz(){
   const grid=document.getElementById('matriz-grid');grid.innerHTML='';
   matrizData.forEach(m=>{
     const card=document.createElement('div');card.className='mcard';
-    card.innerHTML=`<div class="mcard-top"><div class="mcard-nom">${esc(m.nom)}</div><div style="display:flex;align-items:center;gap:.35rem;"><input type="number" value="${m.horas}" min=".5" max="40" step=".5" onchange="actualizarMatriz('${m.key}',this.value,'${m.id}')"><span style="font-size:11px;color:var(--gray3);">h</span></div></div><div class="mcard-sub">${esc(m.descripcion||'')}</div><button class="ba danger" style="margin-top:.6rem;flex:0;padding:3px 8px;font-size:9px;width:auto;" onclick="eliminarTipo('${m.id}')">Eliminar</button>`;
+    card.innerHTML=`<div class="mcard-top"><div class="mcard-nom">${esc(m.nom)}</div></div><div class="mcard-sub">${esc(m.descripcion||'')}</div><button class="ba danger" style="margin-top:.6rem;flex:0;padding:3px 8px;font-size:9px;width:auto;" onclick="eliminarTipo('${m.id}')">Eliminar</button>`;
     grid.appendChild(card);
   });
   poblarSelectTipo('f-tipo');
 }
-async function actualizarMatriz(key,horas,id){const{error}=await sbGuardarMatriz(key,parseFloat(horas)||1,id);if(!error){const m=matrizData.find(x=>x.id===id);if(m)m.horas=parseFloat(horas)||1;toast('Tiempo actualizado');}else toast('Error: '+error.message);}
-async function agregarTipo(){const nom=document.getElementById('nuevo-tipo-nom').value.trim();const h=parseFloat(document.getElementById('nuevo-tipo-h').value)||2;const desc=document.getElementById('nuevo-tipo-desc').value.trim();if(!nom)return;const{error}=await sbAgregarMatriz(nom,h,desc);if(error){toast('Error: '+error.message);return;}document.getElementById('nuevo-tipo-nom').value='';document.getElementById('nuevo-tipo-desc').value='';await cargarMatriz();renderMatriz();poblarFiltros();toast('Tipo agregado');}
+async function agregarTipo(){const nom=document.getElementById('nuevo-tipo-nom').value.trim();const desc=document.getElementById('nuevo-tipo-desc').value.trim();if(!nom)return;const{error}=await sbAgregarMatriz(nom,desc);if(error){toast('Error: '+error.message);return;}document.getElementById('nuevo-tipo-nom').value='';document.getElementById('nuevo-tipo-desc').value='';await cargarMatriz();renderMatriz();poblarFiltros();toast('Tipo agregado');}
 async function eliminarTipo(id){if(!confirm('¿Eliminar este tipo?'))return;const{error}=await sbEliminarMatriz(id);if(error){toast('Error: '+error.message);return;}matrizData=matrizData.filter(m=>m.id!==id);renderMatriz();poblarFiltros();toast('Tipo eliminado');}
 
 // ══════════════════════════════════════════════════════════
@@ -5026,8 +4887,8 @@ function renderReporteEquipo(desde,hasta){
   const aprVis=tareasVis.filter(t=>t.estado==='aprobado'&&t.aprobadoEn>=desde.getTime()&&t.aprobadoEn<=hasta.getTime());
   const actVis=tareasVis.filter(t=>t.estado==='pendiente'||t.estado==='proceso');
   const venVis=tareasVis.filter(t=>t.fecha&&t.estado!=='aprobado'&&new Date(t.fecha+'T23:59:59')<new Date());
-  const hTVis=actVis.reduce((s,t)=>s+(t.horas||0),0);
-  let html=`<div class="rsum-grid"><div class="rsum-card"><div class="rsum-n" style="color:var(--verde)">${aprVis.length}</div><div class="rsum-l">Completadas</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--gold)">${actVis.length}</div><div class="rsum-l">En progreso</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--urgente)">${venVis.length}</div><div class="rsum-l">Vencidas</div></div><div class="rsum-card"><div class="rsum-n">${hTVis.toFixed(0)}</div><div class="rsum-l">Horas en cola</div></div></div>`;
+  const sinFechaVis=actVis.filter(t=>!t.fecha).length;
+  let html=`<div class="rsum-grid"><div class="rsum-card"><div class="rsum-n" style="color:var(--verde)">${aprVis.length}</div><div class="rsum-l">Completadas</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--gold)">${actVis.length}</div><div class="rsum-l">En progreso</div></div><div class="rsum-card"><div class="rsum-n" style="color:var(--urgente)">${venVis.length}</div><div class="rsum-l">Vencidas</div></div><div class="rsum-card"><div class="rsum-n">${sinFechaVis}</div><div class="rsum-l">Sin fecha asignada</div></div></div>`;
 
   const usuariosReporte=esColab?usuarios.filter(u=>u.id===USER.id):usuarios;
   html+=`<div class="rperson-list">`;
@@ -5129,16 +4990,15 @@ function renderReporteDetalle(uid){
   html+=`<div class="rsec"><div class="rsec-ttl">Historial de entregas del mes</div>`;
   if(!hist.length)html+=`<div class="r-empty">Sin tareas aprobadas este mes.</div>`;
   else{
-    html+=`<table class="rt"><thead><tr><th>Tarea</th><th>H. est.</th><th>H. reales</th><th>Deadline</th><th>Cumplimiento</th></tr></thead><tbody>`;
+    html+=`<table class="rt"><thead><tr><th>Tarea</th><th>Deadline</th><th>Cumplimiento</th></tr></thead><tbody>`;
     hist.forEach(t=>{
-      const rH=t.inicioProcess&&t.aprobadoEn?((t.aprobadoEn-t.inicioProcess)/3600000).toFixed(1):'-';
       let c='',cls='';
       if(t.fecha){
         const ok=t.aprobadoEn<=new Date(t.fecha+'T23:59:59').getTime();
         if(ok){c='A tiempo';cls='ok';}
         else{const d=Math.round((t.aprobadoEn-new Date(t.fecha+'T23:59:59').getTime())/86400000);c=`${d}d tarde`;cls='tarde';}
       }else{c='Sin fecha';cls='puntual';}
-      html+=`<tr><td><strong>${esc(t.titulo)}</strong></td><td>${t.horas||'-'}h</td><td>${rH}h</td><td style="color:var(--gray3);font-size:11px">${t.fecha||'—'}</td><td><span class="rb ${cls}">${c}</span></td></tr>`;
+      html+=`<tr><td><strong>${esc(t.titulo)}</strong></td><td style="color:var(--gray3);font-size:11px">${t.fecha||'—'}</td><td><span class="rb ${cls}">${c}</span></td></tr>`;
     });
     html+=`</tbody></table>`;
   }
@@ -5167,12 +5027,6 @@ function renderAdminTipos(){
     card.innerHTML=`
       <div class="mcard-top">
         <div class="mcard-nom">${esc(m.nom)}</div>
-        <div style="display:flex;align-items:center;gap:.35rem;">
-          <input type="number" value="${m.horas}" min=".5" max="40" step=".5"
-            onchange="actualizarMatriz('${m.key}',this.value,'${m.id}')"
-            style="width:60px;padding:4px 6px;border:1.5px solid var(--gray2);border-radius:8px;font-family:'Inter',sans-serif;font-size:13px;font-weight:700;color:var(--v-700);text-align:center;outline:none;">
-          <span style="font-size:11px;color:var(--gray3);">h</span>
-        </div>
       </div>
       <div class="mcard-sub">${esc(m.descripcion||'')}</div>
       <button class="ba danger" style="margin-top:.5rem;flex:0;padding:3px 8px;font-size:9px;width:auto;"
@@ -5183,10 +5037,9 @@ function renderAdminTipos(){
 
 async function adminAgregarTipo(){
   const nom=document.getElementById('admin-tipo-nom').value.trim();
-  const h=parseFloat(document.getElementById('admin-tipo-h').value)||2;
   const desc=document.getElementById('admin-tipo-desc').value.trim();
   if(!nom){toast('Ingresa un nombre para el tipo');return;}
-  const{error}=await sbAgregarMatriz(nom,h,desc);
+  const{error}=await sbAgregarMatriz(nom,desc);
   if(error){toast('Error: '+error.message);return;}
   document.getElementById('admin-tipo-nom').value='';
   document.getElementById('admin-tipo-desc').value='';
@@ -5956,13 +5809,6 @@ function tareasDelDia(fechaStr, respFiltro=''){
   });
 }
 
-// (Comentario legado, función diaSobrecargado ya eliminada)
-// individual excede su capacidad diaria ese día.
-// Mantener compat: horas a mostrar en el chip del día (suma visible, informativa)
-function cargaDia(fechaStr, respFiltro=''){
-  const ts=tareasDelDia(fechaStr, respFiltro).filter(t=>t.estado!=='aprobado'&&t.estado!=='revision');
-  return ts.reduce((s,t)=>s+(t.horas||0),0);
-}
 
 // ══════════════════════════════════════════════════════════
 // POR TIENDA — agrupa los pendientes activos (no aprobados) por
@@ -6074,7 +5920,6 @@ function renderCalMes(resp){
     const esHoy=cur.getTime()===hoy.getTime();
     const esDom=cur.getDay()===0;
     const tsDelDia=tareasDelDia(fechaStr, resp);
-    const hDia=cargaDia(fechaStr, resp);
 
     const div=document.createElement('div');
     let cls='cal-dia';
@@ -6138,8 +5983,6 @@ function renderCalSemana(resp){
     const fechaStr=d.toISOString().split('T')[0];
     const esHoy=d.getTime()===hoy.getTime();
     const esDom=d.getDay()===0;
-    const maxH=horasDia(d);
-    const hDia=cargaDia(fechaStr, resp);
     const tsDelDia=tareasDelDia(fechaStr, resp).sort((a,b)=>{
       const o={proceso:0,pendiente:1,revision:2,aprobado:3};
       return(o[a.estado]||0)-(o[b.estado]||0);
@@ -6154,10 +5997,6 @@ function renderCalSemana(resp){
 
     const hdr=document.createElement('div');hdr.className='sem-hdr';
     hdr.innerHTML=`<div class="sem-dow">${DIAS_SEMANA[d.getDay()]}</div><div class="sem-num">${d.getDate()}</div>`;
-    if(maxH>0&&resp){
-      const hCls=hDia>maxH?'over':hDia>maxH*.8?'warn':'ok';
-      hdr.innerHTML+=`<div class="sem-horas ${hCls}">${hDia}h / ${maxH}h</div>`;
-    }
     col.appendChild(hdr);
 
     const chips=document.createElement('div');chips.className='sem-chips';
@@ -6168,7 +6007,7 @@ function renderCalSemana(resp){
       chip.className='sem-chip';
       chip.style.background=c.bg;
       chip.style.color=c.fg;
-      chip.innerHTML=`<div class="sem-chip-top"><span class="sem-chip-avatar" style="background:${c.fill};">${ini}</span><span style="opacity:.75;">${t.horas?`${t.horas}h`:EL[t.estado]}</span></div><div class="sem-chip-ttl">${esc(t.titulo)}</div>`;
+      chip.innerHTML=`<div class="sem-chip-top"><span class="sem-chip-avatar" style="background:${c.fill};">${ini}</span><span style="opacity:.75;">${EL[t.estado]}</span></div><div class="sem-chip-ttl">${esc(t.titulo)}</div>`;
       chip.title=`${t.titulo} — ${EL[t.estado]}`;
       chip.draggable=true;chip.dataset.tareaId=t.id;
       chip.addEventListener('dragstart',onDragStart);
@@ -6224,8 +6063,6 @@ function abrirModalDia(fechaStr, resp=''){
   const lbl=dt.toLocaleDateString('es-PA',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   document.getElementById('modal-dia-ttl').textContent=lbl;
   const ts=tareasDelDia(fechaStr,resp);
-  const hDia=cargaDia(fechaStr,resp);
-  const maxH=horasDia(dt);
   let html='';
   if(!ts.length){html+='<div class="r-empty">Sin pendientes este día.</div>';}
   else{
@@ -6236,7 +6073,7 @@ function abrirModalDia(fechaStr, resp=''){
           <div class="mdia-ttl">${esc(t.titulo)}</div>
           <span class="mdia-estado ptestado ${t.estado}">${EL[t.estado]}</span>
         </div>
-        <div class="mdia-meta">${getUsuarioNombre(t.responsable)}${t.horas?` · ${t.horas}h estimadas`:''}</div>
+        <div class="mdia-meta">${getUsuarioNombre(t.responsable)}</div>
         <div style="margin-top:.4rem;display:flex;gap:.35rem;">
           ${EN[t.estado]?`<button class="ba avanzar" style="flex:0;padding:3px 8px;font-size:9px;" onclick="avanzarDesdeCal('${t.id}')">→ ${EL[EN[t.estado]]}</button>`:''}
           <button class="ba" style="flex:0;padding:3px 8px;font-size:9px;" onclick="editarTareaDesdeModal('${t.id}')">Editar</button>

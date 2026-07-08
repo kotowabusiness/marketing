@@ -505,6 +505,12 @@ table.rt tr:last-child td{border-bottom:none;}
 
 /* ADMIN */
 .admin-wrap{padding:1.5rem 2rem 2rem;}
+.admin-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin-bottom:1.5rem;overflow-x:auto;}
+.admin-tab-btn{background:none;border:none;padding:.6rem 1rem;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--gray3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;}
+.admin-tab-btn:hover{color:var(--dark);}
+.admin-tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
+.admin-tabpanel{display:flex;flex-direction:column;}
+.admin-tabpanel.active{display:flex;}
 .admin-section{background:var(--white);border-radius:16px;padding:1.25rem 1.5rem;box-shadow:0 1px 2px rgba(20,30,25,.04);border:1px solid var(--gray2);margin-bottom:1.25rem;}
 .admin-section-title{font-family:var(--font-display);font-weight:700;font-size:15px;color:var(--dark);margin-bottom:1rem;padding-bottom:.6rem;border-bottom:1px solid var(--gray2);}
 .notif-toggle-list{display:flex;flex-direction:column;gap:.6rem;}
@@ -1369,246 +1375,272 @@ table.rt tr:last-child td{border-bottom:none;}
 <div class="vista" id="vista-admin">
   <div class="admin-wrap">
     <div class="proy-top"><div class="proy-titulo">&#9881; Administración</div></div>
-    <div class="admin-section">
-      <div class="admin-section-title">Usuarios del equipo</div>
-      <div class="users-grid" id="users-grid"></div>
-      <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalUsuario()">+ Invitar usuario</button></div>
+
+    <div class="admin-tabs">
+      <button class="admin-tab-btn active" onclick="setAdminTab('equipo',this)">Equipo</button>
+      <button class="admin-tab-btn" onclick="setAdminTab('tablero',this)">Tablero</button>
+      <button class="admin-tab-btn" onclick="setAdminTab('datos',this)">Datos</button>
+      <button class="admin-tab-btn" onclick="setAdminTab('notificaciones',this)">Notificaciones</button>
+      <button class="admin-tab-btn" onclick="setAdminTab('apariencia',this)">Apariencia</button>
     </div>
-    <div class="admin-section">
-      <div class="admin-section-title">Departamentos</div>
-      <div id="depts-list"></div>
-      <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalDept()">+ Nuevo departamento</button></div>
-    </div>
-    <div class="admin-section" id="admin-tiendas-section">
-      <div class="admin-section-title">&#127978; Tiendas</div>
-      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Lista de tiendas de tu departamento. Se usa para asociar pendientes a una o varias tiendas y verlos agrupados en la vista "Por Tienda".</div>
-      <div id="admin-tiendas-list" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;"></div>
-      <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
-        <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tienda</div>
-        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
-          <div class="fg" style="flex:1;min-width:180px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="tienda-nom" placeholder="ej. Justo Arosemena"></div>
-          <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tienda-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option><option value="oficina">Oficina</option></select></div>
-          <button class="btn-save" style="padding:7px 16px;" onclick="agregarTienda()">+ Agregar</button>
-        </div>
+
+    <!-- EQUIPO: Usuarios, Departamentos, Puestos y KPIs -->
+    <div class="admin-tabpanel active" id="admintab-equipo">
+      <div class="admin-section">
+        <div class="admin-section-title">Usuarios del equipo</div>
+        <div class="users-grid" id="users-grid"></div>
+        <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalUsuario()">+ Invitar usuario</button></div>
+      </div>
+      <div class="admin-section" id="admin-deptos-section">
+        <div class="admin-section-title">Departamentos</div>
+        <div id="depts-list"></div>
+        <div style="margin-top:1rem;"><button class="btn-save" onclick="abrirModalDept()">+ Nuevo departamento</button></div>
+      </div>
+      <div class="admin-section" id="admin-kpis-section">
+        <div class="admin-section-title">&#127919; Puestos y KPIs</div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Define los indicadores de desempe&ntilde;o reales de cada puesto, con su peso exacto. Luego asigna un puesto a cada persona desde su perfil en Usuarios.</div>
+        <div id="admin-kpis-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;"></div>
+        <button class="btn-save" onclick="abrirModalKpiPuesto()">+ Nuevo puesto</button>
       </div>
     </div>
-    <div class="admin-section" id="admin-tipos-section">
-      <div class="admin-section-title">&#9201; Tipos de tarea</div>
-      <div class="matriz-grid" id="admin-matriz-grid"></div>
-      <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
-        <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tipo</div>
-        <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
-          <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="admin-tipo-nom" placeholder="ej. Fotografía"></div>
-          <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Descripción</label><input type="text" class="fi" id="admin-tipo-desc" placeholder="Breve descripción"></div>
-          <button class="btn-save" style="padding:7px 16px;" onclick="adminAgregarTipo()">+ Agregar</button>
+
+    <!-- TABLERO: Tipos de tarea, Plantillas de proyecto -->
+    <div class="admin-tabpanel" id="admintab-tablero" style="display:none;">
+      <div class="admin-section" id="admin-tipos-section">
+        <div class="admin-section-title">&#9201; Tipos de tarea</div>
+        <div class="matriz-grid" id="admin-matriz-grid"></div>
+        <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
+          <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tipo</div>
+          <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
+            <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="admin-tipo-nom" placeholder="ej. Fotografía"></div>
+            <div class="fg" style="flex:1;min-width:140px;"><label class="flabel">Descripción</label><input type="text" class="fi" id="admin-tipo-desc" placeholder="Breve descripción"></div>
+            <button class="btn-save" style="padding:7px 16px;" onclick="adminAgregarTipo()">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="admin-section" id="admin-plantillas-section">
+        <div class="admin-section-title">&#128203; Plantillas de proyecto</div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Checklists reutilizables (ej. apertura de tienda) que se aplican autom&aacute;ticamente al crear un proyecto nuevo.</div>
+        <div id="admin-plantillas-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;"></div>
+        <button class="btn-save" onclick="abrirModalPlantilla()">+ Nueva plantilla</button>
+      </div>
+    </div>
+
+    <!-- DATOS: Tiendas -->
+    <div class="admin-tabpanel" id="admintab-datos" style="display:none;">
+      <div class="admin-section" id="admin-tiendas-section">
+        <div class="admin-section-title">&#127978; Tiendas</div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Lista de tiendas de tu departamento. Se usa para asociar pendientes a una o varias tiendas y verlos agrupados en la vista "Por Tienda".</div>
+        <div id="admin-tiendas-list" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;"></div>
+        <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
+          <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tienda</div>
+          <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
+            <div class="fg" style="flex:1;min-width:180px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="tienda-nom" placeholder="ej. Justo Arosemena"></div>
+            <div class="fg"><label class="flabel">Tipo</label><select class="fs" id="tienda-tipo"><option value="propia">Tienda propia</option><option value="deli_gourmet">Deli Gourmet</option><option value="oficina">Oficina</option></select></div>
+            <button class="btn-save" style="padding:7px 16px;" onclick="agregarTienda()">+ Agregar</button>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="admin-section" id="admin-plantillas-section">
-      <div class="admin-section-title">&#128203; Plantillas de proyecto</div>
-      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Checklists reutilizables (ej. apertura de tienda) que se aplican autom&aacute;ticamente al crear un proyecto nuevo.</div>
-      <div id="admin-plantillas-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:1rem;"></div>
-      <button class="btn-save" onclick="abrirModalPlantilla()">+ Nueva plantilla</button>
-    </div>
-
-    <div class="admin-section" id="admin-kpis-section">
-      <div class="admin-section-title">&#127919; Puestos y KPIs</div>
-      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Define los indicadores de desempe&ntilde;o reales de cada puesto, con su peso exacto. Luego asigna un puesto a cada persona desde su perfil en Usuarios.</div>
-      <div id="admin-kpis-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:1rem;"></div>
-      <button class="btn-save" onclick="abrirModalKpiPuesto()">+ Nuevo puesto</button>
-    </div>
-
-    <div class="admin-section" id="admin-notif-section">
-      <div class="admin-section-title">&#128276; Notificaciones</div>
-      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Activa o desactiva qu&eacute; tipos de notificaci&oacute;n se env&iacute;an en este departamento.</div>
-      <div class="notif-toggle-list">
-        <label class="notif-toggle-row">
-          <div>
-            <div class="notif-toggle-ttl">En revisi&oacute;n</div>
-            <div class="notif-toggle-sub">Avisa a admin/gerente/asistente cuando alguien marca un pendiente como Listo</div>
-          </div>
-          <input type="checkbox" id="notif-cfg-revision" onchange="toggleNotifConfig('notif_revision',this)">
-        </label>
-        <label class="notif-toggle-row">
-          <div>
-            <div class="notif-toggle-ttl">Aprobado</div>
-            <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente es aprobado</div>
-          </div>
-          <input type="checkbox" id="notif-cfg-aprobado" onchange="toggleNotifConfig('notif_aprobado',this)">
-        </label>
-        <label class="notif-toggle-row">
-          <div>
-            <div class="notif-toggle-ttl">Cambios solicitados</div>
-            <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente regresa con cambios</div>
-          </div>
-          <input type="checkbox" id="notif-cfg-cambios" onchange="toggleNotifConfig('notif_cambios',this)">
-        </label>
-        <label class="notif-toggle-row">
-          <div>
-            <div class="notif-toggle-ttl">Desbloqueo</div>
-            <div class="notif-toggle-sub">Avisa al responsable cuando un pendiente bloqueado se desbloquea</div>
-          </div>
-          <input type="checkbox" id="notif-cfg-desbloqueo" onchange="toggleNotifConfig('notif_desbloqueo',this)">
-        </label>
-        <label class="notif-toggle-row">
-          <div>
-            <div class="notif-toggle-ttl">Comentarios</div>
-            <div class="notif-toggle-sub">Avisa cuando alguien comenta en un pendiente</div>
-          </div>
-          <input type="checkbox" id="notif-cfg-comentario" onchange="toggleNotifConfig('notif_comentario',this)">
-        </label>
+    <!-- NOTIFICACIONES -->
+    <div class="admin-tabpanel" id="admintab-notificaciones" style="display:none;">
+      <div class="admin-section" id="admin-notif-section">
+        <div class="admin-section-title">&#128276; Notificaciones</div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Activa o desactiva qu&eacute; tipos de notificaci&oacute;n se env&iacute;an en este departamento.</div>
+        <div class="notif-toggle-list">
+          <label class="notif-toggle-row">
+            <div>
+              <div class="notif-toggle-ttl">En revisi&oacute;n</div>
+              <div class="notif-toggle-sub">Avisa a admin/gerente/asistente cuando alguien marca un pendiente como Listo</div>
+            </div>
+            <input type="checkbox" id="notif-cfg-revision" onchange="toggleNotifConfig('notif_revision',this)">
+          </label>
+          <label class="notif-toggle-row">
+            <div>
+              <div class="notif-toggle-ttl">Aprobado</div>
+              <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente es aprobado</div>
+            </div>
+            <input type="checkbox" id="notif-cfg-aprobado" onchange="toggleNotifConfig('notif_aprobado',this)">
+          </label>
+          <label class="notif-toggle-row">
+            <div>
+              <div class="notif-toggle-ttl">Cambios solicitados</div>
+              <div class="notif-toggle-sub">Avisa al responsable cuando su pendiente regresa con cambios</div>
+            </div>
+            <input type="checkbox" id="notif-cfg-cambios" onchange="toggleNotifConfig('notif_cambios',this)">
+          </label>
+          <label class="notif-toggle-row">
+            <div>
+              <div class="notif-toggle-ttl">Desbloqueo</div>
+              <div class="notif-toggle-sub">Avisa al responsable cuando un pendiente bloqueado se desbloquea</div>
+            </div>
+            <input type="checkbox" id="notif-cfg-desbloqueo" onchange="toggleNotifConfig('notif_desbloqueo',this)">
+          </label>
+          <label class="notif-toggle-row">
+            <div>
+              <div class="notif-toggle-ttl">Comentarios</div>
+              <div class="notif-toggle-sub">Avisa cuando alguien comenta en un pendiente</div>
+            </div>
+            <input type="checkbox" id="notif-cfg-comentario" onchange="toggleNotifConfig('notif_comentario',this)">
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="admin-section" id="admin-iconos-section">
-      <div class="admin-section-title">&#128161; &Iacute;conos del sidebar</div>
-      <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Elige el &iacute;cono y color de cada secci&oacute;n del men&uacute; lateral. Click en cualquiera para cambiarlo.</div>
-      <div id="admin-iconos-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"></div>
+    <!-- APARIENCIA: Íconos del sidebar, Personalización visual -->
+    <div class="admin-tabpanel" id="admintab-apariencia" style="display:none;">
+      <div class="admin-section" id="admin-iconos-section">
+        <div class="admin-section-title">&#128161; &Iacute;conos del sidebar</div>
+        <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Elige el &iacute;cono y color de cada secci&oacute;n del men&uacute; lateral. Click en cualquiera para cambiarlo.</div>
+        <div id="admin-iconos-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"></div>
+      </div>
+
+      <div class="admin-section" id="config-visual-section">
+        <div class="admin-section-title">&#127912; Personalización visual</div>
+        <div class="config-grid">
+          <div class="config-item">
+            <div class="config-label">Categor&iacute;a 1</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-cat1"><input type="color" id="cp-cat1" oninput="onCatColorChange(1,this.value)"></div>
+              <input type="text" class="color-hex" id="hex-cat1" maxlength="7" placeholder="#7F77DD" oninput="onCatHexChange(1,this.value)">
+            </div>
+            <div class="config-desc">Color de una de las 4 categor&iacute;as usadas en columnas del Tablero y chips del Calendario.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Categor&iacute;a 2</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-cat2"><input type="color" id="cp-cat2" oninput="onCatColorChange(2,this.value)"></div>
+              <input type="text" class="color-hex" id="hex-cat2" maxlength="7" placeholder="#1D9E75" oninput="onCatHexChange(2,this.value)">
+            </div>
+            <div class="config-desc">Segunda categor&iacute;a de color.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Categor&iacute;a 3</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-cat3"><input type="color" id="cp-cat3" oninput="onCatColorChange(3,this.value)"></div>
+              <input type="text" class="color-hex" id="hex-cat3" maxlength="7" placeholder="#EF9F27" oninput="onCatHexChange(3,this.value)">
+            </div>
+            <div class="config-desc">Tercera categor&iacute;a de color.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Categor&iacute;a 4</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-cat4"><input type="color" id="cp-cat4" oninput="onCatColorChange(4,this.value)"></div>
+              <input type="text" class="color-hex" id="hex-cat4" maxlength="7" placeholder="#D4537E" oninput="onCatHexChange(4,this.value)">
+            </div>
+            <div class="config-desc">Cuarta categor&iacute;a de color.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Color principal</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-primario"><input type="color" id="cp-primario" oninput="onColorChange('primario',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-primario" maxlength="7" placeholder="#00614D" oninput="onHexChange('primario',this.value)">
+            </div>
+            <div class="config-desc">Botones principales, sidebar activo, acentos de gráficas y barras.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Color acento</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-acento"><input type="color" id="cp-acento" oninput="onColorChange('acento',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-acento" maxlength="7" placeholder="#C9A84C" oninput="onHexChange('acento',this.value)">
+            </div>
+            <div class="config-desc">Detalles dorados: borde superior del header, badges de "hoy", chips destacados.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Fondo de toda la app</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-fondoapp"><input type="color" id="cp-fondoapp" oninput="onColorChange('fondoapp',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-fondoapp" maxlength="7" placeholder="#FAFBFA" oninput="onHexChange('fondoapp',this.value)">
+            </div>
+            <div class="config-desc">El fondo detrás de todo: Tablero, Mi día, Calendario, Reportes — toda la pantalla.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Fondo dentro de modales</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-fondo"><input type="color" id="cp-fondo" oninput="onColorChange('fondo',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FFFFFF" oninput="onHexChange('fondo',this.value)">
+            </div>
+            <div class="config-desc">Solo el interior de las ventanas que se abren (editar pendiente, proyecto, etc.).</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Fondo de columnas y tarjetas neutras</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-fondocol"><input type="color" id="cp-fondocol" oninput="onColorChange('fondocol',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-fondocol" maxlength="7" placeholder="#EEF0EF" oninput="onHexChange('fondocol',this.value)">
+            </div>
+            <div class="config-desc">El fondo gris detrás de las tarjetas en el Tablero (las columnas Pendientes, Hoy, etc.).</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Color de texto general</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-texto"><input type="color" id="cp-texto" oninput="onColorChange('texto',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-texto" maxlength="7" placeholder="#1B2420" oninput="onHexChange('texto',this.value)">
+            </div>
+            <div class="config-desc">Títulos, párrafos y texto de tarjetas en toda la app.</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Texto del sidebar</div>
+            <div class="color-picker-wrap">
+              <div class="color-swatch" id="swatch-textosb"><input type="color" id="cp-textosb" oninput="onColorChange('textosb',this.value)"></div>
+              <input type="text" class="color-hex" id="hex-textosb" maxlength="7" placeholder="#8C9690" oninput="onHexChange('textosb',this.value)">
+            </div>
+            <div class="config-desc">Color de los nombres de las secciones en el menú lateral (cuando no están activas).</div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Nombre de la app</div>
+            <input type="text" class="fi" id="config-nombre-app" placeholder="ej. Mercadeo" style="font-size:13px;" oninput="configDirty=true">
+            <div class="config-desc">Aparece debajo del logo en el sidebar.</div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
+          <div class="config-item">
+            <div class="config-label">Tipografía de títulos</div>
+            <div class="font-btns" id="font-display-btns">
+              <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('display','Inter',this)">Inter</button>
+              <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('display','Manrope',this)">Manrope</button>
+              <button class="font-btn" style="font-family:'Plus Jakarta Sans',sans-serif;" onclick="setFont('display','Plus Jakarta Sans',this)">Plus Jakarta Sans</button>
+              <button class="font-btn" style="font-family:'Libre Baskerville',serif;" onclick="setFont('display','Libre Baskerville',this)">Libre Baskerville</button>
+            </div>
+          </div>
+          <div class="config-item">
+            <div class="config-label">Tipografía de texto</div>
+            <div class="font-btns" id="font-body-btns">
+              <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('body','Inter',this)">Inter</button>
+              <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('body','Manrope',this)">Manrope</button>
+              <button class="font-btn" style="font-family:'DM Sans',sans-serif;" onclick="setFont('body','DM Sans',this)">DM Sans</button>
+              <button class="font-btn" style="font-family:'Nunito',sans-serif;" onclick="setFont('body','Nunito',this)">Nunito</button>
+            </div>
+          </div>
+        </div>
+        <!-- PREVIEW EN VIVO -->
+        <div class="config-label" style="margin-bottom:.6rem;">Vista previa</div>
+        <div class="config-preview">
+          <div class="config-preview-header" id="prev-header">
+            <span class="config-preview-title" id="prev-title">KOTOWA COFFEE HOUSE</span>
+            <span class="config-preview-btn" id="prev-btn">+ Nueva tarea</span>
+          </div>
+          <div style="display:flex;gap:.75rem;margin-top:.5rem;">
+            <div class="config-preview-card" id="prev-card1" style="flex:1;">
+              <div class="config-preview-card-title" id="prev-card-title">Arte campaña Salted Caramel</div>
+              <span class="config-preview-badge" id="prev-badge">Urgente</span>
+            </div>
+            <div class="config-preview-card" id="prev-card2" style="flex:1;opacity:.6;">
+              <div class="config-preview-card-title">Planograma v0626</div>
+              <span class="config-preview-badge" style="background:var(--gray1);color:var(--gray3);">Normal</span>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;">
+          <button class="btn-cancel" onclick="resetConfig()">Restablecer</button>
+          <button class="btn-save" onclick="guardarConfig()">Guardar cambios</button>
+        </div>
+      </div>
     </div>
 
-    <div class="admin-section" id="config-visual-section">
-      <div class="admin-section-title">&#127912; Personalización visual</div>
-      <div class="config-grid">
-        <div class="config-item">
-          <div class="config-label">Categor&iacute;a 1</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-cat1"><input type="color" id="cp-cat1" oninput="onCatColorChange(1,this.value)"></div>
-            <input type="text" class="color-hex" id="hex-cat1" maxlength="7" placeholder="#7F77DD" oninput="onCatHexChange(1,this.value)">
-          </div>
-          <div class="config-desc">Color de una de las 4 categor&iacute;as usadas en columnas del Tablero y chips del Calendario.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Categor&iacute;a 2</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-cat2"><input type="color" id="cp-cat2" oninput="onCatColorChange(2,this.value)"></div>
-            <input type="text" class="color-hex" id="hex-cat2" maxlength="7" placeholder="#1D9E75" oninput="onCatHexChange(2,this.value)">
-          </div>
-          <div class="config-desc">Segunda categor&iacute;a de color.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Categor&iacute;a 3</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-cat3"><input type="color" id="cp-cat3" oninput="onCatColorChange(3,this.value)"></div>
-            <input type="text" class="color-hex" id="hex-cat3" maxlength="7" placeholder="#EF9F27" oninput="onCatHexChange(3,this.value)">
-          </div>
-          <div class="config-desc">Tercera categor&iacute;a de color.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Categor&iacute;a 4</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-cat4"><input type="color" id="cp-cat4" oninput="onCatColorChange(4,this.value)"></div>
-            <input type="text" class="color-hex" id="hex-cat4" maxlength="7" placeholder="#D4537E" oninput="onCatHexChange(4,this.value)">
-          </div>
-          <div class="config-desc">Cuarta categor&iacute;a de color.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Color principal</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-primario"><input type="color" id="cp-primario" oninput="onColorChange('primario',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-primario" maxlength="7" placeholder="#00614D" oninput="onHexChange('primario',this.value)">
-          </div>
-          <div class="config-desc">Botones principales, sidebar activo, acentos de gráficas y barras.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Color acento</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-acento"><input type="color" id="cp-acento" oninput="onColorChange('acento',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-acento" maxlength="7" placeholder="#C9A84C" oninput="onHexChange('acento',this.value)">
-          </div>
-          <div class="config-desc">Detalles dorados: borde superior del header, badges de "hoy", chips destacados.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Fondo de toda la app</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-fondoapp"><input type="color" id="cp-fondoapp" oninput="onColorChange('fondoapp',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-fondoapp" maxlength="7" placeholder="#FAFBFA" oninput="onHexChange('fondoapp',this.value)">
-          </div>
-          <div class="config-desc">El fondo detrás de todo: Tablero, Mi día, Calendario, Reportes — toda la pantalla.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Fondo dentro de modales</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-fondo"><input type="color" id="cp-fondo" oninput="onColorChange('fondo',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FFFFFF" oninput="onHexChange('fondo',this.value)">
-          </div>
-          <div class="config-desc">Solo el interior de las ventanas que se abren (editar pendiente, proyecto, etc.).</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Fondo de columnas y tarjetas neutras</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-fondocol"><input type="color" id="cp-fondocol" oninput="onColorChange('fondocol',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-fondocol" maxlength="7" placeholder="#EEF0EF" oninput="onHexChange('fondocol',this.value)">
-          </div>
-          <div class="config-desc">El fondo gris detrás de las tarjetas en el Tablero (las columnas Pendientes, Hoy, etc.).</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Color de texto general</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-texto"><input type="color" id="cp-texto" oninput="onColorChange('texto',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-texto" maxlength="7" placeholder="#1B2420" oninput="onHexChange('texto',this.value)">
-          </div>
-          <div class="config-desc">Títulos, párrafos y texto de tarjetas en toda la app.</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Texto del sidebar</div>
-          <div class="color-picker-wrap">
-            <div class="color-swatch" id="swatch-textosb"><input type="color" id="cp-textosb" oninput="onColorChange('textosb',this.value)"></div>
-            <input type="text" class="color-hex" id="hex-textosb" maxlength="7" placeholder="#8C9690" oninput="onHexChange('textosb',this.value)">
-          </div>
-          <div class="config-desc">Color de los nombres de las secciones en el menú lateral (cuando no están activas).</div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Nombre de la app</div>
-          <input type="text" class="fi" id="config-nombre-app" placeholder="ej. Mercadeo" style="font-size:13px;" oninput="configDirty=true">
-          <div class="config-desc">Aparece debajo del logo en el sidebar.</div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
-        <div class="config-item">
-          <div class="config-label">Tipografía de títulos</div>
-          <div class="font-btns" id="font-display-btns">
-            <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('display','Inter',this)">Inter</button>
-            <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('display','Manrope',this)">Manrope</button>
-            <button class="font-btn" style="font-family:'Plus Jakarta Sans',sans-serif;" onclick="setFont('display','Plus Jakarta Sans',this)">Plus Jakarta Sans</button>
-            <button class="font-btn" style="font-family:'Libre Baskerville',serif;" onclick="setFont('display','Libre Baskerville',this)">Libre Baskerville</button>
-          </div>
-        </div>
-        <div class="config-item">
-          <div class="config-label">Tipografía de texto</div>
-          <div class="font-btns" id="font-body-btns">
-            <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('body','Inter',this)">Inter</button>
-            <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('body','Manrope',this)">Manrope</button>
-            <button class="font-btn" style="font-family:'DM Sans',sans-serif;" onclick="setFont('body','DM Sans',this)">DM Sans</button>
-            <button class="font-btn" style="font-family:'Nunito',sans-serif;" onclick="setFont('body','Nunito',this)">Nunito</button>
-          </div>
-        </div>
-      </div>
-      <!-- PREVIEW EN VIVO -->
-      <div class="config-label" style="margin-bottom:.6rem;">Vista previa</div>
-      <div class="config-preview">
-        <div class="config-preview-header" id="prev-header">
-          <span class="config-preview-title" id="prev-title">KOTOWA COFFEE HOUSE</span>
-          <span class="config-preview-btn" id="prev-btn">+ Nueva tarea</span>
-        </div>
-        <div style="display:flex;gap:.75rem;margin-top:.5rem;">
-          <div class="config-preview-card" id="prev-card1" style="flex:1;">
-            <div class="config-preview-card-title" id="prev-card-title">Arte campaña Salted Caramel</div>
-            <span class="config-preview-badge" id="prev-badge">Urgente</span>
-          </div>
-          <div class="config-preview-card" id="prev-card2" style="flex:1;opacity:.6;">
-            <div class="config-preview-card-title">Planograma v0626</div>
-            <span class="config-preview-badge" style="background:var(--gray1);color:var(--gray3);">Normal</span>
-          </div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:flex-end;gap:.75rem;margin-top:1rem;">
-        <button class="btn-cancel" onclick="resetConfig()">Restablecer</button>
-        <button class="btn-save" onclick="guardarConfig()">Guardar cambios</button>
-      </div>
-    </div>
   </div>
 </div>
+
 
 <!-- MODAL NOMBRE PROYECTO AUTO -->
 <div class="modal-ov" id="modal-nombre-proy" style="z-index:300;">
@@ -5063,6 +5095,15 @@ async function adminEliminarTipo(id,nom){
   toast('Tipo eliminado');
 }
 
+// Cambia de pestaña dentro de Admin (Equipo / Tablero / Datos / Notificaciones / Apariencia)
+function setAdminTab(tab,btn){
+  document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.admin-tabpanel').forEach(p=>{p.style.display='none';p.classList.remove('active');});
+  const panel=document.getElementById(`admintab-${tab}`);
+  if(panel){panel.style.display='flex';panel.classList.add('active');}
+}
+
 async function renderAdmin(){
   const esAdmin=PERFIL?.rol==='admin';
   // Admin ve todos, Gerente ve solo su departamento
@@ -5071,7 +5112,7 @@ async function renderAdmin(){
   document.querySelector('#vista-admin .proy-top .proy-titulo').textContent=
     esAdmin ? '⚙ Administración global' : `⚙ Equipo — ${(departamentos.find(d=>d.id===DEPT_ID)||{}).nombre||'Mi departamento'}`;
   // Mostrar/ocultar sección de departamentos (solo admin)
-  const deptSection=document.querySelector('#vista-admin .admin-section:last-child');
+  const deptSection=document.getElementById('admin-deptos-section');
   if(deptSection)deptSection.style.display=esAdmin?'':'none';
   // Usuarios
   const grid=document.getElementById('users-grid');grid.innerHTML='';

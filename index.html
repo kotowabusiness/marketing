@@ -536,10 +536,10 @@ table.rt tr:last-child td{border-bottom:none;}
 .kpi-rep-val{font-size:12.5px;font-weight:700;color:var(--dark);min-width:44px;text-align:right;}
 .kpi-rep-sub{font-size:10px;color:var(--gray3);margin-top:.3rem;}
 .kpi-rep-manual-input{width:70px;font-size:12px;padding:5px 7px;border:1px solid var(--gray2);border-radius:8px;text-align:center;}
-.estrellas-picker{display:flex;gap:4px;}
-.estrellas-picker i{font-size:26px;color:var(--gray2);cursor:pointer;transition:color .1s;}
-.estrellas-picker i.activa{color:#F0B93D;}
-.estrellas-picker i:hover{color:#F0B93D;}
+.estrellas-picker{display:flex;gap:2px;}
+.estrella-item{font-size:28px;line-height:1;color:var(--gray2);cursor:pointer;transition:color .1s;user-select:none;}
+.estrella-item.activa{color:#F0B93D;}
+.estrella-item:hover{color:#F0B93D;}
 .pl-item-row input,.pl-item-row select{font-family:var(--font-body);font-size:11px;padding:5px 7px;border:1px solid var(--gray2);border-radius:8px;background:var(--white);width:100%;}
 .pl-item-hdr{display:grid;grid-template-columns:1.6fr 1fr .9fr .8fr auto;gap:.4rem;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray3);padding-bottom:.4rem;border-bottom:1px solid var(--gray2);margin-bottom:.2rem;}
 .pl-item-del{background:none;border:none;color:var(--urgente);cursor:pointer;font-size:14px;padding:0 4px;}
@@ -773,6 +773,33 @@ table.rt tr:last-child td{border-bottom:none;}
 
 /* ── CALENDARIO ── */
 .cal-wrap{padding:0;}
+/* LAYOUT: sidebar (mini-cal + sin fecha) + calendario principal */
+.cal-layout{display:flex;gap:1.25rem;align-items:flex-start;}
+.cal-sidebar{width:220px;flex-shrink:0;display:flex;flex-direction:column;gap:1.25rem;}
+.cal-main{flex:1;min-width:0;}
+@media(max-width:900px){.cal-layout{flex-direction:column;}.cal-sidebar{width:100%;}}
+/* Mini calendario */
+.cal-mini{background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:.85rem;}
+.cal-mini-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem;}
+.cal-mini-mes{font-size:12.5px;font-weight:700;color:var(--dark);}
+.cal-mini-nav{background:none;border:none;color:var(--gray3);cursor:pointer;font-size:12px;padding:2px 6px;border-radius:6px;}
+.cal-mini-nav:hover{background:var(--v-50);color:var(--verde);}
+.cal-mini-dow{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px;}
+.cal-mini-dow span{font-size:9px;color:var(--gray3);text-align:center;font-weight:700;}
+.cal-mini-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+.cal-mini-day{font-size:10px;text-align:center;padding:4px 0;border-radius:6px;cursor:pointer;color:var(--dark);}
+.cal-mini-day:hover{background:var(--v-50);}
+.cal-mini-day.otro-mes{color:var(--gray2);}
+.cal-mini-day.hoy{background:var(--v-700);color:var(--white);font-weight:700;}
+.cal-mini-day.seleccionado:not(.hoy){background:var(--gold-lt);font-weight:700;}
+/* Sin fecha asignada */
+.cal-sinfecha-ttl{font-size:10.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem;}
+.cal-sf-item{background:var(--white);border:1px solid var(--gray2);border-radius:10px;padding:.55rem .7rem;margin-bottom:.5rem;cursor:grab;transition:box-shadow .12s;}
+.cal-sf-item:hover{box-shadow:0 2px 8px rgba(20,30,25,.08);}
+.cal-sf-item.dragging{opacity:.4;}
+.cal-sf-ttl{font-size:11.5px;color:var(--dark);margin-bottom:2px;line-height:1.3;}
+.cal-sf-meta{font-size:9.5px;color:var(--gray3);}
+.cal-sf-empty{font-size:11px;color:var(--gray3);padding:.5rem 0;}
 .cal-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;flex-wrap:wrap;gap:.75rem;}
 .cal-nav{display:flex;align-items:center;gap:.6rem;}
 .cal-mes{font-family:var(--font-display);font-weight:700;font-size:17px;color:var(--ink);min-width:190px;text-align:center;}
@@ -791,13 +818,11 @@ table.rt tr:last-child td{border-bottom:none;}
 .cal-dia.domingo{background:var(--bg-app);}
 .cal-dia.hoy .cal-dia-num{background:var(--v-700);color:var(--white);border-radius:8px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
 .cal-dia-num{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:2px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:8px;}
-.cal-chip{font-size:9.5px;font-weight:600;padding:3px 7px;border-radius:7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;cursor:grab;transition:opacity .12s,transform .12s;}
+.cal-chip{font-size:9.5px;font-weight:600;padding:3px 6px;border-radius:7px;display:flex;align-items:center;gap:4px;cursor:grab;transition:opacity .12s,transform .12s;overflow:hidden;}
 .cal-chip:hover{opacity:.85;transform:translateY(-1px);}
 .cal-chip.dragging{opacity:.4;}
-.cal-chip.proceso{background:var(--gold-lt);color:#8A6A1F;}
-.cal-chip.pendiente{background:var(--gray1);color:var(--gray3);}
-.cal-chip.revision{background:var(--azul-lt);color:var(--azul);}
-.cal-chip.aprobado{background:var(--v-100);color:var(--v-800);}
+.cal-chip-avatar{width:13px;height:13px;border-radius:50%;color:var(--white);font-size:7.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cal-chip-txt{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .cal-mas{font-size:9px;color:var(--gray3);font-weight:600;padding:1px 4px;}
 /* DRAG OVER */
 .cal-dia.drag-over{background:var(--gold-lt)!important;outline:2px dashed var(--gold);}
@@ -817,10 +842,9 @@ table.rt tr:last-child td{border-bottom:none;}
 .sem-chips{padding:.5rem .5rem;display:flex;flex-direction:column;gap:5px;flex:1;}
 .sem-chip{font-size:10.5px;font-weight:600;padding:7px 9px;border-radius:9px;cursor:grab;line-height:1.35;transition:transform .12s;}
 .sem-chip:hover{opacity:.9;transform:translateY(-1px);}
-.sem-chip.proceso{background:var(--gold-lt);color:#8A6A1F;}
-.sem-chip.pendiente{background:var(--gray1);color:var(--ink);}
-.sem-chip.revision{background:var(--azul-lt);color:var(--azul);}
-.sem-chip.aprobado{background:var(--v-100);color:var(--v-800);}
+.sem-chip-top{display:flex;align-items:center;gap:5px;margin-bottom:3px;font-size:9px;font-weight:600;}
+.sem-chip-avatar{width:15px;height:15px;border-radius:50%;color:var(--white);font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sem-chip-ttl{font-weight:600;}
 .sem-col.drag-over{background:var(--gold-lt)!important;outline:2px dashed var(--gold);}
 /* MODAL DÍA */
 .modal-dia-lista{display:flex;flex-direction:column;gap:.5rem;max-height:60vh;overflow-y:auto;}
@@ -1246,26 +1270,43 @@ table.rt tr:last-child td{border-bottom:none;}
 
 <!-- CALENDARIO -->
 <div class="vista" id="vista-calendario">
-  <div class="cal-wrap">
-    <div class="cal-top">
-      <div class="cal-nav">
-        <button class="cal-nav-btn" onclick="calNav(-1)">&#8592;</button>
-        <div class="cal-mes" id="cal-mes-lbl">&mdash;</div>
-        <button class="cal-nav-btn" onclick="calNav(1)">&#8594;</button>
-        <button class="cal-nav-btn" onclick="calHoy()" style="font-size:11px;padding:5px 10px;">Hoy</button>
+  <div class="cal-layout">
+    <aside class="cal-sidebar">
+      <div class="cal-mini">
+        <div class="cal-mini-hdr">
+          <button class="cal-mini-nav" onclick="calMiniNav(-1)">&#8592;</button>
+          <span class="cal-mini-mes" id="cal-mini-mes-lbl">&mdash;</span>
+          <button class="cal-mini-nav" onclick="calMiniNav(1)">&#8594;</button>
+        </div>
+        <div class="cal-mini-dow"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+        <div class="cal-mini-grid" id="cal-mini-grid"></div>
       </div>
-      <div class="cal-vista-btns">
-        <button class="cal-vista-btn active" id="cvbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
-        <button class="cal-vista-btn" id="cvbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
+      <div class="cal-sinfecha">
+        <div class="cal-sinfecha-ttl">Sin fecha asignada</div>
+        <div id="cal-sinfecha-list"></div>
       </div>
-      <div class="cal-filtro">
-        <span class="flbl">Ver</span>
-        <select class="fselect" id="cal-filtro-resp" onchange="renderCal()">
-          <option value="">Todos</option>
-        </select>
+    </aside>
+    <div class="cal-main">
+      <div class="cal-top">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="calNav(-1)">&#8592;</button>
+          <div class="cal-mes" id="cal-mes-lbl">&mdash;</div>
+          <button class="cal-nav-btn" onclick="calNav(1)">&#8594;</button>
+          <button class="cal-nav-btn" onclick="calHoy()" style="font-size:11px;padding:5px 10px;">Hoy</button>
+        </div>
+        <div class="cal-vista-btns">
+          <button class="cal-vista-btn active" id="cvbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
+          <button class="cal-vista-btn" id="cvbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
+        </div>
+        <div class="cal-filtro">
+          <span class="flbl">Ver</span>
+          <select class="fselect" id="cal-filtro-resp" onchange="renderCal()">
+            <option value="">Todos</option>
+          </select>
+        </div>
       </div>
+      <div id="cal-container"></div>
     </div>
-    <div id="cal-container"></div>
   </div>
 </div>
 
@@ -2016,6 +2057,24 @@ const H0=8;
 // Helpers de datos en memoria
 function getMatriz(){const m={};matrizData.forEach(r=>{m[r.key]={nom:r.nom,h:parseFloat(r.horas),desc:r.descripcion||'',dbId:r.id};});return m;}
 function getTipoLabel(tipo){return getMatriz()[tipo]?.nom||tipo;}
+// Color determinístico por tipo de tarea — mismo tipo siempre el mismo color, sin configuración extra.
+const TIPO_COLORES=[
+  {bg:'var(--v-100)',fg:'var(--v-800)',fill:'var(--v-700)'},
+  {bg:'var(--gold-lt)',fg:'#8A6A1F',fill:'#D89818'},
+  {bg:'var(--azul-lt)',fg:'var(--azul)',fill:'var(--azul)'},
+  {bg:'#FBEAF0',fg:'#993556',fill:'#D4537E'},
+  {bg:'#EAF3DE',fg:'#3B6D11',fill:'#639922'},
+  {bg:'#FAECE7',fg:'#993C1D',fill:'#D85A30'},
+];
+function colorPorTipo(tipoKey){
+  const keys=Object.keys(getMatriz());
+  let idx=keys.indexOf(tipoKey);
+  if(idx<0){
+    // Hash simple del string para tipos no encontrados en la matriz (borrados, etc.)
+    idx=[...String(tipoKey||'')].reduce((s,c)=>s+c.charCodeAt(0),0);
+  }
+  return TIPO_COLORES[idx%TIPO_COLORES.length];
+}
 function getUsuarioNombre(id){const u=usuarios.find(x=>x.id===id);return u?.nombre||'—';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2500);}
@@ -2902,7 +2961,9 @@ let todosUsuariosCache=[]; // fallback si el responsable no está en `usuarios` 
 function renderEstrellasPicker(){
   const cont=document.getElementById('f-estrellas-picker');
   if(!cont)return;
-  cont.innerHTML=[1,2,3,4,5].map(n=>`<i class="ti ti-star${modalEstrellasValor>=n?'-filled activa':''}" onclick="setEstrellas(${n})"></i>`).join('');
+  // Nota: ti-star-filled no existe en el CDN outline-only que cargamos (el filled va en un
+  // archivo aparte que no incluimos) — por eso usamos el carácter ★/☆ directo, que siempre renderiza.
+  cont.innerHTML=[1,2,3,4,5].map(n=>`<span class="estrella-item${modalEstrellasValor>=n?' activa':''}" onclick="setEstrellas(${n})">${modalEstrellasValor>=n?'★':'☆'}</span>`).join('');
 }
 function setEstrellas(n){
   modalEstrellasValor=modalEstrellasValor===n?null:n; // click de nuevo en la misma = quitar calificación
@@ -4104,7 +4165,9 @@ function limpiarFechaEntrega(){
 }
 
 function abrirModal(){
-  editTareaId=null;document.getElementById('mt-ttl').textContent='Nueva tarea';
+  editTareaId=null;
+  setModalSoloLinks(false); // resetea explícitamente por si el modal anterior quedó en modo "solo links"
+  document.getElementById('mt-ttl').textContent='Nueva tarea';
   ['f-titulo','f-brief','f-deadline-real'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-deadline-real').disabled=false;
   document.getElementById('f-deadline-hint').style.display='none';
@@ -5713,9 +5776,69 @@ let calFecha = new Date(); // mes/semana mostrado actualmente
 let calVista = 'mes'; // 'mes' | 'semana'
 let calDiaSeleccionado = null;
 let dragTareaId = null;
+let calMiniFecha = new Date(); // mes que muestra el mini-calendario del sidebar (independiente del principal)
 
 const DIAS_SEMANA = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+function calMiniNav(dir){
+  calMiniFecha.setMonth(calMiniFecha.getMonth()+dir);
+  renderCalMini();
+}
+function renderCalMini(){
+  const hoy=new Date();hoy.setHours(0,0,0,0);
+  const y=calMiniFecha.getFullYear(),m=calMiniFecha.getMonth();
+  document.getElementById('cal-mini-mes-lbl').textContent=`${MESES[m].slice(0,3)} ${y}`;
+  const primerDia=new Date(y,m,1);
+  let inicioGrid=new Date(primerDia);
+  const dow=primerDia.getDay();
+  inicioGrid.setDate(primerDia.getDate()-(dow===0?6:dow-1));
+  const cont=document.getElementById('cal-mini-grid');
+  if(!cont)return;
+  cont.innerHTML='';
+  const cur=new Date(inicioGrid);
+  for(let i=0;i<42;i++){
+    const fechaStr=fechaStr_(cur);
+    const esMes=cur.getMonth()===m;
+    const esHoy=cur.getTime()===hoy.getTime();
+    const esSel=calFecha.getFullYear()===cur.getFullYear()&&calFecha.getMonth()===cur.getMonth()&&calFecha.getDate()===cur.getDate();
+    const div=document.createElement('div');
+    div.className=`cal-mini-day${esMes?'':' otro-mes'}${esHoy?' hoy':''}${esSel&&!esHoy?' seleccionado':''}`;
+    div.textContent=cur.getDate();
+    div.addEventListener('click',()=>{
+      calFecha=new Date(cur);
+      calMiniFecha=new Date(cur);
+      renderCal();renderCalMini();
+    });
+    cont.appendChild(div);
+    if(i>=34&&cur.getMonth()!==m&&i>=inicioGrid.getDate()+34)break;
+    cur.setDate(cur.getDate()+1);
+  }
+}
+function fechaStr_(d){return`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+// Pendientes sin fecha asignada — arrastrables directo al calendario para asignarles fecha
+function renderCalSinFecha(){
+  const cont=document.getElementById('cal-sinfecha-list');
+  if(!cont)return;
+  const resp=document.getElementById('cal-filtro-resp')?.value||'';
+  let sinFecha=tareas.filter(t=>!t.fecha&&t.estado!=='aprobado');
+  if(resp)sinFecha=sinFecha.filter(t=>t.responsable===resp);
+  if(PERFIL?.rol==='colaborador')sinFecha=sinFecha.filter(t=>t.responsable===USER.id);
+  if(!sinFecha.length){cont.innerHTML='<div class="cal-sf-empty">Todo tiene fecha asignada.</div>';return;}
+  cont.innerHTML='';
+  sinFecha.forEach(t=>{
+    const proy=t.proyId?proyectos.find(p=>p.id===t.proyId):null;
+    const div=document.createElement('div');
+    div.className='cal-sf-item';
+    div.draggable=true;
+    div.dataset.tareaId=t.id;
+    div.innerHTML=`<div class="cal-sf-ttl">${esc(t.titulo)}</div><div class="cal-sf-meta">${esc(getUsuarioNombre(t.responsable).split(' ')[0]||'—')}${proy?` · ${esc(proy.nombre)}`:''}</div>`;
+    div.addEventListener('dragstart',onDragStart);
+    div.addEventListener('click',e=>editarTarea(t.id,e));
+    cont.appendChild(div);
+  });
+}
 
 function calNav(dir){
   if(calVista==='mes'){
@@ -5828,6 +5951,8 @@ function renderCal(){
   const resp=document.getElementById('cal-filtro-resp')?.value||'';
   if(calVista==='mes') renderCalMes(resp);
   else renderCalSemana(resp);
+  renderCalMini();
+  renderCalSinFecha();
 }
 
 function renderCalMes(resp){
@@ -5871,12 +5996,15 @@ function renderCalMes(resp){
 
     const numDiv=document.createElement('div');numDiv.className='cal-dia-num';numDiv.textContent=cur.getDate();div.appendChild(numDiv);
 
-    // Chips de tareas (máx 3 + "X más")
+    // Chips de tareas (máx 3 + "X más") — color por tipo de tarea, con avatar del responsable
     const mostrar=tsDelDia.slice(0,3);
     mostrar.forEach(t=>{
+      const c=colorPorTipo(t.tipo);
+      const ini=(getUsuarioNombre(t.responsable)||'?').charAt(0).toUpperCase();
       const chip=document.createElement('div');
-      chip.className=`cal-chip ${t.estado}`;
-      chip.textContent=t.titulo;
+      chip.className='cal-chip';
+      chip.style.background=c.bg;
+      chip.innerHTML=`<span class="cal-chip-avatar" style="background:${c.fill};">${ini}</span><span class="cal-chip-txt" style="color:${c.fg};">${esc(t.titulo)}</span>`;
       chip.title=`${t.titulo} — ${getUsuarioNombre(t.responsable).split(' ')[0]} — ${EL[t.estado]}`;
       chip.draggable=true;
       chip.dataset.tareaId=t.id;
@@ -5944,9 +6072,13 @@ function renderCalSemana(resp){
 
     const chips=document.createElement('div');chips.className='sem-chips';
     tsDelDia.forEach(t=>{
+      const c=colorPorTipo(t.tipo);
+      const ini=(getUsuarioNombre(t.responsable)||'?').charAt(0).toUpperCase();
       const chip=document.createElement('div');
-      chip.className=`sem-chip ${t.estado}`;
-      chip.innerHTML=`<div style="font-size:9px;color:inherit;opacity:.7;margin-bottom:1px;">${getUsuarioNombre(t.responsable).split(' ')[0]}${t.horas?` · ${t.horas}h`:''}</div><div>${esc(t.titulo)}</div>`;
+      chip.className='sem-chip';
+      chip.style.background=c.bg;
+      chip.style.color=c.fg;
+      chip.innerHTML=`<div class="sem-chip-top"><span class="sem-chip-avatar" style="background:${c.fill};">${ini}</span><span style="opacity:.75;">${t.horas?`${t.horas}h`:EL[t.estado]}</span></div><div class="sem-chip-ttl">${esc(t.titulo)}</div>`;
       chip.title=`${t.titulo} — ${EL[t.estado]}`;
       chip.draggable=true;chip.dataset.tareaId=t.id;
       chip.addEventListener('dragstart',onDragStart);
@@ -5980,10 +6112,18 @@ async function onDropDia(fechaStr){
   const t=tareas.find(x=>x.id===dragTareaId);
   if(!t){dragTareaId=null;return;}
   if(t.fecha===fechaStr){dragTareaId=null;return;}
+  // Actualizar tanto "fecha" (lo que se ve/ordena) como "deadline_real" (el verdadero deadline
+  // que el modal restaura). Sin esto, el modal seguía mostrando la fecha vieja y el próximo
+  // guardado desde ahí revertía el cambio hecho en el calendario.
   t.fecha=fechaStr;
+  t.deadline_real=fechaStr;
+  // Si estaba fijada manualmente a "Hoy" en el Tablero, mover la fecha en el calendario
+  // es una reasignación explícita del deadline — quitamos esa fijación para que no quede
+  // pegada mostrando "Hoy" mientras el deadline real ya apunta a otro día.
+  if(t.dia_fijado)t.dia_fijado=null;
   await sbGuardarTarea({...t},dragTareaId);
   dragTareaId=null;
-  renderCal();render();toast(`Fecha de entrega movida a ${fechaStr}`);
+  renderCal();render();if(proyActualId)renderDetalle();toast(`Fecha de entrega movida a ${fechaStr}`);
 }
 
 // MODAL DÍA

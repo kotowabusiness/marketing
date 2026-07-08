@@ -728,6 +728,15 @@ table.rt tr:last-child td{border-bottom:none;}
 /* CONFIGURACIÓN VISUAL */
 .config-section{background:var(--white);border-radius:16px;padding:1.25rem 1.5rem;box-shadow:0 1px 2px rgba(20,30,25,.04);border:1px solid var(--gray2);margin-bottom:1.25rem;}
 .config-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:1.25rem;margin-bottom:1.25rem;}
+.config-grid-4{grid-template-columns:repeat(4,1fr);}
+.config-grid-3{grid-template-columns:repeat(3,1fr);}
+.config-grid-2{grid-template-columns:repeat(2,1fr);}
+@media(max-width:900px){.config-grid-4,.config-grid-3,.config-grid-2{grid-template-columns:repeat(2,1fr);}}
+.config-group{background:var(--bg-app);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem;}
+.config-group-ttl{font-size:11.5px;font-weight:700;color:var(--dark);margin-bottom:.85rem;}
+.config-group-sub{font-weight:400;color:var(--gray3);font-size:10.5px;margin-left:.4rem;}
+.config-mini-preview{display:flex;align-items:center;gap:.6rem;margin-top:.85rem;padding-top:.75rem;border-top:1px solid var(--gray2);font-size:11px;color:var(--gray3);}
+.config-mini-avatar{width:30px;height:30px;border-radius:50%;color:var(--white);font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .config-item{display:flex;flex-direction:column;gap:.5rem;}
 .config-label{font-size:10px;font-weight:700;color:var(--verde);text-transform:uppercase;letter-spacing:.8px;}
 .config-desc{font-size:10.5px;color:var(--gray3);line-height:1.4;margin-top:.3rem;}
@@ -1498,123 +1507,148 @@ table.rt tr:last-child td{border-bottom:none;}
 
       <div class="admin-section" id="config-visual-section">
         <div class="admin-section-title">&#127912; Personalización visual</div>
-        <div class="config-grid">
-          <div class="config-item">
-            <div class="config-label">Categor&iacute;a 1</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-cat1"><input type="color" id="cp-cat1" oninput="onCatColorChange(1,this.value)"></div>
-              <input type="text" class="color-hex" id="hex-cat1" maxlength="7" placeholder="#7F77DD" oninput="onCatHexChange(1,this.value)">
+
+        <div class="config-group">
+          <div class="config-group-ttl">Colores de categor&iacute;a <span class="config-group-sub">se usan en las columnas del Tablero y los chips del Calendario</span></div>
+          <div class="config-grid config-grid-4">
+            <div class="config-item">
+              <div class="config-label">Categor&iacute;a 1</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-cat1"><input type="color" id="cp-cat1" oninput="onCatColorChange(1,this.value)"></div>
+                <input type="text" class="color-hex" id="hex-cat1" maxlength="7" placeholder="#7F77DD" oninput="onCatHexChange(1,this.value)">
+              </div>
             </div>
-            <div class="config-desc">Color de una de las 4 categor&iacute;as usadas en columnas del Tablero y chips del Calendario.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Categor&iacute;a 2</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-cat2"><input type="color" id="cp-cat2" oninput="onCatColorChange(2,this.value)"></div>
-              <input type="text" class="color-hex" id="hex-cat2" maxlength="7" placeholder="#1D9E75" oninput="onCatHexChange(2,this.value)">
+            <div class="config-item">
+              <div class="config-label">Categor&iacute;a 2</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-cat2"><input type="color" id="cp-cat2" oninput="onCatColorChange(2,this.value)"></div>
+                <input type="text" class="color-hex" id="hex-cat2" maxlength="7" placeholder="#1D9E75" oninput="onCatHexChange(2,this.value)">
+              </div>
             </div>
-            <div class="config-desc">Segunda categor&iacute;a de color.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Categor&iacute;a 3</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-cat3"><input type="color" id="cp-cat3" oninput="onCatColorChange(3,this.value)"></div>
-              <input type="text" class="color-hex" id="hex-cat3" maxlength="7" placeholder="#EF9F27" oninput="onCatHexChange(3,this.value)">
+            <div class="config-item">
+              <div class="config-label">Categor&iacute;a 3</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-cat3"><input type="color" id="cp-cat3" oninput="onCatColorChange(3,this.value)"></div>
+                <input type="text" class="color-hex" id="hex-cat3" maxlength="7" placeholder="#EF9F27" oninput="onCatHexChange(3,this.value)">
+              </div>
             </div>
-            <div class="config-desc">Tercera categor&iacute;a de color.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Categor&iacute;a 4</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-cat4"><input type="color" id="cp-cat4" oninput="onCatColorChange(4,this.value)"></div>
-              <input type="text" class="color-hex" id="hex-cat4" maxlength="7" placeholder="#D4537E" oninput="onCatHexChange(4,this.value)">
-            </div>
-            <div class="config-desc">Cuarta categor&iacute;a de color.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Color principal</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-primario"><input type="color" id="cp-primario" oninput="onColorChange('primario',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-primario" maxlength="7" placeholder="#00614D" oninput="onHexChange('primario',this.value)">
-            </div>
-            <div class="config-desc">Botones principales, sidebar activo, acentos de gráficas y barras.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Color acento</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-acento"><input type="color" id="cp-acento" oninput="onColorChange('acento',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-acento" maxlength="7" placeholder="#C9A84C" oninput="onHexChange('acento',this.value)">
-            </div>
-            <div class="config-desc">Detalles dorados: borde superior del header, badges de "hoy", chips destacados.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Fondo de toda la app</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-fondoapp"><input type="color" id="cp-fondoapp" oninput="onColorChange('fondoapp',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-fondoapp" maxlength="7" placeholder="#FAFBFA" oninput="onHexChange('fondoapp',this.value)">
-            </div>
-            <div class="config-desc">El fondo detrás de todo: Tablero, Mi día, Calendario, Reportes — toda la pantalla.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Fondo dentro de modales</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-fondo"><input type="color" id="cp-fondo" oninput="onColorChange('fondo',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FFFFFF" oninput="onHexChange('fondo',this.value)">
-            </div>
-            <div class="config-desc">Solo el interior de las ventanas que se abren (editar pendiente, proyecto, etc.).</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Fondo de columnas y tarjetas neutras</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-fondocol"><input type="color" id="cp-fondocol" oninput="onColorChange('fondocol',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-fondocol" maxlength="7" placeholder="#EEF0EF" oninput="onHexChange('fondocol',this.value)">
-            </div>
-            <div class="config-desc">El fondo gris detrás de las tarjetas en el Tablero (las columnas Pendientes, Hoy, etc.).</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Color de texto general</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-texto"><input type="color" id="cp-texto" oninput="onColorChange('texto',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-texto" maxlength="7" placeholder="#1B2420" oninput="onHexChange('texto',this.value)">
-            </div>
-            <div class="config-desc">Títulos, párrafos y texto de tarjetas en toda la app.</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Texto del sidebar</div>
-            <div class="color-picker-wrap">
-              <div class="color-swatch" id="swatch-textosb"><input type="color" id="cp-textosb" oninput="onColorChange('textosb',this.value)"></div>
-              <input type="text" class="color-hex" id="hex-textosb" maxlength="7" placeholder="#8C9690" oninput="onHexChange('textosb',this.value)">
-            </div>
-            <div class="config-desc">Color de los nombres de las secciones en el menú lateral (cuando no están activas).</div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Nombre de la app</div>
-            <input type="text" class="fi" id="config-nombre-app" placeholder="ej. Mercadeo" style="font-size:13px;" oninput="configDirty=true">
-            <div class="config-desc">Aparece debajo del logo en el sidebar.</div>
-          </div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;margin-bottom:1.25rem;">
-          <div class="config-item">
-            <div class="config-label">Tipografía de títulos</div>
-            <div class="font-btns" id="font-display-btns">
-              <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('display','Inter',this)">Inter</button>
-              <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('display','Manrope',this)">Manrope</button>
-              <button class="font-btn" style="font-family:'Plus Jakarta Sans',sans-serif;" onclick="setFont('display','Plus Jakarta Sans',this)">Plus Jakarta Sans</button>
-              <button class="font-btn" style="font-family:'Libre Baskerville',serif;" onclick="setFont('display','Libre Baskerville',this)">Libre Baskerville</button>
-            </div>
-          </div>
-          <div class="config-item">
-            <div class="config-label">Tipografía de texto</div>
-            <div class="font-btns" id="font-body-btns">
-              <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('body','Inter',this)">Inter</button>
-              <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('body','Manrope',this)">Manrope</button>
-              <button class="font-btn" style="font-family:'DM Sans',sans-serif;" onclick="setFont('body','DM Sans',this)">DM Sans</button>
-              <button class="font-btn" style="font-family:'Nunito',sans-serif;" onclick="setFont('body','Nunito',this)">Nunito</button>
+            <div class="config-item">
+              <div class="config-label">Categor&iacute;a 4</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-cat4"><input type="color" id="cp-cat4" oninput="onCatColorChange(4,this.value)"></div>
+                <input type="text" class="color-hex" id="hex-cat4" maxlength="7" placeholder="#D4537E" oninput="onCatHexChange(4,this.value)">
+              </div>
             </div>
           </div>
         </div>
+
+        <div class="config-group">
+          <div class="config-group-ttl">Acento de la app <span class="config-group-sub">avatares, d&iacute;a de hoy en el calendario, notificaciones, y detalles dorados</span></div>
+          <div class="config-grid config-grid-2">
+            <div class="config-item">
+              <div class="config-label">Acento principal</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-primario"><input type="color" id="cp-primario" oninput="onColorChange('primario',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-primario" maxlength="7" placeholder="#00614D" oninput="onHexChange('primario',this.value)">
+              </div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Dorado / destacado</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-acento"><input type="color" id="cp-acento" oninput="onColorChange('acento',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-acento" maxlength="7" placeholder="#C9A84C" oninput="onHexChange('acento',this.value)">
+              </div>
+            </div>
+          </div>
+          <div class="config-mini-preview">
+            <div class="config-mini-avatar" id="mini-prev-avatar">R</div>
+            <span>As&iacute; se ve un avatar con el acento elegido</span>
+          </div>
+        </div>
+
+        <div class="config-group">
+          <div class="config-group-ttl">Fondos</div>
+          <div class="config-grid config-grid-3">
+            <div class="config-item">
+              <div class="config-label">Toda la app</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-fondoapp"><input type="color" id="cp-fondoapp" oninput="onColorChange('fondoapp',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-fondoapp" maxlength="7" placeholder="#FAFBFA" oninput="onHexChange('fondoapp',this.value)">
+              </div>
+              <div class="config-desc">Detr&aacute;s de Tablero, Mi d&iacute;a, Calendario, Reportes.</div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Dentro de modales</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-fondo"><input type="color" id="cp-fondo" oninput="onColorChange('fondo',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-fondo" maxlength="7" placeholder="#FFFFFF" oninput="onHexChange('fondo',this.value)">
+              </div>
+              <div class="config-desc">Solo el interior de las ventanas (editar pendiente, proyecto).</div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Tarjetas neutras</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-fondocol"><input type="color" id="cp-fondocol" oninput="onColorChange('fondocol',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-fondocol" maxlength="7" placeholder="#EEF0EF" oninput="onHexChange('fondocol',this.value)">
+              </div>
+              <div class="config-desc">Zonas grises sin categor&iacute;a asignada.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-group">
+          <div class="config-group-ttl">Texto</div>
+          <div class="config-grid config-grid-2">
+            <div class="config-item">
+              <div class="config-label">Texto general</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-texto"><input type="color" id="cp-texto" oninput="onColorChange('texto',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-texto" maxlength="7" placeholder="#1B2420" oninput="onHexChange('texto',this.value)">
+              </div>
+              <div class="config-desc">T&iacute;tulos y p&aacute;rrafos en toda la app.</div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Texto del sidebar</div>
+              <div class="color-picker-wrap">
+                <div class="color-swatch" id="swatch-textosb"><input type="color" id="cp-textosb" oninput="onColorChange('textosb',this.value)"></div>
+                <input type="text" class="color-hex" id="hex-textosb" maxlength="7" placeholder="#8C9690" oninput="onHexChange('textosb',this.value)">
+              </div>
+              <div class="config-desc">Secciones inactivas del men&uacute; lateral.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-group">
+          <div class="config-group-ttl">Nombre y tipograf&iacute;a</div>
+          <div class="config-grid config-grid-3">
+            <div class="config-item">
+              <div class="config-label">Nombre de la app</div>
+              <input type="text" class="fi" id="config-nombre-app" placeholder="ej. Mercadeo" style="font-size:13px;" oninput="configDirty=true">
+              <div class="config-desc">Aparece debajo del logo en el sidebar.</div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Tipograf&iacute;a de t&iacute;tulos</div>
+              <div class="font-btns" id="font-display-btns">
+                <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('display','Inter',this)">Inter</button>
+                <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('display','Manrope',this)">Manrope</button>
+                <button class="font-btn" style="font-family:'Plus Jakarta Sans',sans-serif;" onclick="setFont('display','Plus Jakarta Sans',this)">Plus Jakarta Sans</button>
+                <button class="font-btn" style="font-family:'Libre Baskerville',serif;" onclick="setFont('display','Libre Baskerville',this)">Libre Baskerville</button>
+              </div>
+            </div>
+            <div class="config-item">
+              <div class="config-label">Tipograf&iacute;a de texto</div>
+              <div class="font-btns" id="font-body-btns">
+                <button class="font-btn" style="font-family:'Inter',sans-serif;" onclick="setFont('body','Inter',this)">Inter</button>
+                <button class="font-btn" style="font-family:'Manrope',sans-serif;" onclick="setFont('body','Manrope',this)">Manrope</button>
+                <button class="font-btn" style="font-family:'DM Sans',sans-serif;" onclick="setFont('body','DM Sans',this)">DM Sans</button>
+                <button class="font-btn" style="font-family:'Nunito',sans-serif;" onclick="setFont('body','Nunito',this)">Nunito</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- PREVIEW EN VIVO -->
-        <div class="config-label" style="margin-bottom:.6rem;">Vista previa</div>
+        <div class="config-label" style="margin-bottom:.6rem;">Vista previa general</div>
         <div class="config-preview">
           <div class="config-preview-header" id="prev-header">
             <span class="config-preview-title" id="prev-title">KOTOWA COFFEE HOUSE</span>
@@ -1640,6 +1674,7 @@ table.rt tr:last-child td{border-bottom:none;}
 
   </div>
 </div>
+
 
 
 <!-- MODAL NOMBRE PROYECTO AUTO -->
@@ -5498,6 +5533,8 @@ function actualizarPreview(){
   const nombre=document.getElementById('config-nombre-app')?.value||configData.nombre_app;
   const pt=document.getElementById('prev-title');
   if(pt){pt.textContent=`KOTOWA — ${nombre.toUpperCase()}`;}
+  const miniAv=document.getElementById('mini-prev-avatar');
+  if(miniAv){miniAv.style.background=p;}
 }
 
 async function guardarConfig(){

@@ -1444,7 +1444,7 @@ table.rt tr:last-child td{border-bottom:none;}
 
 <!-- MODAL COMENTARIO DE REDES -->
 <div class="modal-ov" id="modal-cr">
-  <div class="modal" style="max-width:480px;">
+  <div class="modal" style="max-width:560px;">
     <div class="mhdr"><span class="mttl" id="mcr-ttl">Registrar comentario</span><button class="mclose" onclick="cerrarModal('modal-cr')">&#215;</button></div>
     <div class="mbody">
       <input type="hidden" id="crf-id">
@@ -1452,14 +1452,22 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="fg"><label class="flabel">Fecha</label><input type="date" class="fi" id="crf-fecha"></div>
         <div class="fg"><label class="flabel">Fuente</label><select class="fs" id="crf-fuente"></select></div>
       </div>
-      <div class="fg"><label class="flabel">Categor&iacute;a</label><select class="fs" id="crf-categoria" onchange="poblarTiposReclamoCR()"></select></div>
-      <div class="fg" id="crf-tiporeclamo-grp"><label class="flabel">Tipo de reclamo</label><select class="fs" id="crf-tiporeclamo"><option value="">Ninguno</option></select></div>
+      <div class="fg"><label class="flabel">Comentario / DM <span style="font-weight:400;color:var(--gray3)">(texto del cliente)</span></label><textarea class="fta" id="crf-comentario" placeholder="Copia aqu&iacute; el comentario o mensaje del cliente..."></textarea></div>
       <div class="frow">
+        <div class="fg"><label class="flabel">Categor&iacute;a</label><select class="fs" id="crf-categoria" onchange="poblarTiposReclamoCR()"></select></div>
         <div class="fg"><label class="flabel">Tienda</label><select class="fs" id="crf-tienda"><option value="">Sin especificar</option></select></div>
-        <div class="fg"><label class="flabel">Prioridad</label><select class="fs" id="crf-prioridad"><option value="">Sin especificar</option></select></div>
       </div>
-      <div class="fg"><label class="flabel">Impacto</label><select class="fs" id="crf-impacto"><option value="">Sin especificar</option></select></div>
-      <div class="fg"><label class="flabel">Nota <span style="font-weight:400;color:var(--gray3)">(opcional)</span></label><textarea class="fta" id="crf-nota" placeholder="Detalle del comentario..."></textarea></div>
+      <div class="frow" id="crf-tiporeclamo-grp">
+        <div class="fg"><label class="flabel">Tipo de reclamo</label><select class="fs" id="crf-tiporeclamo" onchange="poblarSubcategoriasCR()"><option value="">Ninguno</option></select></div>
+        <div class="fg" id="crf-subcategoria-grp"><label class="flabel">Subcategor&iacute;a</label><select class="fs" id="crf-subcategoria"><option value="">Ninguna</option></select></div>
+      </div>
+      <div class="frow">
+        <div class="fg"><label class="flabel">Prioridad</label><select class="fs" id="crf-prioridad"><option value="">Sin especificar</option></select></div>
+        <div class="fg"><label class="flabel">Impacto</label><select class="fs" id="crf-impacto"><option value="">Sin especificar</option></select></div>
+      </div>
+      <div class="fg"><label class="flabel">Acci&oacute;n <span style="font-weight:400;color:var(--gray3)">(qu&eacute; se hizo)</span></label><textarea class="fta" id="crf-accion" placeholder="ej. Se contact&oacute; al cliente y se le ofreci&oacute; reposici&oacute;n..."></textarea></div>
+      <div class="fg"><label class="flabel">Fecha de respuesta <span style="font-weight:400;color:var(--gray3)">(opcional)</span></label><input type="date" class="fi" id="crf-fecharespuesta" style="max-width:200px;"></div>
+      <div class="fg"><label class="flabel">Comentarios de Operaciones <span style="font-weight:400;color:var(--gray3)">(opcional)</span></label><textarea class="fta" id="crf-nota" placeholder="Notas internas de seguimiento..."></textarea></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-cr')">Cancelar</button><button class="btn-del" id="btn-del-cr" style="display:none" onclick="eliminarCRActual()">Eliminar</button><button class="btn-save" onclick="guardarCR()">Guardar</button></div>
   </div>
@@ -2915,7 +2923,7 @@ function getTiendaNombre(id){return tiendas.find(x=>x.id===id)?.nombre||'—';}
 // Tipo de Reclamo dependiente de Categoría, Prioridad, Impacto) +
 // tabla de registros individuales. Reemplaza el Excel manual.
 // ══════════════════════════════════════════════════════════
-let crFuentes=[],crCategorias=[],crTiposReclamo=[],crPrioridades=[],crImpactos=[],crRegistros=[];
+let crFuentes=[],crCategorias=[],crTiposReclamo=[],crSubcategorias=[],crPrioridades=[],crImpactos=[],crRegistros=[];
 let crMesActualFecha=new Date();crMesActualFecha.setDate(1);
 let crFiltros={fuente:'',categoria:'',tienda:''};
 let editCRId=null;
@@ -2935,6 +2943,11 @@ async function cargarComentariosRedesCatalogos(){
       const{data:tr}=await sb.from('cr_tipos_reclamo').select('*').in('categoria_id',catIds).order('orden');
       crTiposReclamo=tr||[];
     } else crTiposReclamo=[];
+    const tipoIds=crTiposReclamo.map(t=>t.id);
+    if(tipoIds.length){
+      const{data:sc}=await sb.from('cr_subcategorias').select('*').in('tipo_reclamo_id',tipoIds).order('orden');
+      crSubcategorias=sc||[];
+    } else crSubcategorias=[];
   }catch(err){console.log('cargarComentariosRedesCatalogos error:',err);}
 }
 // Acceso de solo lectura: el departamento "Procesos" ve (nunca edita) los
@@ -2968,6 +2981,11 @@ async function cargarComentariosRedesCatalogosPara(deptIdEfectivo){
       const{data:tr}=await sb.from('cr_tipos_reclamo').select('*').in('categoria_id',catIds).order('orden');
       crTiposReclamo=tr||[];
     } else crTiposReclamo=[];
+    const tipoIds=crTiposReclamo.map(t=>t.id);
+    if(tipoIds.length){
+      const{data:sc}=await sb.from('cr_subcategorias').select('*').in('tipo_reclamo_id',tipoIds).order('orden');
+      crSubcategorias=sc||[];
+    } else crSubcategorias=[];
   }catch(err){console.log('cargarComentariosRedesCatalogosPara error:',err);}
 }
 async function cargarCRRegistros(){
@@ -6307,14 +6325,16 @@ function renderCRTabla(){
   const wrap=document.getElementById('cr-tabla-wrap');
   if(!regs.length){wrap.innerHTML='<div class="r-empty">Sin comentarios registrados este mes.</div>';return;}
   const soloLectura=crEsSoloLectura();
-  let html=`<table class="cr-tabla"><thead><tr><th>Fecha</th><th>Fuente</th><th>Categor&iacute;a</th><th>Tienda</th><th>Tipo de reclamo</th><th>Prioridad</th></tr></thead><tbody>`;
+  let html=`<table class="cr-tabla"><thead><tr><th>Fecha</th><th>Fuente</th><th>Categor&iacute;a</th><th>Comentario</th><th>Tienda</th><th>Tipo de reclamo</th><th>Prioridad</th></tr></thead><tbody>`;
   regs.forEach(r=>{
     const cat=crCategorias.find(c=>c.id===r.categoria_id);
     const cls=cat?crCategoriaClase(cat.nombre):'otro';
+    const comentarioCorto=r.comentario_texto?(r.comentario_texto.length>60?esc(r.comentario_texto.slice(0,60))+'…':esc(r.comentario_texto)):'—';
     html+=`<tr onclick="editarCR('${r.id}')" style="${soloLectura?'cursor:default;':''}">
       <td>${r.fecha?fechaLocal(r.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'}):'—'}</td>
       <td>${esc(getCRNombre(crFuentes,r.fuente_id))}</td>
       <td>${cat?`<span class="cr-badge ${cls}">${esc(cat.nombre)}</span>`:'—'}</td>
+      <td style="max-width:220px;color:var(--gray3);font-size:11.5px;" title="${r.comentario_texto?esc(r.comentario_texto):''}">${comentarioCorto}</td>
       <td>${r.tienda_id?esc(getTiendaNombre(r.tienda_id)):'—'}</td>
       <td>${r.tipo_reclamo_id?esc(getCRNombre(crTiposReclamo,r.tipo_reclamo_id)):'—'}</td>
       <td>${r.prioridad_id?esc(getCRNombre(crPrioridades,r.prioridad_id)):'—'}</td>
@@ -6343,9 +6363,20 @@ function poblarTiposReclamoCR(){
   const sel=document.getElementById('crf-tiporeclamo');
   const grp=document.getElementById('crf-tiporeclamo-grp');
   const opciones=crTiposReclamo.filter(t=>t.categoria_id===catId);
+  if(!opciones.length){grp.style.display='none';sel.value='';poblarSubcategoriasCR();return;}
+  grp.style.display='flex';
+  sel.innerHTML='<option value="">Ninguno</option>'+opciones.map(t=>`<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
+  poblarSubcategoriasCR();
+}
+// Subcategoría depende del Tipo de Reclamo elegido — igual patrón, un nivel más abajo
+function poblarSubcategoriasCR(){
+  const tipoId=document.getElementById('crf-tiporeclamo').value;
+  const sel=document.getElementById('crf-subcategoria');
+  const grp=document.getElementById('crf-subcategoria-grp');
+  const opciones=crSubcategorias.filter(s=>s.tipo_reclamo_id===tipoId);
   if(!opciones.length){grp.style.display='none';sel.value='';return;}
   grp.style.display='block';
-  sel.innerHTML='<option value="">Ninguno</option>'+opciones.map(t=>`<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
+  sel.innerHTML='<option value="">Ninguna</option>'+opciones.map(s=>`<option value="${s.id}">${esc(s.nombre)}</option>`).join('');
 }
 function abrirModalCR(){
   editCRId=null;
@@ -6353,6 +6384,9 @@ function abrirModalCR(){
   document.getElementById('crf-id').value='';
   poblarSelectsCR();
   document.getElementById('crf-fecha').value=hoyStr();
+  document.getElementById('crf-comentario').value='';
+  document.getElementById('crf-accion').value='';
+  document.getElementById('crf-fecharespuesta').value='';
   document.getElementById('crf-nota').value='';
   poblarTiposReclamoCR();
   document.getElementById('btn-del-cr').style.display='none';
@@ -6367,12 +6401,17 @@ function editarCR(id){
   poblarSelectsCR();
   document.getElementById('crf-fecha').value=r.fecha||hoyStr();
   document.getElementById('crf-fuente').value=r.fuente_id||'';
+  document.getElementById('crf-comentario').value=r.comentario_texto||'';
   document.getElementById('crf-categoria').value=r.categoria_id||'';
   poblarTiposReclamoCR();
   document.getElementById('crf-tiporeclamo').value=r.tipo_reclamo_id||'';
+  poblarSubcategoriasCR();
+  document.getElementById('crf-subcategoria').value=r.subcategoria_id||'';
   document.getElementById('crf-tienda').value=r.tienda_id||'';
   document.getElementById('crf-prioridad').value=r.prioridad_id||'';
   document.getElementById('crf-impacto').value=r.impacto_id||'';
+  document.getElementById('crf-accion').value=r.accion||'';
+  document.getElementById('crf-fecharespuesta').value=r.fecha_respuesta||'';
   document.getElementById('crf-nota').value=r.nota||'';
   document.getElementById('btn-del-cr').style.display='inline-block';
   document.getElementById('modal-cr').classList.add('open');
@@ -6385,10 +6424,14 @@ async function guardarCR(){
   const row={
     departamento_id:DEPT_ID||(departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id,
     fuente_id,categoria_id,
+    comentario_texto:document.getElementById('crf-comentario').value.trim()||null,
     tipo_reclamo_id:document.getElementById('crf-tiporeclamo').value||null,
+    subcategoria_id:document.getElementById('crf-subcategoria').value||null,
     tienda_id:document.getElementById('crf-tienda').value||null,
     prioridad_id:document.getElementById('crf-prioridad').value||null,
     impacto_id:document.getElementById('crf-impacto').value||null,
+    accion:document.getElementById('crf-accion').value.trim()||null,
+    fecha_respuesta:document.getElementById('crf-fecharespuesta').value||null,
     fecha,
     nota:document.getElementById('crf-nota').value.trim()||null,
   };
@@ -6435,18 +6478,22 @@ async function exportarCRExcel(){
   const filas=data.map(r=>{
     const cat=crCategorias.find(c=>c.id===r.categoria_id);
     return{
-      'Fecha':r.fecha||'',
       'Fuente':getCRNombre(crFuentes,r.fuente_id),
       'Categoría':cat?cat.nombre:'',
-      'Tienda':r.tienda_id?getTiendaNombre(r.tienda_id):'',
+      'Comentario / DM':r.comentario_texto||'',
+      'Fecha':r.fecha||'',
+      'Sucursal':r.tienda_id?getTiendaNombre(r.tienda_id):'',
+      'Acción':r.accion||'',
+      'Fecha de respuesta':r.fecha_respuesta||'',
       'Tipo de Reclamo':r.tipo_reclamo_id?getCRNombre(crTiposReclamo,r.tipo_reclamo_id):'',
+      'Subcategorías':r.subcategoria_id?getCRNombre(crSubcategorias,r.subcategoria_id):'',
       'Prioridad':r.prioridad_id?getCRNombre(crPrioridades,r.prioridad_id):'',
       'Impacto':r.impacto_id?getCRNombre(crImpactos,r.impacto_id):'',
-      'Nota':r.nota||'',
+      'Comentarios de Operaciones':r.nota||'',
     };
   });
   const ws=XLSX.utils.json_to_sheet(filas);
-  ws['!cols']=[{wch:12},{wch:14},{wch:14},{wch:18},{wch:26},{wch:12},{wch:12},{wch:40}];
+  ws['!cols']=[{wch:14},{wch:14},{wch:44},{wch:12},{wch:16},{wch:36},{wch:16},{wch:26},{wch:30},{wch:12},{wch:12},{wch:36}];
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,'Comentarios');
   const nombreArchivo=`Comentarios_Redes_${desde}_a_${hasta}.xlsx`;

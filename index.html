@@ -5353,7 +5353,7 @@ async function guardarUsuario(){
   cerrarModal('modal-edit-user');renderAdmin();toast('Usuario actualizado');
 }
 
-function abrirModalUsuario(){document.getElementById('mu-ttl').textContent='Invitar usuario';['uf-nombre','uf-email','uf-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('uf-rol').value='colaborador';const sel=document.getElementById('uf-dept');departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});document.getElementById('modal-usuario').classList.add('open');}
+function abrirModalUsuario(){document.getElementById('mu-ttl').textContent='Invitar usuario';['uf-nombre','uf-email','uf-pass'].forEach(id=>document.getElementById(id).value='');document.getElementById('uf-rol').value='colaborador';const sel=document.getElementById('uf-dept');sel.innerHTML='';departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;sel.appendChild(o);});document.getElementById('modal-usuario').classList.add('open');}
 async function crearUsuario(){
   const nombre=document.getElementById('uf-nombre').value.trim();
   const email=document.getElementById('uf-email').value.trim();

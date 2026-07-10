@@ -1141,7 +1141,6 @@ table.rt tr:last-child td{border-bottom:none;}
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
     <button onclick="setVistaMobile('calendario',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#128197; Calendario</button>
     <button onclick="setVistaMobile('porTienda',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#127978; Por Tienda</button>
-    <button onclick="setVistaMobile('matriz',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-matriz">&#9201; Tiempos</button>
     <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-admin">&#9881; Admin</button>
     <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);">&#9166; Salir</button>
   </div>
@@ -1182,7 +1181,6 @@ table.rt tr:last-child td{border-bottom:none;}
 
     <nav class="sb-nav">
       <div class="sb-section-lbl">Equipo</div>
-      <button class="sb-item" id="tab-matriz" onclick="setVista('matriz',this)"><span class="sb-icon" id="sbicon-matriz"><svg viewBox="0 0 70 70" width="20" height="20"><circle cx="35" cy="35" r="31" fill="#F0B93D"/><circle cx="35" cy="35" r="24" fill="#D89818"/><line x1="35" y1="35" x2="35" y2="20" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="35" x2="46" y2="40" stroke="#F7EDE1" stroke-width="5" stroke-linecap="round"/><circle cx="35" cy="35" r="3" fill="#F7EDE1"/></svg></span> Tiempos</button>
       <button class="sb-item" id="sb-btn-reportes" onclick="setVista('reportes',this)"><span class="sb-icon" id="sbicon-reportes"><svg viewBox="0 0 62 74" width="20" height="20"><path d="M14 68L14 40C14 36 17 33 21 33L27 33C31 33 34 36 34 40L34 68Z" fill="#9B7FD4"/><path d="M36 68L36 24C36 20 39 17 43 17L49 17C53 17 56 20 56 24L56 68Z" fill="#7A5FC0"/><rect x="8" y="68" width="54" height="6" rx="3" fill="#6B4FAD"/></svg></span> Reportes</button>
       <button class="sb-item" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)"><span class="sb-icon" id="sbicon-propuestas"><svg viewBox="0 0 70 72" width="20" height="20"><path d="M35 4C15 6 3 21 5 40C3 57 16 70 35 72C54 70 67 57 65 40C67 21 55 6 35 4Z" fill="#4AB894"/><path d="M20 37L30 47L52 22" stroke="#F7EDE1" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Propuestas<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
       <button class="sb-item admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)"><span class="sb-icon" id="sbicon-admin"><svg viewBox="0 0 70 70" width="20" height="20"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg></span> Admin</button>
@@ -1317,21 +1315,6 @@ table.rt tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- TIEMPOS -->
-<div class="vista" id="vista-matriz">
-  <div class="matriz-wrap">
-    <div class="proy-top"><div class="proy-titulo">Matriz de tiempos</div><div style="font-size:11px;color:var(--gray3);">Tiempos base por tipo de tarea. La IA los usa al estimar.</div></div>
-    <div class="matriz-grid" id="matriz-grid"></div>
-    <div style="background:var(--white);border-radius:14px;padding:1rem 1.25rem;box-shadow:0 1px 2px rgba(20,30,25,.04);border:1px solid var(--gray2);">
-      <div class="rsec-ttl">Agregar tipo personalizado</div>
-      <div style="display:flex;gap:.75rem;align-items:flex-end;flex-wrap:wrap;">
-        <div class="fg" style="flex:1;min-width:160px;"><label class="flabel">Nombre</label><input type="text" class="fi" id="nuevo-tipo-nom" placeholder="ej. Fotograf&iacute;a de producto"></div>
-        <div class="fg" style="flex:1;min-width:160px;"><label class="flabel">Descripci&oacute;n</label><input type="text" class="fi" id="nuevo-tipo-desc" placeholder="Breve descripci&oacute;n"></div>
-        <button class="btn-save" style="padding:8px 18px;" onclick="agregarTipo()">Agregar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <!-- CALENDARIO -->
 <div class="vista" id="vista-calendario">
   <div class="cal-layout">
@@ -1479,6 +1462,10 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="admin-section" id="admin-tiendas-section">
         <div class="admin-section-title">&#127978; Tiendas</div>
         <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Lista de tiendas de tu departamento. Se usa para asociar pendientes a una o varias tiendas y verlos agrupados en la vista "Por Tienda".</div>
+        <div id="admin-tiendas-copiar-aviso" style="display:none;background:var(--gold-lt);border-radius:10px;padding:.7rem .9rem;margin-bottom:1rem;font-size:11.5px;color:var(--dark);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;">
+          <span>Este departamento a&uacute;n no tiene tiendas cargadas.</span>
+          <button class="btn-save" style="padding:6px 14px;font-size:11px;" onclick="copiarTiendasDesdeAdmin()">Copiar tiendas de Mercadeo</button>
+        </div>
         <div id="admin-tiendas-list" style="display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;"></div>
         <div style="background:var(--bg-app);border-radius:12px;padding:.85rem 1rem;border:1px solid var(--gray2);">
           <div class="rsec-ttl" style="margin-bottom:.65rem;">Agregar tienda</div>
@@ -2254,11 +2241,6 @@ async function iniciarApp(user){
     document.getElementById('admin-tab').style.display='flex';
     document.getElementById('tab-propuestas').style.display='flex';
   }
-  // Ocultar pestaña Tiempos para colaboradores
-  // Admin y gerente pueden editar tipos; asistente y colaborador no
-  if(rolFinal==='colaborador'||rolFinal==='asistente'){
-    document.getElementById('tab-matriz').style.display='none';
-  }
   // Cargar todos los datos
   await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas(),cargarKpiPuestos()]);
   todosUsuariosCache=await cargarTodosUsuarios();
@@ -2830,7 +2812,13 @@ async function eliminarTienda(id,nom){
 }
 function renderAdminTiendas(){
   const list=document.getElementById('admin-tiendas-list');if(!list)return;
-  if(!tiendas.length){list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin tiendas todav&iacute;a &mdash; agrega la primera abajo.</div>';return;}
+  const aviso=document.getElementById('admin-tiendas-copiar-aviso');
+  if(!tiendas.length){
+    list.innerHTML='<div class="prop-empty" style="padding:1rem;">Sin tiendas todav&iacute;a &mdash; agrega la primera abajo, o cop&iacute;alas de otro departamento.</div>';
+    if(aviso)aviso.style.display='flex';
+    return;
+  }
+  if(aviso)aviso.style.display='none';
   const propias=tiendas.filter(t=>t.tipo==='propia'||!t.tipo);
   const deli=tiendas.filter(t=>t.tipo==='deli_gourmet');
   const oficina=tiendas.filter(t=>t.tipo==='oficina');
@@ -2845,6 +2833,16 @@ function renderAdminTiendas(){
     </div>`;
   };
   list.innerHTML=grupoHtml('Tiendas propias',propias)+grupoHtml('Deli Gourmet',deli)+grupoHtml('Oficina',oficina);
+}
+
+// Copia las tiendas de Mercadeo al departamento actual, para cuando un depto
+// existente (creado antes de que esto fuera automático) todavía no tiene ninguna.
+async function copiarTiendasDesdeAdmin(){
+  if(!DEPT_ID){toast('No se pudo identificar el departamento actual');return;}
+  await copiarTiendasADept(DEPT_ID);
+  await cargarTiendas();
+  renderAdminTiendas();
+  toast('Tiendas copiadas');
 }
 function abrirModalTienda(id){
   const t=tiendas.find(x=>x.id===id);if(!t)return;
@@ -4057,7 +4055,7 @@ async function marcarListo(id,e){
 
 // VISTAS
 const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],porTienda:['General','Por Tienda'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='matriz'){renderMatriz();}if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
 function sortTareas(a,b){
   // Tareas sin deadline van siempre al final
   const aD=a.fecha?new Date(a.fecha+'T23:59:59'):null;
@@ -5375,9 +5373,26 @@ async function crearDept(){
   const nom=document.getElementById('df-nom').value.trim();
   const slug=document.getElementById('df-slug').value.trim().toLowerCase().replace(/\s+/g,'-');
   if(!nom||!slug){toast('Completa nombre y slug');return;}
-  const{error}=await sb.from('departamentos').insert({nombre:nom,slug});
+  const{data,error}=await sb.from('departamentos').insert({nombre:nom,slug}).select().single();
   if(error){toast('Error: '+error.message);return;}
+  // Las tiendas aplican a toda la empresa — se precarga una copia propia para el
+  // departamento nuevo (independiente, editable sin afectar a los demás) tomando
+  // como plantilla la lista de Mercadeo, que ya tiene las 30 ubicaciones reales.
+  await copiarTiendasADept(data.id);
   toast('Departamento creado');cerrarModal('modal-dept');await cargarDepts();renderAdmin();
+}
+
+// Copia la lista de tiendas de un departamento plantilla (Mercadeo, o el primero
+// disponible) hacia un departamento nuevo, como filas propias e independientes.
+async function copiarTiendasADept(deptIdNuevo){
+  try{
+    const deptPlantilla=departamentos.find(d=>d.slug==='mercadeo')||departamentos[0];
+    if(!deptPlantilla)return;
+    const{data:tiendasBase,error:errQ}=await sb.from('tiendas').select('nombre,tipo').eq('departamento_id',deptPlantilla.id).eq('activa',true);
+    if(errQ||!tiendasBase?.length)return;
+    const rows=tiendasBase.map(t=>({departamento_id:deptIdNuevo,nombre:t.nombre,tipo:t.tipo}));
+    await sb.from('tiendas').insert(rows);
+  }catch(err){console.log('copiarTiendasADept error:',err);}
 }
 
 // UTILS
@@ -5784,7 +5799,6 @@ function setVistaMobile(v, btn){
     if(v==='reportes')renderReporte();
     if(v==='proyectos')renderProyectos();
     if(v==='calendario')renderCal();
-    if(v==='matriz')renderMatriz();
     if(v==='admin')renderAdmin();
     if(v==='miDia')renderMiDia();
   }
@@ -5799,8 +5813,6 @@ function toggleMobileMenu(){
     // Ocultar admin si no tiene permiso
     const adminBtn=document.getElementById('mmenu-admin');
     if(adminBtn)adminBtn.style.display=(PERFIL?.rol==='admin'||PERFIL?.rol==='gerente')?'':'none';
-    const matrizBtn=document.getElementById('mmenu-matriz');
-    if(matrizBtn)matrizBtn.style.display=PERFIL?.rol==='colaborador'?'none':'';
   }
 }
 

@@ -11,6 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <title>Kotowa — Gestión</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/boxicons/2.1.4/css/boxicons.min.css">
@@ -1416,7 +1417,10 @@ table.rt tr:last-child td{border-bottom:none;}
   <div class="cr-wrap">
     <div class="proy-top">
       <div class="proy-titulo">Comentarios de redes</div>
-      <button class="btn-new" onclick="abrirModalCR()">+ Registrar comentario</button>
+      <div style="display:flex;gap:.6rem;">
+        <button class="btn-cancel" onclick="abrirModalExportarCR()">&#8595; Exportar</button>
+        <button class="btn-new" onclick="abrirModalCR()">+ Registrar comentario</button>
+      </div>
     </div>
 
     <div class="cr-mes-nav">
@@ -1458,6 +1462,21 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="fg"><label class="flabel">Nota <span style="font-weight:400;color:var(--gray3)">(opcional)</span></label><textarea class="fta" id="crf-nota" placeholder="Detalle del comentario..."></textarea></div>
     </div>
     <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-cr')">Cancelar</button><button class="btn-del" id="btn-del-cr" style="display:none" onclick="eliminarCRActual()">Eliminar</button><button class="btn-save" onclick="guardarCR()">Guardar</button></div>
+  </div>
+</div>
+
+<!-- MODAL EXPORTAR COMENTARIOS -->
+<div class="modal-ov" id="modal-exportar-cr">
+  <div class="modal" style="max-width:420px;">
+    <div class="mhdr"><span class="mttl">Exportar comentarios</span><button class="mclose" onclick="cerrarModal('modal-exportar-cr')">&#215;</button></div>
+    <div class="mbody">
+      <div class="frow">
+        <div class="fg"><label class="flabel">Desde</label><input type="date" class="fi" id="exp-cr-desde"></div>
+        <div class="fg"><label class="flabel">Hasta</label><input type="date" class="fi" id="exp-cr-hasta"></div>
+      </div>
+      <div style="font-size:11px;color:var(--gray3);">Se exportan todos los registros de este departamento en el rango elegido, con nombres de fuente, categor&iacute;a, tienda, tipo de reclamo, prioridad e impacto ya resueltos (no ids).</div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-exportar-cr')">Cancelar</button><button class="btn-save" onclick="exportarCRExcel()">Descargar Excel</button></div>
   </div>
 </div>
 
@@ -2918,13 +2937,50 @@ async function cargarComentariosRedesCatalogos(){
     } else crTiposReclamo=[];
   }catch(err){console.log('cargarComentariosRedesCatalogos error:',err);}
 }
+// Acceso de solo lectura: el departamento "Procesos" ve (nunca edita) los
+// comentarios de redes registrados por Mercadeo. Se resuelve por slug, no
+// duplica datos — simplemente apunta las consultas al depto de Mercadeo
+// cuando quien está viendo pertenece a Procesos.
+function crDeptIdEfectivo(){
+  if(PERFIL?.departamento_id){
+    const miDept=departamentos.find(d=>d.id===PERFIL.departamento_id);
+    if(miDept?.slug==='procesos'){
+      const deptMercadeo=departamentos.find(d=>d.slug==='mercadeo');
+      if(deptMercadeo)return deptMercadeo.id;
+    }
+  }
+  return DEPT_ID;
+}
+function crEsSoloLectura(){
+  const miDept=departamentos.find(d=>d.id===PERFIL?.departamento_id);
+  return miDept?.slug==='procesos';
+}
+async function cargarComentariosRedesCatalogosPara(deptIdEfectivo){
+  try{
+    const qF=sb.from('cr_fuentes').select('*').eq('departamento_id',deptIdEfectivo);
+    const qC=sb.from('cr_categorias').select('*').eq('departamento_id',deptIdEfectivo);
+    const qP=sb.from('cr_prioridades').select('*').eq('departamento_id',deptIdEfectivo);
+    const qI=sb.from('cr_impactos').select('*').eq('departamento_id',deptIdEfectivo);
+    const[rF,rC,rP,rI]=await Promise.all([qF.order('orden'),qC.order('orden'),qP.order('orden'),qI.order('orden')]);
+    crFuentes=rF.data||[];crCategorias=rC.data||[];crPrioridades=rP.data||[];crImpactos=rI.data||[];
+    const catIds=crCategorias.map(c=>c.id);
+    if(catIds.length){
+      const{data:tr}=await sb.from('cr_tipos_reclamo').select('*').in('categoria_id',catIds).order('orden');
+      crTiposReclamo=tr||[];
+    } else crTiposReclamo=[];
+  }catch(err){console.log('cargarComentariosRedesCatalogosPara error:',err);}
+}
 async function cargarCRRegistros(){
   try{
+    const deptEfectivo=crDeptIdEfectivo();
+    // Si estamos viendo Procesos, los catálogos también deben ser los de Mercadeo
+    // (fuentes/categorías/tipos propios), no los del departamento actual.
+    if(crEsSoloLectura())await cargarComentariosRedesCatalogosPara(deptEfectivo);
     const desde=fechaStr(crMesActualFecha);
     const finMes=new Date(crMesActualFecha.getFullYear(),crMesActualFecha.getMonth()+1,0);
     const hasta=fechaStr(finMes);
     const q=sb.from('cr_registros').select('*').gte('fecha',desde).lte('fecha',hasta);
-    if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
+    if(deptEfectivo)q.eq('departamento_id',deptEfectivo);
     const{data,error}=await q.order('fecha',{ascending:false});
     if(error){console.log('cargarCRRegistros:',error.message);crRegistros=[];return;}
     crRegistros=data||[];
@@ -5541,8 +5597,8 @@ async function copiarTiendasADept(deptIdNuevo){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea'){setModalSoloLinks(false);comentarios=[];}editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr','modal-exportar-cr'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr','modal-exportar-cr'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 
 // ══════════════════════════════════════════════════════════
@@ -6167,6 +6223,19 @@ function crMesActual(){
 async function renderComentariosRedes(){
   document.getElementById('cr-mes-lbl').textContent=`${MESES_LARGO[crMesActualFecha.getMonth()]} ${crMesActualFecha.getFullYear()}`;
   await cargarCRRegistros();
+  const soloLectura=crEsSoloLectura();
+  const btnNuevo=document.querySelector('#vista-comentarios .btn-new');
+  if(btnNuevo)btnNuevo.style.display=soloLectura?'none':'inline-block';
+  let avisoEl=document.getElementById('cr-solo-lectura-aviso');
+  if(soloLectura&&!avisoEl){
+    avisoEl=document.createElement('div');
+    avisoEl.id='cr-solo-lectura-aviso';
+    avisoEl.style.cssText='background:var(--azul-lt);color:var(--azul);border-radius:10px;padding:.6rem .9rem;font-size:11.5px;margin-bottom:1rem;';
+    avisoEl.textContent='Viendo los comentarios de Mercadeo en modo solo lectura.';
+    document.querySelector('#vista-comentarios .proy-top').insertAdjacentElement('afterend',avisoEl);
+  } else if(!soloLectura&&avisoEl){
+    avisoEl.remove();
+  }
   renderCRStats();
   renderCRCharts();
   renderCRFiltros();
@@ -6237,11 +6306,12 @@ function renderCRTabla(){
   const regs=crRegistrosFiltrados();
   const wrap=document.getElementById('cr-tabla-wrap');
   if(!regs.length){wrap.innerHTML='<div class="r-empty">Sin comentarios registrados este mes.</div>';return;}
+  const soloLectura=crEsSoloLectura();
   let html=`<table class="cr-tabla"><thead><tr><th>Fecha</th><th>Fuente</th><th>Categor&iacute;a</th><th>Tienda</th><th>Tipo de reclamo</th><th>Prioridad</th></tr></thead><tbody>`;
   regs.forEach(r=>{
     const cat=crCategorias.find(c=>c.id===r.categoria_id);
     const cls=cat?crCategoriaClase(cat.nombre):'otro';
-    html+=`<tr onclick="editarCR('${r.id}')">
+    html+=`<tr onclick="editarCR('${r.id}')" style="${soloLectura?'cursor:default;':''}">
       <td>${r.fecha?fechaLocal(r.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'}):'—'}</td>
       <td>${esc(getCRNombre(crFuentes,r.fuente_id))}</td>
       <td>${cat?`<span class="cr-badge ${cls}">${esc(cat.nombre)}</span>`:'—'}</td>
@@ -6289,6 +6359,7 @@ function abrirModalCR(){
   document.getElementById('modal-cr').classList.add('open');
 }
 function editarCR(id){
+  if(crEsSoloLectura())return; // Procesos solo puede ver, no editar los comentarios de Mercadeo
   const r=crRegistros.find(x=>x.id===id);if(!r)return;
   editCRId=id;
   document.getElementById('mcr-ttl').textContent='Editar comentario';
@@ -6341,6 +6412,47 @@ async function eliminarCRActual(){
   cerrarModal('modal-cr');
   toast('Registro eliminado');
   await renderComentariosRedes();
+}
+
+// ── Exportar a Excel ──
+function abrirModalExportarCR(){
+  const desde=fechaStr(crMesActualFecha);
+  const finMes=new Date(crMesActualFecha.getFullYear(),crMesActualFecha.getMonth()+1,0);
+  document.getElementById('exp-cr-desde').value=desde;
+  document.getElementById('exp-cr-hasta').value=fechaStr(finMes);
+  document.getElementById('modal-exportar-cr').classList.add('open');
+}
+async function exportarCRExcel(){
+  const desde=document.getElementById('exp-cr-desde').value;
+  const hasta=document.getElementById('exp-cr-hasta').value;
+  if(!desde||!hasta){toast('Elige un rango de fechas');return;}
+  const deptEfectivo=crDeptIdEfectivo();
+  const q=sb.from('cr_registros').select('*').gte('fecha',desde).lte('fecha',hasta);
+  if(deptEfectivo)q.eq('departamento_id',deptEfectivo);
+  const{data,error}=await q.order('fecha');
+  if(error){toast('Error: '+error.message);return;}
+  if(!data||!data.length){toast('Sin registros en ese rango');return;}
+  const filas=data.map(r=>{
+    const cat=crCategorias.find(c=>c.id===r.categoria_id);
+    return{
+      'Fecha':r.fecha||'',
+      'Fuente':getCRNombre(crFuentes,r.fuente_id),
+      'Categoría':cat?cat.nombre:'',
+      'Tienda':r.tienda_id?getTiendaNombre(r.tienda_id):'',
+      'Tipo de Reclamo':r.tipo_reclamo_id?getCRNombre(crTiposReclamo,r.tipo_reclamo_id):'',
+      'Prioridad':r.prioridad_id?getCRNombre(crPrioridades,r.prioridad_id):'',
+      'Impacto':r.impacto_id?getCRNombre(crImpactos,r.impacto_id):'',
+      'Nota':r.nota||'',
+    };
+  });
+  const ws=XLSX.utils.json_to_sheet(filas);
+  ws['!cols']=[{wch:12},{wch:14},{wch:14},{wch:18},{wch:26},{wch:12},{wch:12},{wch:40}];
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Comentarios');
+  const nombreArchivo=`Comentarios_Redes_${desde}_a_${hasta}.xlsx`;
+  XLSX.writeFile(wb,nombreArchivo);
+  cerrarModal('modal-exportar-cr');
+  toast('Archivo descargado');
 }
 
 function renderPorTienda(){

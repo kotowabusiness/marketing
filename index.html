@@ -804,6 +804,36 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-preview-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;display:inline-block;}
 /* ── POR TIENDA ── */
 .por-tienda-wrap{padding:1.5rem 2rem 2rem;}
+/* COMENTARIOS DE REDES */
+.cr-wrap{padding:1.5rem 2rem 2rem;}
+.cr-mes-nav{display:flex;align-items:center;gap:.5rem;margin-bottom:1.25rem;}
+.cr-stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:1.25rem;}
+.cr-stat-card{background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:1rem;}
+.cr-stat-lbl{font-size:12px;color:var(--gray3);margin-bottom:4px;}
+.cr-stat-n{font-size:24px;font-weight:700;font-family:var(--font-display);color:var(--dark);}
+.cr-stat-card.neg{background:var(--urgente-lt);}.cr-stat-card.neg .cr-stat-lbl,.cr-stat-card.neg .cr-stat-n{color:var(--urgente);}
+.cr-stat-card.pos{background:var(--verde-lt);}.cr-stat-card.pos .cr-stat-lbl,.cr-stat-card.pos .cr-stat-n{color:var(--verde);}
+.cr-charts-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.cr-chart-card{background:var(--white);border:1px solid var(--gray2);border-radius:12px;padding:1rem;}
+.cr-chart-ttl{font-size:12px;color:var(--gray3);margin-bottom:.7rem;}
+.cr-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.cr-bar-lbl{font-size:11.5px;width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cr-bar-track{flex:1;height:6px;background:var(--gray1);border-radius:3px;overflow:hidden;}
+.cr-bar-fill{height:100%;background:var(--v-700);border-radius:3px;}
+.cr-bar-n{font-size:11px;color:var(--gray3);width:22px;text-align:right;flex-shrink:0;}
+.cr-filtros{display:flex;gap:.6rem;margin-bottom:.75rem;flex-wrap:wrap;}
+.cr-filtros select{font-family:var(--font-body);font-size:12px;padding:6px 10px;border:1px solid var(--gray2);border-radius:8px;background:var(--white);color:var(--dark);}
+.cr-tabla{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--gray2);}
+.cr-tabla thead th{text-align:left;padding:8px 12px;font-weight:700;color:var(--gray3);font-size:10.5px;text-transform:uppercase;letter-spacing:.4px;background:var(--bg-app);}
+.cr-tabla tbody td{padding:8px 12px;border-top:1px solid var(--gray1);}
+.cr-tabla tbody tr{cursor:pointer;transition:background .1s;}
+.cr-tabla tbody tr:hover{background:var(--bg-app);}
+.cr-badge{font-size:10px;font-weight:700;padding:2px 9px;border-radius:99px;}
+.cr-badge.neg{background:var(--urgente-lt);color:var(--urgente);}
+.cr-badge.pos{background:var(--verde-lt);color:var(--verde);}
+.cr-badge.sug{background:var(--azul-lt);color:var(--azul);}
+.cr-badge.app{background:var(--gold-lt);color:#8A6A1F;}
+.cr-badge.otro{background:var(--gray1);color:var(--gray3);}
 .tiendas-grupo{margin-bottom:1.25rem;}
 .tiendas-grupo:last-child{margin-bottom:0;}
 .tiendas-grupo-ttl{font-size:10.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:.55rem;}
@@ -1189,6 +1219,7 @@ table.rt tr:last-child td{border-bottom:none;}
       <button class="sb-item" onclick="setVista('proyectos',this)"><span class="sb-icon" id="sbicon-proyectos"><svg viewBox="0 0 68 69" width="20" height="20"><path d="M12 26L34 12L58 26L58 60C58 65 54 69 49 69L19 69C14 69 10 65 10 60Z" fill="#5AA469"/><rect x="24" y="42" width="20" height="27" fill="#3D7A48"/><circle cx="34" cy="8" r="5" fill="#5AA469"/></svg></span> Proyectos</button>
       <button class="sb-item" id="tab-calendario" onclick="setVista('calendario',this)"><span class="sb-icon" id="sbicon-calendario"><svg viewBox="0 0 66 78" width="20" height="20"><path d="M11 22C7 22 4 26 4 30L4 68C4 73 8 78 14 78L56 78C61 78 66 73 66 68L66 30C66 26 62 22 58 22L52 22L52 15C52 11 49 9 46 9C42 9 40 11 40 15L40 22L30 22L30 15C30 11 27 9 24 9C20 9 18 11 18 15L18 22Z" fill="#D65C7A"/><rect x="4" y="22" width="62" height="12" fill="#B03F5C"/><circle cx="24" cy="15" r="4.5" fill="#B03F5C"/><circle cx="46" cy="15" r="4.5" fill="#B03F5C"/><circle cx="35" cy="55" r="12" fill="#B03F5C"/></svg></span> Calendario</button>
       <button class="sb-item" id="tab-tiendas" onclick="setVista('porTienda',this)"><span class="sb-icon" id="sbicon-porTienda"><svg viewBox="0 0 70 68" width="20" height="20"><path d="M35 4C17 6 6 20 8 38C10 54 22 66 35 68C48 66 60 54 62 38C64 20 53 6 35 4Z" fill="#8AB84A"/><path d="M25 30C22 40 22 50 27 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M45 30C48 40 48 50 43 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="35" cy="34" r="6" fill="#F7EDE1"/></svg></span> Por Tienda</button>
+      <button class="sb-item" id="tab-comentarios" onclick="setVista('comentarios',this)"><span class="sb-icon" id="sbicon-comentarios"><i class="ti ti-message-circle-2"></i></span> Comentarios</button>
     </nav>
 
     <nav class="sb-nav">
@@ -1377,6 +1408,56 @@ table.rt tr:last-child td{border-bottom:none;}
       <input type="text" class="fi" id="tienda-buscar" placeholder="Buscar tienda..." style="max-width:220px;" oninput="renderPorTienda()">
     </div>
     <div id="por-tienda-list"></div>
+  </div>
+</div>
+
+<!-- COMENTARIOS DE REDES -->
+<div class="vista" id="vista-comentarios">
+  <div class="cr-wrap">
+    <div class="proy-top">
+      <div class="proy-titulo">Comentarios de redes</div>
+      <button class="btn-new" onclick="abrirModalCR()">+ Registrar comentario</button>
+    </div>
+
+    <div class="cr-mes-nav">
+      <button class="cal-nav-btn" onclick="crNavMes(-1)">&#8592;</button>
+      <div class="cal-mes" id="cr-mes-lbl">&mdash;</div>
+      <button class="cal-nav-btn" onclick="crNavMes(1)">&#8594;</button>
+      <button class="cal-nav-btn" onclick="crMesActual()" style="font-size:11px;padding:5px 10px;">Este mes</button>
+    </div>
+
+    <div class="cr-stats-row" id="cr-stats-row"></div>
+
+    <div class="cr-charts-row" id="cr-charts-row"></div>
+
+    <div class="proy-top" style="margin-top:1.5rem;">
+      <div class="proy-titulo" style="font-size:14px;">Registro de comentarios</div>
+    </div>
+    <div class="cr-filtros" id="cr-filtros"></div>
+    <div id="cr-tabla-wrap"></div>
+  </div>
+</div>
+
+<!-- MODAL COMENTARIO DE REDES -->
+<div class="modal-ov" id="modal-cr">
+  <div class="modal" style="max-width:480px;">
+    <div class="mhdr"><span class="mttl" id="mcr-ttl">Registrar comentario</span><button class="mclose" onclick="cerrarModal('modal-cr')">&#215;</button></div>
+    <div class="mbody">
+      <input type="hidden" id="crf-id">
+      <div class="frow">
+        <div class="fg"><label class="flabel">Fecha</label><input type="date" class="fi" id="crf-fecha"></div>
+        <div class="fg"><label class="flabel">Fuente</label><select class="fs" id="crf-fuente"></select></div>
+      </div>
+      <div class="fg"><label class="flabel">Categor&iacute;a</label><select class="fs" id="crf-categoria" onchange="poblarTiposReclamoCR()"></select></div>
+      <div class="fg" id="crf-tiporeclamo-grp"><label class="flabel">Tipo de reclamo</label><select class="fs" id="crf-tiporeclamo"><option value="">Ninguno</option></select></div>
+      <div class="frow">
+        <div class="fg"><label class="flabel">Tienda</label><select class="fs" id="crf-tienda"><option value="">Sin especificar</option></select></div>
+        <div class="fg"><label class="flabel">Prioridad</label><select class="fs" id="crf-prioridad"><option value="">Sin especificar</option></select></div>
+      </div>
+      <div class="fg"><label class="flabel">Impacto</label><select class="fs" id="crf-impacto"><option value="">Sin especificar</option></select></div>
+      <div class="fg"><label class="flabel">Nota <span style="font-weight:400;color:var(--gray3)">(opcional)</span></label><textarea class="fta" id="crf-nota" placeholder="Detalle del comentario..."></textarea></div>
+    </div>
+    <div class="mfoot"><button class="btn-cancel" onclick="cerrarModal('modal-cr')">Cancelar</button><button class="btn-del" id="btn-del-cr" style="display:none" onclick="eliminarCRActual()">Eliminar</button><button class="btn-save" onclick="guardarCR()">Guardar</button></div>
   </div>
 </div>
 
@@ -2264,7 +2345,7 @@ async function iniciarApp(user){
     document.getElementById('tab-propuestas').style.display='flex';
   }
   // Cargar todos los datos
-  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas(),cargarKpiPuestos()]);
+  await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas(),cargarKpiPuestos(),cargarComentariosRedesCatalogos()]);
   todosUsuariosCache=await cargarTodosUsuarios();
   // Poblar filtros dinámicos
   poblarFiltros();
@@ -2809,6 +2890,47 @@ async function cargarTiendas(){
   }catch(err){console.log('cargarTiendas error:',err);tiendas=[];}
 }
 function getTiendaNombre(id){return tiendas.find(x=>x.id===id)?.nombre||'—';}
+
+// ══════════════════════════════════════════════════════════
+// COMENTARIOS DE REDES — catálogos configurables (Fuente, Categoría,
+// Tipo de Reclamo dependiente de Categoría, Prioridad, Impacto) +
+// tabla de registros individuales. Reemplaza el Excel manual.
+// ══════════════════════════════════════════════════════════
+let crFuentes=[],crCategorias=[],crTiposReclamo=[],crPrioridades=[],crImpactos=[],crRegistros=[];
+let crMesActualFecha=new Date();crMesActualFecha.setDate(1);
+let crFiltros={fuente:'',categoria:'',tienda:''};
+let editCRId=null;
+
+async function cargarComentariosRedesCatalogos(){
+  try{
+    const qF=sb.from('cr_fuentes').select('*');if(DEPT_ID)qF.eq('departamento_id',DEPT_ID);
+    const qC=sb.from('cr_categorias').select('*');if(DEPT_ID)qC.eq('departamento_id',DEPT_ID);
+    const qP=sb.from('cr_prioridades').select('*');if(DEPT_ID)qP.eq('departamento_id',DEPT_ID);
+    const qI=sb.from('cr_impactos').select('*');if(DEPT_ID)qI.eq('departamento_id',DEPT_ID);
+    const[rF,rC,rP,rI]=await Promise.all([
+      qF.order('orden'),qC.order('orden'),qP.order('orden'),qI.order('orden'),
+    ]);
+    crFuentes=rF.data||[];crCategorias=rC.data||[];crPrioridades=rP.data||[];crImpactos=rI.data||[];
+    const catIds=crCategorias.map(c=>c.id);
+    if(catIds.length){
+      const{data:tr}=await sb.from('cr_tipos_reclamo').select('*').in('categoria_id',catIds).order('orden');
+      crTiposReclamo=tr||[];
+    } else crTiposReclamo=[];
+  }catch(err){console.log('cargarComentariosRedesCatalogos error:',err);}
+}
+async function cargarCRRegistros(){
+  try{
+    const desde=fechaStr(crMesActualFecha);
+    const finMes=new Date(crMesActualFecha.getFullYear(),crMesActualFecha.getMonth()+1,0);
+    const hasta=fechaStr(finMes);
+    const q=sb.from('cr_registros').select('*').gte('fecha',desde).lte('fecha',hasta);
+    if(DEPT_ID)q.eq('departamento_id',DEPT_ID);
+    const{data,error}=await q.order('fecha',{ascending:false});
+    if(error){console.log('cargarCRRegistros:',error.message);crRegistros=[];return;}
+    crRegistros=data||[];
+  }catch(err){console.log('cargarCRRegistros error:',err);crRegistros=[];}
+}
+function getCRNombre(lista,id){return lista.find(x=>x.id===id)?.nombre||'—';}
 
 async function agregarTienda(){
   const nom=document.getElementById('tienda-nom').value.trim();
@@ -4076,8 +4198,8 @@ async function marcarListo(id,e){
 }
 
 // VISTAS
-const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],porTienda:['General','Por Tienda'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
+const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],porTienda:['General','Por Tienda'],comentarios:['General','Comentarios de redes'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
+function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='comentarios'){renderComentariosRedes();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
 function sortTareas(a,b){
   // Tareas sin deadline van siempre al final
   const aD=a.fecha?new Date(a.fecha+'T23:59:59'):null;
@@ -5419,8 +5541,8 @@ async function copiarTiendasADept(deptIdNuevo){
 
 // UTILS
 function cerrarModal(id){document.getElementById(id).classList.remove('open');if(id==='modal-tarea'){setModalSoloLinks(false);comentarios=[];}editTareaId=null;editProyId=null;editPTId=null;clearTimeout(estTimer);clearTimeout(ptEstTimer);}
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
-['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr'].forEach(id=>cerrarModal(id));}if((e.metaKey||e.ctrlKey)&&e.key==='Enter'){if(document.getElementById('modal-tarea').classList.contains('open'))guardarTarea();else if(document.getElementById('modal-proy').classList.contains('open'))guardarProy();else if(document.getElementById('modal-pt').classList.contains('open'))guardarPT();}});
+['modal-tarea','modal-proy','modal-pt','modal-usuario','modal-dept','modal-edit-user','modal-dia','modal-tienda','modal-icono','modal-kpi-puesto','modal-cr'].forEach(id=>{document.getElementById(id).addEventListener('click',e=>{if(e.target===document.getElementById(id))cerrarModal(id);});});
 
 
 // ══════════════════════════════════════════════════════════
@@ -6030,6 +6152,196 @@ function tareasDelDia(fechaStr, respFiltro=''){
 // su detalle (lista de pendientes) aparece debajo.
 // ══════════════════════════════════════════════════════════
 let tiendaSeleccionadaId=null;
+
+// ══════════════════════════════════════════════════════════
+// RENDER COMENTARIOS DE REDES
+// ══════════════════════════════════════════════════════════
+function crNavMes(dir){
+  crMesActualFecha.setMonth(crMesActualFecha.getMonth()+dir);
+  renderComentariosRedes();
+}
+function crMesActual(){
+  crMesActualFecha=new Date();crMesActualFecha.setDate(1);
+  renderComentariosRedes();
+}
+async function renderComentariosRedes(){
+  document.getElementById('cr-mes-lbl').textContent=`${MESES_LARGO[crMesActualFecha.getMonth()]} ${crMesActualFecha.getFullYear()}`;
+  await cargarCRRegistros();
+  renderCRStats();
+  renderCRCharts();
+  renderCRFiltros();
+  renderCRTabla();
+}
+function crRegistrosFiltrados(){
+  return crRegistros.filter(r=>
+    (!crFiltros.fuente||r.fuente_id===crFiltros.fuente)&&
+    (!crFiltros.categoria||r.categoria_id===crFiltros.categoria)&&
+    (!crFiltros.tienda||r.tienda_id===crFiltros.tienda)
+  );
+}
+function crCategoriaClase(nombre){
+  const n=(nombre||'').toLowerCase();
+  if(n.includes('negativ'))return'neg';
+  if(n.includes('positiv'))return'pos';
+  if(n.includes('sugerenc'))return'sug';
+  if(n.includes('app'))return'app';
+  return'otro';
+}
+function renderCRStats(){
+  const regs=crRegistrosFiltrados();
+  const porCat={};
+  crCategorias.forEach(c=>{porCat[c.id]=regs.filter(r=>r.categoria_id===c.id).length;});
+  let html=`<div class="cr-stat-card"><div class="cr-stat-lbl">Total del mes</div><div class="cr-stat-n">${regs.length}</div></div>`;
+  crCategorias.forEach(c=>{
+    const cls=crCategoriaClase(c.nombre);
+    html+=`<div class="cr-stat-card ${cls==='neg'?'neg':cls==='pos'?'pos':''}"><div class="cr-stat-lbl">${esc(c.nombre)}</div><div class="cr-stat-n">${porCat[c.id]||0}</div></div>`;
+  });
+  document.getElementById('cr-stats-row').innerHTML=html;
+}
+function renderCRCharts(){
+  const regs=crRegistrosFiltrados();
+  // Por fuente
+  const porFuente=crFuentes.map(f=>({nombre:f.nombre,n:regs.filter(r=>r.fuente_id===f.id).length})).filter(x=>x.n>0).sort((a,b)=>b.n-a.n);
+  const maxFuente=Math.max(1,...porFuente.map(x=>x.n));
+  let htmlFuente=porFuente.length?porFuente.map(x=>`<div class="cr-bar-row"><span class="cr-bar-lbl">${esc(x.nombre)}</span><div class="cr-bar-track"><div class="cr-bar-fill" style="width:${Math.round(x.n/maxFuente*100)}%"></div></div><span class="cr-bar-n">${x.n}</span></div>`).join(''):'<div class="r-empty">Sin datos este mes.</div>';
+
+  // Por tipo de reclamo (solo de categorías tipo "negativo", que es donde suele haber tipo de reclamo)
+  const conteoTipo={};
+  regs.forEach(r=>{if(r.tipo_reclamo_id)conteoTipo[r.tipo_reclamo_id]=(conteoTipo[r.tipo_reclamo_id]||0)+1;});
+  const porTipo=Object.entries(conteoTipo).map(([id,n])=>({nombre:getCRNombre(crTiposReclamo,id),n})).sort((a,b)=>b.n-a.n).slice(0,6);
+  let htmlTipo=porTipo.length?porTipo.map(x=>`<div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px;"><span>${esc(x.nombre)}</span><span style="color:var(--gray3);">${x.n}</span></div>`).join(''):'<div class="r-empty">Sin tipos de reclamo registrados.</div>';
+
+  document.getElementById('cr-charts-row').innerHTML=`
+    <div class="cr-chart-card"><div class="cr-chart-ttl">Por fuente</div>${htmlFuente}</div>
+    <div class="cr-chart-card"><div class="cr-chart-ttl">Tipo de reclamo</div>${htmlTipo}</div>
+  `;
+}
+function renderCRFiltros(){
+  const cont=document.getElementById('cr-filtros');
+  cont.innerHTML=`
+    <select onchange="crFiltros.fuente=this.value;renderCRStats();renderCRCharts();renderCRTabla();">
+      <option value="">Todas las fuentes</option>
+      ${crFuentes.map(f=>`<option value="${f.id}"${crFiltros.fuente===f.id?' selected':''}>${esc(f.nombre)}</option>`).join('')}
+    </select>
+    <select onchange="crFiltros.categoria=this.value;renderCRStats();renderCRCharts();renderCRTabla();">
+      <option value="">Todas las categor&iacute;as</option>
+      ${crCategorias.map(c=>`<option value="${c.id}"${crFiltros.categoria===c.id?' selected':''}>${esc(c.nombre)}</option>`).join('')}
+    </select>
+    <select onchange="crFiltros.tienda=this.value;renderCRStats();renderCRCharts();renderCRTabla();">
+      <option value="">Todas las tiendas</option>
+      ${tiendas.map(t=>`<option value="${t.id}"${crFiltros.tienda===t.id?' selected':''}>${esc(t.nombre)}</option>`).join('')}
+    </select>
+  `;
+}
+function renderCRTabla(){
+  const regs=crRegistrosFiltrados();
+  const wrap=document.getElementById('cr-tabla-wrap');
+  if(!regs.length){wrap.innerHTML='<div class="r-empty">Sin comentarios registrados este mes.</div>';return;}
+  let html=`<table class="cr-tabla"><thead><tr><th>Fecha</th><th>Fuente</th><th>Categor&iacute;a</th><th>Tienda</th><th>Tipo de reclamo</th><th>Prioridad</th></tr></thead><tbody>`;
+  regs.forEach(r=>{
+    const cat=crCategorias.find(c=>c.id===r.categoria_id);
+    const cls=cat?crCategoriaClase(cat.nombre):'otro';
+    html+=`<tr onclick="editarCR('${r.id}')">
+      <td>${r.fecha?fechaLocal(r.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'}):'—'}</td>
+      <td>${esc(getCRNombre(crFuentes,r.fuente_id))}</td>
+      <td>${cat?`<span class="cr-badge ${cls}">${esc(cat.nombre)}</span>`:'—'}</td>
+      <td>${r.tienda_id?esc(getTiendaNombre(r.tienda_id)):'—'}</td>
+      <td>${r.tipo_reclamo_id?esc(getCRNombre(crTiposReclamo,r.tipo_reclamo_id)):'—'}</td>
+      <td>${r.prioridad_id?esc(getCRNombre(crPrioridades,r.prioridad_id)):'—'}</td>
+    </tr>`;
+  });
+  html+=`</tbody></table>`;
+  wrap.innerHTML=html;
+}
+
+// ── Modal de captura/edición ──
+function poblarSelectsCR(){
+  const selF=document.getElementById('crf-fuente');
+  selF.innerHTML=crFuentes.map(f=>`<option value="${f.id}">${esc(f.nombre)}</option>`).join('');
+  const selC=document.getElementById('crf-categoria');
+  selC.innerHTML=crCategorias.map(c=>`<option value="${c.id}">${esc(c.nombre)}</option>`).join('');
+  const selT=document.getElementById('crf-tienda');
+  selT.innerHTML='<option value="">Sin especificar</option>'+tiendas.map(t=>`<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
+  const selP=document.getElementById('crf-prioridad');
+  selP.innerHTML='<option value="">Sin especificar</option>'+crPrioridades.map(p=>`<option value="${p.id}">${esc(p.nombre)}</option>`).join('');
+  const selI=document.getElementById('crf-impacto');
+  selI.innerHTML='<option value="">Sin especificar</option>'+crImpactos.map(i=>`<option value="${i.id}">${esc(i.nombre)}</option>`).join('');
+}
+// Tipo de reclamo depende de la Categoría elegida — se repuebla cada vez que cambia
+function poblarTiposReclamoCR(){
+  const catId=document.getElementById('crf-categoria').value;
+  const sel=document.getElementById('crf-tiporeclamo');
+  const grp=document.getElementById('crf-tiporeclamo-grp');
+  const opciones=crTiposReclamo.filter(t=>t.categoria_id===catId);
+  if(!opciones.length){grp.style.display='none';sel.value='';return;}
+  grp.style.display='block';
+  sel.innerHTML='<option value="">Ninguno</option>'+opciones.map(t=>`<option value="${t.id}">${esc(t.nombre)}</option>`).join('');
+}
+function abrirModalCR(){
+  editCRId=null;
+  document.getElementById('mcr-ttl').textContent='Registrar comentario';
+  document.getElementById('crf-id').value='';
+  poblarSelectsCR();
+  document.getElementById('crf-fecha').value=hoyStr();
+  document.getElementById('crf-nota').value='';
+  poblarTiposReclamoCR();
+  document.getElementById('btn-del-cr').style.display='none';
+  document.getElementById('modal-cr').classList.add('open');
+}
+function editarCR(id){
+  const r=crRegistros.find(x=>x.id===id);if(!r)return;
+  editCRId=id;
+  document.getElementById('mcr-ttl').textContent='Editar comentario';
+  document.getElementById('crf-id').value=id;
+  poblarSelectsCR();
+  document.getElementById('crf-fecha').value=r.fecha||hoyStr();
+  document.getElementById('crf-fuente').value=r.fuente_id||'';
+  document.getElementById('crf-categoria').value=r.categoria_id||'';
+  poblarTiposReclamoCR();
+  document.getElementById('crf-tiporeclamo').value=r.tipo_reclamo_id||'';
+  document.getElementById('crf-tienda').value=r.tienda_id||'';
+  document.getElementById('crf-prioridad').value=r.prioridad_id||'';
+  document.getElementById('crf-impacto').value=r.impacto_id||'';
+  document.getElementById('crf-nota').value=r.nota||'';
+  document.getElementById('btn-del-cr').style.display='inline-block';
+  document.getElementById('modal-cr').classList.add('open');
+}
+async function guardarCR(){
+  const fecha=document.getElementById('crf-fecha').value;
+  const fuente_id=document.getElementById('crf-fuente').value||null;
+  const categoria_id=document.getElementById('crf-categoria').value||null;
+  if(!fecha||!fuente_id||!categoria_id){toast('Completa fecha, fuente y categor&iacute;a');return;}
+  const row={
+    departamento_id:DEPT_ID||(departamentos.find(d=>d.slug==='mercadeo')||departamentos[0])?.id,
+    fuente_id,categoria_id,
+    tipo_reclamo_id:document.getElementById('crf-tiporeclamo').value||null,
+    tienda_id:document.getElementById('crf-tienda').value||null,
+    prioridad_id:document.getElementById('crf-prioridad').value||null,
+    impacto_id:document.getElementById('crf-impacto').value||null,
+    fecha,
+    nota:document.getElementById('crf-nota').value.trim()||null,
+  };
+  let error;
+  if(editCRId){
+    ({error}=await sb.from('cr_registros').update(row).eq('id',editCRId));
+  } else {
+    row.creado_por=USER.id;
+    ({error}=await sb.from('cr_registros').insert(row));
+  }
+  if(error){toast('Error: '+error.message);return;}
+  cerrarModal('modal-cr');
+  toast(editCRId?'Comentario actualizado':'Comentario registrado');
+  await renderComentariosRedes();
+}
+async function eliminarCRActual(){
+  if(!editCRId)return;
+  if(!confirm('¿Eliminar este registro?'))return;
+  const{error}=await sb.from('cr_registros').delete().eq('id',editCRId);
+  if(error){toast('Error: '+error.message);return;}
+  cerrarModal('modal-cr');
+  toast('Registro eliminado');
+  await renderComentariosRedes();
+}
 
 function renderPorTienda(){
   const cont=document.getElementById('por-tienda-list');

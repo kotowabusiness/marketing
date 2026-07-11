@@ -545,6 +545,12 @@ table.rt tr:last-child td{border-bottom:none;}
 /* ADMIN */
 .admin-wrap{padding:1.5rem 2rem 2rem;}
 .admin-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin-bottom:1.5rem;overflow-x:auto;}
+.tareas-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin:0 1.75rem;padding-top:1rem;}
+.tareas-tab-btn{background:none;border:none;padding:.6rem 1rem;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--gray3);cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;}
+.tareas-tab-btn:hover{color:var(--dark);}
+.tareas-tab-btn.active{color:var(--dark);border-bottom-color:var(--dark);}
+.tareas-tabpanel{display:none;}
+.tareas-tabpanel.active{display:block;}
 .midia-tabs{display:flex;gap:.35rem;border-bottom:1px solid var(--gray2);margin-bottom:1.5rem;}
 .midia-tab-btn{background:none;border:none;padding:.6rem 1rem;font-family:var(--font-body);font-size:12.5px;font-weight:500;color:var(--gray3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;}
 .midia-tab-btn:hover{color:var(--dark);}
@@ -1154,7 +1160,7 @@ table.rt tr:last-child td{border-bottom:none;}
       <span class="bnav-icon">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18"/><rect x="14" y="3" width="7" height="11"/><rect x="14" y="18" width="7" height="3"/></svg>
       </span>
-      <span class="bnav-lbl">Tablero</span>
+      <span class="bnav-lbl">Tareas</span>
     </button>
     <button class="bnav-btn" id="bnav-proyectos" onclick="setVistaMobile('proyectos',this)">
       <span class="bnav-icon">
@@ -1183,12 +1189,10 @@ table.rt tr:last-child td{border-bottom:none;}
 <!-- MENU MÁS (mobile) -->
 <div id="mobile-menu" style="display:none;position:fixed;bottom:60px;left:0;right:0;z-index:89;background:var(--white);border-top:1px solid var(--gray2);box-shadow:0 -4px 16px rgba(26,18,10,.1);padding:.75rem 1rem;max-height:70vh;overflow-y:auto;">
   <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
-    <button onclick="setVistaMobile('calendario',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#128197; Calendario</button>
-    <button onclick="setVistaMobile('porTienda',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#127978; Por Tienda</button>
     <button onclick="setVistaMobile('comentarios',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);">&#128172; Comentarios</button>
-    <button onclick="setVistaMobile('propuestas',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);position:relative;" id="mmenu-propuestas">&#9997; Propuestas</button>
+    <button onclick="abrirAdminPropuestas();toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);position:relative;" id="mmenu-propuestas">&#9997; Propuestas</button>
     <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--dark);" id="mmenu-admin">&#9881; Admin</button>
-    <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);">&#9166; Salir</button>
+    <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:8px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);grid-column:span 3;">&#9166; Salir</button>
   </div>
   <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--gray1);font-size:11px;color:var(--gray3);text-align:center;" id="mmenu-user"></div>
 </div>
@@ -1219,18 +1223,15 @@ table.rt tr:last-child td{border-bottom:none;}
     <nav class="sb-nav">
       <div class="sb-section-lbl">General</div>
       <button class="sb-item active" onclick="setVista('miDia',this)"><span class="sb-icon" id="sbicon-miDia"><svg viewBox="0 0 70 76" width="20" height="20"><path d="M35 4C15 6 2 22 4 42C2 60 16 74 35 76C54 74 68 60 66 42C68 22 55 6 35 4Z" fill="#4A90D9"/><circle cx="35" cy="38" r="17" fill="#F7EDE1"/><circle cx="35" cy="38" r="11" fill="#4A90D9"/><line x1="35" y1="10" x2="35" y2="18" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="58" x2="35" y2="66" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="8" y1="38" x2="16" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="54" y1="38" x2="62" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/></svg></span> Mi d&iacute;a</button>
-      <button class="sb-item" onclick="setVista('tareas',this)"><span class="sb-icon" id="sbicon-tareas"><svg viewBox="0 0 64 79" width="20" height="20"><path d="M13 20C9 20 6 24 6 28L6 68C6 74 11 79 17 79L53 79C59 79 64 74 64 68L64 28C64 24 61 20 57 20L51 20L51 13C51 10 49 8 46 8C43 8 41 10 41 13L41 20L29 20L29 13C29 10 27 8 24 8C21 8 19 10 19 13L19 20Z" fill="#E8804D"/><rect x="6" y="20" width="58" height="11" fill="#C96436"/><circle cx="24" cy="13" r="4.5" fill="#C96436"/><circle cx="46" cy="13" r="4.5" fill="#C96436"/></svg></span> Tablero</button>
+      <button class="sb-item" onclick="setVista('tareas',this)"><span class="sb-icon" id="sbicon-tareas"><svg viewBox="0 0 64 79" width="20" height="20"><path d="M13 20C9 20 6 24 6 28L6 68C6 74 11 79 17 79L53 79C59 79 64 74 64 68L64 28C64 24 61 20 57 20L51 20L51 13C51 10 49 8 46 8C43 8 41 10 41 13L41 20L29 20L29 13C29 10 27 8 24 8C21 8 19 10 19 13L19 20Z" fill="#E8804D"/><rect x="6" y="20" width="58" height="11" fill="#C96436"/><circle cx="24" cy="13" r="4.5" fill="#C96436"/><circle cx="46" cy="13" r="4.5" fill="#C96436"/></svg></span> Tareas</button>
       <button class="sb-item" onclick="setVista('proyectos',this)"><span class="sb-icon" id="sbicon-proyectos"><svg viewBox="0 0 68 69" width="20" height="20"><path d="M12 26L34 12L58 26L58 60C58 65 54 69 49 69L19 69C14 69 10 65 10 60Z" fill="#5AA469"/><rect x="24" y="42" width="20" height="27" fill="#3D7A48"/><circle cx="34" cy="8" r="5" fill="#5AA469"/></svg></span> Proyectos</button>
-      <button class="sb-item" id="tab-calendario" onclick="setVista('calendario',this)"><span class="sb-icon" id="sbicon-calendario"><svg viewBox="0 0 66 78" width="20" height="20"><path d="M11 22C7 22 4 26 4 30L4 68C4 73 8 78 14 78L56 78C61 78 66 73 66 68L66 30C66 26 62 22 58 22L52 22L52 15C52 11 49 9 46 9C42 9 40 11 40 15L40 22L30 22L30 15C30 11 27 9 24 9C20 9 18 11 18 15L18 22Z" fill="#D65C7A"/><rect x="4" y="22" width="62" height="12" fill="#B03F5C"/><circle cx="24" cy="15" r="4.5" fill="#B03F5C"/><circle cx="46" cy="15" r="4.5" fill="#B03F5C"/><circle cx="35" cy="55" r="12" fill="#B03F5C"/></svg></span> Calendario</button>
-      <button class="sb-item" id="tab-tiendas" onclick="setVista('porTienda',this)"><span class="sb-icon" id="sbicon-porTienda"><svg viewBox="0 0 70 68" width="20" height="20"><path d="M35 4C17 6 6 20 8 38C10 54 22 66 35 68C48 66 60 54 62 38C64 20 53 6 35 4Z" fill="#8AB84A"/><path d="M25 30C22 40 22 50 27 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M45 30C48 40 48 50 43 58" stroke="#F7EDE1" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="35" cy="34" r="6" fill="#F7EDE1"/></svg></span> Por Tienda</button>
       <button class="sb-item" id="tab-comentarios" onclick="setVista('comentarios',this)"><span class="sb-icon" id="sbicon-comentarios"><i class="ti ti-message-circle-2"></i></span> Comentarios</button>
     </nav>
 
     <nav class="sb-nav">
       <div class="sb-section-lbl">Equipo</div>
       <button class="sb-item" id="sb-btn-reportes" onclick="setVista('reportes',this)"><span class="sb-icon" id="sbicon-reportes"><svg viewBox="0 0 62 74" width="20" height="20"><path d="M14 68L14 40C14 36 17 33 21 33L27 33C31 33 34 36 34 40L34 68Z" fill="#9B7FD4"/><path d="M36 68L36 24C36 20 39 17 43 17L49 17C53 17 56 20 56 24L56 68Z" fill="#7A5FC0"/><rect x="8" y="68" width="54" height="6" rx="3" fill="#6B4FAD"/></svg></span> Reportes</button>
-      <button class="sb-item" id="tab-propuestas" style="display:none;position:relative;" onclick="setVista('propuestas',this)"><span class="sb-icon" id="sbicon-propuestas"><svg viewBox="0 0 70 72" width="20" height="20"><path d="M35 4C15 6 3 21 5 40C3 57 16 70 35 72C54 70 67 57 65 40C67 21 55 6 35 4Z" fill="#4AB894"/><path d="M20 37L30 47L52 22" stroke="#F7EDE1" stroke-width="6.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span> Propuestas<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
-      <button class="sb-item admin-tab" id="admin-tab" style="display:none" onclick="setVista('admin',this)"><span class="sb-icon" id="sbicon-admin"><svg viewBox="0 0 70 70" width="20" height="20"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg></span> Admin</button>
+      <button class="sb-item admin-tab" id="admin-tab" style="display:none;position:relative;" onclick="setVista('admin',this)"><span class="sb-icon" id="sbicon-admin"><svg viewBox="0 0 70 70" width="20" height="20"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg></span> Admin<span class="notif-badge sb-badge" id="propuestas-badge" style="display:none;">0</span></button>
     </nav>
 
     <div style="flex:1"></div>
@@ -1277,63 +1278,122 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 </div>
 
-<!-- TABLERO -->
+<!-- TABLERO / CALENDARIO / POR TIENDA — todo es "Tareas", 3 formas de verlas -->
 <div class="vista" id="vista-tareas">
-  <!-- FILTROS MOBILE — dropdowns -->
-  <div class="filter-mobile-wrap" id="filter-mobile-wrap">
-    <select class="fselect" id="fm-responsable" onchange="setFilterMobile('responsable',this)">
-      <option value="">Responsable</option>
-    </select>
-    <select class="fselect" id="fm-fecha" onchange="setFilterMobile('fecha',this)">
-      <option value="">Fecha</option>
-      <option value="hoy">Hoy</option>
-      <option value="semana">Esta semana</option>
-      <option value="mes">Este mes</option>
-      <option value="vencidas">Vencidas</option>
-    </select>
-    <select class="fselect" id="fm-tipo" onchange="setFilterMobile('tipo',this)">
-      <option value="">Tipo</option>
-    </select>
-    <button class="fselect" onclick="limpiarFiltrosMobile()" style="background:var(--urgente-lt);border-color:var(--urgente);color:var(--urgente);cursor:pointer;white-space:nowrap;">✕ Limpiar</button>
+  <div class="tareas-tabs">
+    <button class="tareas-tab-btn active" onclick="setTareasTab('tablero',this)">Tablero</button>
+    <button class="tareas-tab-btn" onclick="setTareasTab('calendario',this)">Calendario</button>
+    <button class="tareas-tab-btn" onclick="setTareasTab('portienda',this)">Por Tienda</button>
   </div>
 
-  <div class="filters">
-    <span class="flbl">Filtros</span>
-    <select class="fselect" id="fd-responsable" onchange="setFilterDesktop('responsable',this)">
-      <option value="">Responsable</option>
-    </select>
-    <select class="fselect" id="fd-fecha" onchange="setFilterDesktop('fecha',this)">
-      <option value="">Fecha</option>
-      <option value="hoy">Hoy</option>
-      <option value="semana">Esta semana</option>
-      <option value="mes">Este mes</option>
-      <option value="vencidas">Vencidas</option>
-    </select>
-    <select class="fselect" id="fd-tipo" onchange="setFilterDesktop('tipo',this)">
-      <option value="">Tipo</option>
-    </select>
-    <button onclick="limpiarFiltros()" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid var(--urgente);background:var(--urgente-lt);color:var(--urgente);cursor:pointer;white-space:nowrap;">&#215; Limpiar</button>
-  </div>
-  <div class="carga-bar" id="carga-bar"></div>
-  <div class="board-hdr" style="display:flex;align-items:center;justify-content:space-between;padding-right:2rem;">
-    <div class="counter" id="counter">&mdash;</div>
-    <div style="display:flex;align-items:center;gap:.5rem;">
-      <span style="font-size:10px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Orden</span>
-      <select id="sort-select" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 24px 4px 10px;border:1.5px solid var(--azul);border-radius:20px;background:var(--white);color:var(--azul);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232471A3'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 8px center;" onchange="setSortOrder(this.value)">
-        <option value="deadline">↑ Deadline (próximo)</option>
-        <option value="deadline_desc">↓ Deadline (lejano)</option>
-        <option value="reciente">↑ Más reciente</option>
-        <option value="responsable">↑ Responsable A-Z</option>
+  <div class="tareas-tabpanel active" id="tareastab-tablero">
+    <!-- FILTROS MOBILE — dropdowns -->
+    <div class="filter-mobile-wrap" id="filter-mobile-wrap">
+      <select class="fselect" id="fm-responsable" onchange="setFilterMobile('responsable',this)">
+        <option value="">Responsable</option>
       </select>
+      <select class="fselect" id="fm-fecha" onchange="setFilterMobile('fecha',this)">
+        <option value="">Fecha</option>
+        <option value="hoy">Hoy</option>
+        <option value="semana">Esta semana</option>
+        <option value="mes">Este mes</option>
+        <option value="vencidas">Vencidas</option>
+      </select>
+      <select class="fselect" id="fm-tipo" onchange="setFilterMobile('tipo',this)">
+        <option value="">Tipo</option>
+      </select>
+      <button class="fselect" onclick="limpiarFiltrosMobile()" style="background:var(--urgente-lt);border-color:var(--urgente);color:var(--urgente);cursor:pointer;white-space:nowrap;">✕ Limpiar</button>
+    </div>
+
+    <div class="filters">
+      <span class="flbl">Filtros</span>
+      <select class="fselect" id="fd-responsable" onchange="setFilterDesktop('responsable',this)">
+        <option value="">Responsable</option>
+      </select>
+      <select class="fselect" id="fd-fecha" onchange="setFilterDesktop('fecha',this)">
+        <option value="">Fecha</option>
+        <option value="hoy">Hoy</option>
+        <option value="semana">Esta semana</option>
+        <option value="mes">Este mes</option>
+        <option value="vencidas">Vencidas</option>
+      </select>
+      <select class="fselect" id="fd-tipo" onchange="setFilterDesktop('tipo',this)">
+        <option value="">Tipo</option>
+      </select>
+      <button onclick="limpiarFiltros()" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;border:1.5px solid var(--urgente);background:var(--urgente-lt);color:var(--urgente);cursor:pointer;white-space:nowrap;">&#215; Limpiar</button>
+    </div>
+    <div class="carga-bar" id="carga-bar"></div>
+    <div class="board-hdr" style="display:flex;align-items:center;justify-content:space-between;padding-right:2rem;">
+      <div class="counter" id="counter">&mdash;</div>
+      <div style="display:flex;align-items:center;gap:.5rem;">
+        <span style="font-size:10px;color:var(--gray3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;">Orden</span>
+        <select id="sort-select" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:600;padding:4px 24px 4px 10px;border:1.5px solid var(--azul);border-radius:20px;background:var(--white);color:var(--azul);outline:none;cursor:pointer;-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%232471A3'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 8px center;" onchange="setSortOrder(this.value)">
+          <option value="deadline">↑ Deadline (próximo)</option>
+          <option value="deadline_desc">↓ Deadline (lejano)</option>
+          <option value="reciente">↑ Más reciente</option>
+          <option value="responsable">↑ Responsable A-Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="board">
+      <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></span></div></div>
+      <div class="col col-atrasados" id="col-atrasados"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl col-ttl-atrasados">Atrasados</span><span class="col-cnt col-cnt-atrasados" id="cnt-atrasados">0</span></span></div></div>
+      <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-cnt" id="cnt-hoy">0</span></span></div></div>
+      <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Esta semana <span class="col-ttl-fecha" id="col-semana-fecha"></span></span><span class="col-cnt" id="cnt-semana">0</span></span></div></div>
+      <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></span></div></div>
+      <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></span></div></div>
     </div>
   </div>
-  <div class="board">
-    <div class="col col-pendientes" id="col-pendientes"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Pendientes</span><span class="col-cnt" id="cnt-pendientes">0</span></span></div></div>
-    <div class="col col-atrasados" id="col-atrasados"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl col-ttl-atrasados">Atrasados</span><span class="col-cnt col-cnt-atrasados" id="cnt-atrasados">0</span></span></div></div>
-    <div class="col col-hoy" id="col-hoy"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Hoy <span class="col-ttl-fecha" id="col-hoy-fecha"></span></span><span class="col-cnt" id="cnt-hoy">0</span></span></div></div>
-    <div class="col col-semana" id="col-semana"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Esta semana <span class="col-ttl-fecha" id="col-semana-fecha"></span></span><span class="col-cnt" id="cnt-semana">0</span></span></div></div>
-    <div class="col col-revision" id="col-revision"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">En revisi&oacute;n</span><span class="col-cnt" id="cnt-revision">0</span></span></div></div>
-    <div class="col col-aprobado" id="col-aprobado"><div class="col-hdr"><span class="col-ttl-wrap"><span class="col-ttl-dot"></span><span class="col-ttl">Culminado</span><span class="col-cnt" id="cnt-aprobado">0</span></span></div></div>
+
+  <div class="tareas-tabpanel" id="tareastab-calendario" style="display:none;">
+    <div class="cal-layout">
+      <aside class="cal-sidebar">
+        <div class="cal-mini">
+          <div class="cal-mini-hdr">
+            <button class="cal-mini-nav" onclick="calMiniNav(-1)">&#8592;</button>
+            <span class="cal-mini-mes" id="cal-mini-mes-lbl">&mdash;</span>
+            <button class="cal-mini-nav" onclick="calMiniNav(1)">&#8594;</button>
+          </div>
+          <div class="cal-mini-dow"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+          <div class="cal-mini-grid" id="cal-mini-grid"></div>
+        </div>
+        <div class="cal-sinfecha">
+          <div class="cal-sinfecha-ttl">Sin fecha asignada</div>
+          <div id="cal-sinfecha-list"></div>
+        </div>
+      </aside>
+      <div class="cal-main">
+        <div class="cal-top">
+          <div class="cal-nav">
+            <button class="cal-nav-btn" onclick="calNav(-1)">&#8592;</button>
+            <div class="cal-mes" id="cal-mes-lbl">&mdash;</div>
+            <button class="cal-nav-btn" onclick="calNav(1)">&#8594;</button>
+            <button class="cal-nav-btn" onclick="calHoy()" style="font-size:11px;padding:5px 10px;">Hoy</button>
+          </div>
+          <div class="cal-vista-btns">
+            <button class="cal-vista-btn active" id="cvbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
+            <button class="cal-vista-btn" id="cvbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
+          </div>
+          <div class="cal-filtro">
+            <span class="flbl">Ver</span>
+            <select class="fselect" id="cal-filtro-resp" onchange="renderCal()">
+              <option value="">Todos</option>
+            </select>
+          </div>
+        </div>
+        <div id="cal-container"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tareas-tabpanel" id="tareastab-portienda" style="display:none;">
+    <div class="por-tienda-wrap">
+      <div class="proy-top">
+        <div class="proy-titulo">Pendientes por tienda</div>
+        <input type="text" class="fi" id="tienda-buscar" placeholder="Buscar tienda..." style="max-width:220px;" oninput="renderPorTienda()">
+      </div>
+      <div id="por-tienda-list"></div>
+    </div>
   </div>
 </div>
 
@@ -1358,60 +1418,6 @@ table.rt tr:last-child td{border-bottom:none;}
     <div class="pdet-prog-wrap" id="pdet-prog"></div>
     <div id="pv-lista-inner"><div class="pt-lista" id="pt-lista-body"></div></div>
     <div id="pv-gantt-inner" style="display:none;"><div class="gantt-wrap"><div id="gantt-container"></div></div></div>
-  </div>
-</div>
-
-<!-- TIEMPOS -->
-<!-- CALENDARIO -->
-<div class="vista" id="vista-calendario">
-  <div class="cal-layout">
-    <aside class="cal-sidebar">
-      <div class="cal-mini">
-        <div class="cal-mini-hdr">
-          <button class="cal-mini-nav" onclick="calMiniNav(-1)">&#8592;</button>
-          <span class="cal-mini-mes" id="cal-mini-mes-lbl">&mdash;</span>
-          <button class="cal-mini-nav" onclick="calMiniNav(1)">&#8594;</button>
-        </div>
-        <div class="cal-mini-dow"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-        <div class="cal-mini-grid" id="cal-mini-grid"></div>
-      </div>
-      <div class="cal-sinfecha">
-        <div class="cal-sinfecha-ttl">Sin fecha asignada</div>
-        <div id="cal-sinfecha-list"></div>
-      </div>
-    </aside>
-    <div class="cal-main">
-      <div class="cal-top">
-        <div class="cal-nav">
-          <button class="cal-nav-btn" onclick="calNav(-1)">&#8592;</button>
-          <div class="cal-mes" id="cal-mes-lbl">&mdash;</div>
-          <button class="cal-nav-btn" onclick="calNav(1)">&#8594;</button>
-          <button class="cal-nav-btn" onclick="calHoy()" style="font-size:11px;padding:5px 10px;">Hoy</button>
-        </div>
-        <div class="cal-vista-btns">
-          <button class="cal-vista-btn active" id="cvbtn-mes" onclick="setCalVista('mes',this)">Mes</button>
-          <button class="cal-vista-btn" id="cvbtn-semana" onclick="setCalVista('semana',this)">Semana</button>
-        </div>
-        <div class="cal-filtro">
-          <span class="flbl">Ver</span>
-          <select class="fselect" id="cal-filtro-resp" onchange="renderCal()">
-            <option value="">Todos</option>
-          </select>
-        </div>
-      </div>
-      <div id="cal-container"></div>
-    </div>
-  </div>
-</div>
-
-<!-- POR TIENDA -->
-<div class="vista" id="vista-porTienda">
-  <div class="por-tienda-wrap">
-    <div class="proy-top">
-      <div class="proy-titulo">Pendientes por tienda</div>
-      <input type="text" class="fi" id="tienda-buscar" placeholder="Buscar tienda..." style="max-width:220px;" oninput="renderPorTienda()">
-    </div>
-    <div id="por-tienda-list"></div>
   </div>
 </div>
 
@@ -1518,14 +1524,6 @@ table.rt tr:last-child td{border-bottom:none;}
 </div>
 
 <!-- ADMIN -->
-<!-- PROPUESTAS -->
-<div class="vista" id="vista-propuestas">
-  <div class="rep-wrap">
-    <div class="proy-top"><span class="proy-titulo">Propuestas pendientes</span></div>
-    <div id="propuestas-list"></div>
-  </div>
-</div>
-
 <div class="vista" id="vista-admin">
   <div class="admin-wrap">
     <div class="proy-top"><div class="proy-titulo">&#9881; Administración</div></div>
@@ -1534,6 +1532,7 @@ table.rt tr:last-child td{border-bottom:none;}
       <button class="admin-tab-btn active" onclick="setAdminTab('equipo',this)">Equipo</button>
       <button class="admin-tab-btn" onclick="setAdminTab('tablero',this)">Tablero</button>
       <button class="admin-tab-btn" onclick="setAdminTab('datos',this)">Datos</button>
+      <button class="admin-tab-btn" id="admintabbtn-propuestas" style="display:none;position:relative;" onclick="setAdminTab('propuestas',this)">Propuestas<span class="notif-badge" id="propuestas-badge-tab" style="display:none;">0</span></button>
       <button class="admin-tab-btn" onclick="setAdminTab('notificaciones',this)">Notificaciones</button>
       <button class="admin-tab-btn" onclick="setAdminTab('apariencia',this)">Apariencia</button>
     </div>
@@ -1598,6 +1597,14 @@ table.rt tr:last-child td{border-bottom:none;}
             <button class="btn-save" style="padding:7px 16px;" onclick="agregarTienda()">+ Agregar</button>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- PROPUESTAS -->
+    <div class="admin-tabpanel" id="admintab-propuestas" style="display:none;">
+      <div class="admin-section">
+        <div class="admin-section-title">Propuestas pendientes</div>
+        <div id="propuestas-list"></div>
       </div>
     </div>
 
@@ -2372,7 +2379,6 @@ async function iniciarApp(user){
   // Mostrar tab admin solo si es admin o gerente
   if(rolFinal==='admin'||rolFinal==='gerente'){
     document.getElementById('admin-tab').style.display='flex';
-    document.getElementById('tab-propuestas').style.display='flex';
   }
   // Cargar todos los datos
   await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas(),cargarKpiPuestos(),cargarComentariosRedesCatalogos()]);
@@ -2421,9 +2427,10 @@ function rtRenderDebounced(){
     render();
     if(proyActualId&&!modalAbierto)renderDetalle();
     const vistaAct=document.querySelector('.vista.active')?.id;
+    const tareasTabAct=document.querySelector('.tareas-tabpanel.active')?.id;
     if(vistaAct==='vista-miDia')renderMiDia();
-    if(vistaAct==='vista-calendario')renderCal();
-    if(vistaAct==='vista-porTienda')renderPorTienda();
+    if(tareasTabAct==='tareastab-calendario')renderCal();
+    if(tareasTabAct==='tareastab-portienda')renderPorTienda();
     if(vistaAct==='vista-reportes')renderReporte();
     if(vistaAct==='vista-proyectos'&&!proyActualId)renderProyectos();
   },250);
@@ -2441,8 +2448,9 @@ function iniciarRealtime(){
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'tiendas',filter:filtroDept},async()=>{
       await cargarTiendas();
+      const tareasTabAct=document.querySelector('.tareas-tabpanel.active')?.id;
       const vistaAct=document.querySelector('.vista.active')?.id;
-      if(vistaAct==='vista-porTienda')renderPorTienda();
+      if(tareasTabAct==='tareastab-portienda')renderPorTienda();
       if(vistaAct==='vista-admin')renderAdminTiendas();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'kpi_puestos',filter:filtroDept},async()=>{
@@ -2463,7 +2471,7 @@ function iniciarRealtime(){
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'propuestas',filter:filtroDept},async()=>{
       await cargarPropuestas();
-      if(document.getElementById('vista-propuestas')?.classList.contains('active'))renderPropuestas();
+      if(document.getElementById('admintab-propuestas')?.classList.contains('active'))renderPropuestas();
     })
     .on('postgres_changes',{event:'*',schema:'public',table:'comentarios'},async(payload)=>{
       // Los comentarios no tienen departamento_id propio — filtramos por si aplica a la tarea abierta
@@ -4275,8 +4283,19 @@ async function marcarListo(id,e){
 }
 
 // VISTAS
-const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tablero'],proyectos:['General','Proyectos'],calendario:['General','Calendario'],porTienda:['General','Por Tienda'],comentarios:['General','Comentarios de redes'],matriz:['Equipo','Tiempos'],reportes:['Equipo','Reportes'],propuestas:['Equipo','Propuestas'],admin:['Equipo','Admin']};
-function setVista(v,btn){localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display=v==='tareas'?'':'none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='calendario'){poblarFiltrosCal();renderCal();}if(v==='porTienda'){renderPorTienda();}if(v==='comentarios'){renderComentariosRedes();}if(v==='miDia'){renderMiDia();}if(v==='propuestas'){renderPropuestas();}if(v==='tareas'){render();}}
+const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tareas'],proyectos:['General','Proyectos'],comentarios:['General','Comentarios de redes'],reportes:['Equipo','Reportes'],admin:['Equipo','Admin']};
+function setVista(v,btn){
+  if(v==='propuestas'){abrirAdminPropuestas();return;}
+  localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display='none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='comentarios'){renderComentariosRedes();}if(v==='miDia'){renderMiDia();}if(v==='tareas'){const activeTab=document.querySelector('.tareas-tab-btn.active')||document.querySelector('.tareas-tab-btn');const tabId=activeTab?.getAttribute('onclick')?.match(/'([a-z]+)'/)?.[1]||'tablero';setTareasTab(tabId,activeTab);}
+}
+// Cualquier lugar que antes navegaba directo a "Propuestas" (ej. notificaciones) ahora
+// abre Admin en su pestaña de Propuestas, ya que dejó de ser una vista independiente.
+function abrirAdminPropuestas(){
+  const adminBtn=document.getElementById('admin-tab');
+  if(adminBtn)setVista('admin',adminBtn);
+  const tabBtn=document.getElementById('admintabbtn-propuestas');
+  if(tabBtn)setAdminTab('propuestas',tabBtn);
+}
 function sortTareas(a,b){
   // Tareas sin deadline van siempre al final
   const aD=a.fecha?new Date(a.fecha+'T23:59:59'):null;
@@ -4654,14 +4673,19 @@ async function cargarPropuestas(){
     else propuestas=data||[];
   }catch(err){console.log('cargarPropuestas error:',err);propuestas=[];}
   renderPropuestasBadge();
-  if(document.getElementById('vista-propuestas')?.classList.contains('active'))renderPropuestas();
+  if(document.getElementById('admintab-propuestas')?.classList.contains('active'))renderPropuestas();
 }
 
 function renderPropuestasBadge(){
-  const badge=document.getElementById('propuestas-badge');
-  if(!badge)return;
-  if(propuestas.length>0){badge.textContent=propuestas.length>9?'9+':propuestas.length;badge.style.display='flex';}
-  else badge.style.display='none';
+  // Dos badges: uno en el ícono Admin del sidebar, otro en la pestaña Propuestas dentro de Admin
+  const badgeSidebar=document.getElementById('propuestas-badge');
+  const badgeTab=document.getElementById('propuestas-badge-tab');
+  const n=propuestas.length;
+  [badgeSidebar,badgeTab].forEach(badge=>{
+    if(!badge)return;
+    if(n>0){badge.textContent=n>9?'9+':n;badge.style.display='flex';}
+    else badge.style.display='none';
+  });
 }
 
 const FIELD_LABELS={
@@ -4826,7 +4850,7 @@ async function ejecutarGuardado(datos){
     }
   }
   cerrarModal('modal-tarea');render();if(proyActualId)renderDetalle();
-  if(document.getElementById('vista-calendario')?.classList.contains('active'))renderCal();
+  if(document.getElementById('tareastab-calendario')?.classList.contains('active'))renderCal();
 }
 
 // ══════════════════════════════════════════════════════════
@@ -5427,12 +5451,27 @@ async function adminEliminarTipo(id,nom){
 }
 
 // Cambia de pestaña dentro de Admin (Equipo / Tablero / Datos / Notificaciones / Apariencia)
+// Cambia de pestaña dentro de "Tareas" (Tablero / Calendario / Por Tienda) —
+// son 3 formas de ver las mismas tareas, ya no vistas separadas del sidebar.
+function setTareasTab(tab,btn){
+  document.querySelectorAll('.tareas-tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.tareas-tabpanel').forEach(p=>{p.style.display='none';p.classList.remove('active');});
+  const panel=document.getElementById(`tareastab-${tab}`);
+  if(panel){panel.style.display='block';panel.classList.add('active');}
+  document.getElementById('btn-new').style.display=tab==='tablero'?'':'none';
+  if(tab==='tablero')render();
+  if(tab==='calendario'){poblarFiltrosCal();renderCal();}
+  if(tab==='portienda')renderPorTienda();
+}
+
 function setAdminTab(tab,btn){
   document.querySelectorAll('.admin-tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.admin-tabpanel').forEach(p=>{p.style.display='none';p.classList.remove('active');});
   const panel=document.getElementById(`admintab-${tab}`);
   if(panel){panel.style.display='flex';panel.classList.add('active');}
+  if(tab==='propuestas')renderPropuestas();
 }
 
 async function renderAdmin(){
@@ -6890,7 +6929,7 @@ async function moverAColumna(id,colDestino){
   }
 
   render();if(proyActualId)renderDetalle();
-  if(document.getElementById('vista-calendario')?.classList.contains('active'))renderCal();
+  if(document.getElementById('tareastab-calendario')?.classList.contains('active'))renderCal();
 }
 
 // SERVICE WORKER (PWA)

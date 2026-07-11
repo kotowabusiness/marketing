@@ -5664,6 +5664,17 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){['modal-tarea','mod
 // ══════════════════════════════════════════════════════════
 // CONFIGURACIÓN VISUAL
 // ══════════════════════════════════════════════════════════
+// Íconos por defecto — constante fija, nunca cambia. Se usa como base del merge
+// en cargarConfig() para que ninguna sección nueva (agregada después de que ya
+// existieran configuraciones guardadas) se pierda al recargar.
+const ICONOS_SIDEBAR_DEFAULT={
+  miDia:{lib:'tabler',cls:'ti-sun',color:'#2C725A'},
+  tareas:{lib:'tabler',cls:'ti-layout-kanban',color:'#BD8643'},
+  proyectos:{lib:'tabler',cls:'ti-folder',color:'#8A9A5B'},
+  comentarios:{lib:'tabler',cls:'ti-message-circle-2',color:'#2471A3'},
+  reportes:{lib:'tabler',cls:'ti-chart-bar',color:'#639922'},
+  admin:{lib:'tabler',cls:'ti-settings',color:'#5F5E5A'},
+};
 let configData = {
   color_primario:'#00614D', color_acento:'#C9A84C', color_fondo:'#FFFFFF',
   color_fondo_app:'#FAFBFA', color_fondo_columnas:'#EEF0EF', color_texto:'#1B2420', color_texto_sidebar:'#8C9690',
@@ -5671,17 +5682,7 @@ let configData = {
   color_cat1:'#7F77DD', color_cat2:'#1D9E75', color_cat3:'#EF9F27', color_cat4:'#D4537E',
   text_scale:'normal',
   notif_revision:true, notif_aprobado:true, notif_cambios:true, notif_desbloqueo:true,
-  iconos_sidebar:{
-    miDia:{lib:'tabler',cls:'ti-sun',color:'#2C725A'},
-    tareas:{lib:'tabler',cls:'ti-layout-kanban',color:'#BD8643'},
-    proyectos:{lib:'tabler',cls:'ti-folder',color:'#8A9A5B'},
-    calendario:{lib:'tabler',cls:'ti-calendar',color:'#C0392B'},
-    porTienda:{lib:'tabler',cls:'ti-building-store',color:'#2471A3'},
-    matriz:{lib:'tabler',cls:'ti-clock',color:'#8A6A1F'},
-    reportes:{lib:'tabler',cls:'ti-chart-bar',color:'#639922'},
-    propuestas:{lib:'tabler',cls:'ti-checklist',color:'#D4537E'},
-    admin:{lib:'tabler',cls:'ti-settings',color:'#5F5E5A'},
-  },
+  iconos_sidebar:{...ICONOS_SIDEBAR_DEFAULT},
 };
 let configDirty = false;
 
@@ -5689,7 +5690,7 @@ async function cargarConfig(){
   if(!DEPT_ID) return;
   const{data}=await sb.from('configuracion').select('*').eq('departamento_id',DEPT_ID).single();
   if(data){
-    const iconosDefault=configData.iconos_sidebar;
+    const iconosDefault=ICONOS_SIDEBAR_DEFAULT;
     configData={
       color_primario:data.color_primario||'#00614D',
       color_acento:data.color_acento||'#C9A84C',
@@ -5955,17 +5956,7 @@ function resetConfig(){
     text_scale:'normal',
     font_display:'Inter',font_body:'Inter',nombre_app:'Mercadeo',
     notif_revision:true,notif_aprobado:true,notif_cambios:true,notif_desbloqueo:true,
-    iconos_sidebar:{
-      miDia:{lib:'tabler',cls:'ti-sun',color:'#2C725A'},
-      tareas:{lib:'tabler',cls:'ti-layout-kanban',color:'#BD8643'},
-      proyectos:{lib:'tabler',cls:'ti-folder',color:'#8A9A5B'},
-      calendario:{lib:'tabler',cls:'ti-calendar',color:'#C0392B'},
-      porTienda:{lib:'tabler',cls:'ti-building-store',color:'#2471A3'},
-      matriz:{lib:'tabler',cls:'ti-clock',color:'#8A6A1F'},
-      reportes:{lib:'tabler',cls:'ti-chart-bar',color:'#639922'},
-      propuestas:{lib:'tabler',cls:'ti-checklist',color:'#D4537E'},
-      admin:{lib:'tabler',cls:'ti-settings',color:'#5F5E5A'},
-    },
+    iconos_sidebar:{...ICONOS_SIDEBAR_DEFAULT},
   };
   renderConfigPanel();
   aplicarConfig();
@@ -6046,9 +6037,10 @@ async function guardarIconoSidebar(){
 }
 function renderAdminIconos(){
   const cont=document.getElementById('admin-iconos-list');if(!cont)return;
-  const nombres={miDia:'Mi día',tareas:'Tablero',proyectos:'Proyectos',calendario:'Calendario',porTienda:'Por Tienda',matriz:'Tiempos',reportes:'Reportes',propuestas:'Propuestas',admin:'Admin'};
+  const nombres={miDia:'Mi día',tareas:'Tareas',proyectos:'Proyectos',comentarios:'Comentarios',reportes:'Reportes',admin:'Admin'};
   cont.innerHTML=Object.keys(nombres).map(v=>{
     const ic=configData.iconos_sidebar[v];
+    if(!ic)return'';
     return`<div class="pl-card compact" style="cursor:pointer;" onclick="abrirSelectorIcono('${v}')">
       <div style="display:flex;align-items:center;gap:.6rem;">
         <i class="${claseIconoCompleta(ic.lib,ic.cls)}" style="font-size:19px;color:${ic.color};"></i>

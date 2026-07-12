@@ -780,7 +780,8 @@ table.rt tr:last-child td{border-bottom:none;}
 .config-grid-4{grid-template-columns:repeat(4,1fr);}
 .config-grid-3{grid-template-columns:repeat(3,1fr);}
 .config-grid-2{grid-template-columns:repeat(2,1fr);}
-@media(max-width:900px){.config-grid-4,.config-grid-3,.config-grid-2{grid-template-columns:repeat(2,1fr);}}
+.admin-iconos-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;}
+@media(max-width:900px){.config-grid-4,.config-grid-3,.config-grid-2,.admin-iconos-grid{grid-template-columns:repeat(2,1fr);}}
 .config-group{background:var(--bg-app);border-radius:12px;padding:1rem 1.1rem;margin-bottom:1rem;}
 .config-group-ttl{font-size:11.5px;font-weight:700;color:var(--dark);margin-bottom:.85rem;}
 .config-group-sub{font-weight:400;color:var(--gray3);font-size:10.5px;margin-left:.4rem;}
@@ -901,6 +902,10 @@ table.rt tr:last-child td{border-bottom:none;}
 .cal-mini-day.seleccionado:not(.hoy){background:var(--gold-lt);font-weight:700;}
 /* Sin fecha asignada — lista con scroll propio, para que no estire toda la página */
 .cal-sinfecha{display:flex;flex-direction:column;min-height:0;flex:1;}
+.cal-mobile-toggle{display:none;width:100%;align-items:center;justify-content:space-between;background:var(--white);border:1px solid var(--gray2);border-radius:10px;padding:.6rem .8rem;font-family:var(--font-body);font-size:12px;font-weight:600;color:var(--dark);cursor:pointer;margin-bottom:.5rem;}
+.cal-mobile-toggle-arrow{font-size:10px;color:var(--gray3);transition:transform .15s;}
+.cal-mobile-toggle-arrow.rotated{transform:rotate(180deg);}
+.cal-mobile-toggle-badge{font-size:10px;background:var(--gold-lt);color:#8A6A1F;padding:2px 8px;border-radius:99px;}
 .cal-sinfecha-ttl{font-size:10.5px;font-weight:700;color:var(--gray3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.6rem;flex-shrink:0;}
 #cal-sinfecha-list{overflow-y:auto;flex:1;min-height:0;padding-right:2px;}
 .cal-sf-item{background:var(--white);border:1px solid var(--gray2);border-radius:10px;padding:.55rem .7rem;margin-bottom:.5rem;cursor:grab;transition:box-shadow .12s;}
@@ -1139,6 +1144,66 @@ table.rt tr:last-child td{border-bottom:none;}
   .btn-new:hover{background:var(--gold);}
   .fbtn:hover:not(.active){border-color:var(--gray2);color:var(--dark);}
 }
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE MOBILE — todas las secciones, siguiendo el mockup
+   aprobado: grids que colapsan a 1 columna, tablas que se
+   convierten en tarjetas, pestañas con scroll horizontal.
+   ══════════════════════════════════════════════════════════ */
+@media(max-width:640px){
+  /* Mi día */
+  .midia-hero-saludo{font-size:22px;}
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:.6rem;}
+  .mid-grid{grid-template-columns:1fr;gap:.75rem;}
+  .midia-task-grid{grid-template-columns:1fr;gap:.6rem;}
+  .midia-pills{gap:.4rem;}
+
+  /* Tablero — columnas apiladas verticalmente, no scroll horizontal */
+  .board{flex-direction:column;overflow-x:visible;padding:.25rem 1rem 1.5rem;}
+  .col{width:100%;flex:1 1 auto;min-height:0;}
+
+  /* Tareas — pestañas y filtros */
+  .tareas-tabs{margin:0 1rem;padding-top:.75rem;}
+  .filters{flex-wrap:wrap;padding:0 1rem;}
+
+  /* Calendario — mini-calendario y sin-fecha colapsables (acordeón), grid mensual apilado */
+  .cal-layout{flex-direction:column;gap:.6rem;}
+  .cal-sidebar{width:100%;position:static;max-height:none;overflow:visible;}
+  .cal-wrap{height:auto;min-height:0;padding:0 1rem 1.5rem;}
+  .cal-mobile-toggle{display:flex;}
+  .cal-mini,.cal-sinfecha{display:none;}
+  .cal-mini.open,.cal-sinfecha.open{display:block;margin-bottom:.6rem;}
+  .cal-grid{grid-template-columns:1fr;grid-template-rows:none;}
+  .cal-dow{display:none;}
+  .cal-dia{min-height:auto;border-radius:10px;margin-bottom:6px;border:1px solid var(--gray2);}
+  .sem-grid{grid-template-columns:1fr;}
+
+  /* Por Tienda */
+  .tiendas-cards-grid{grid-template-columns:repeat(2,1fr);}
+  .por-tienda-wrap{padding:0 1rem 1.5rem;}
+
+  /* Comentarios de redes */
+  .cr-wrap{padding:0 1rem 1.5rem;}
+  .cr-stats-row{grid-template-columns:repeat(2,1fr);}
+  .cr-charts-row{grid-template-columns:1fr;}
+  .cr-filtros{flex-wrap:wrap;}
+  .cr-tabla{display:block;}
+  .cr-tabla thead{display:none;}
+  .cr-tabla tbody{display:block;}
+  .cr-tabla tbody tr{display:block;border-top:1px solid var(--gray2);padding:.65rem 0;}
+  .cr-tabla tbody td{display:flex;justify-content:space-between;padding:.2rem 0;border-top:none;font-size:11.5px;}
+  .cr-tabla tbody td:before{content:attr(data-label);font-weight:600;color:var(--gray3);margin-right:.5rem;}
+
+  /* Reportes */
+  .rsum-grid{grid-template-columns:repeat(2,1fr);}
+  .rep-wrap{padding:0 1rem 1.5rem;}
+  .rperson-card{padding:.7rem .85rem;gap:.7rem;}
+  .rperson-metrics{gap:8px;}
+
+  /* Admin — pestañas con scroll horizontal, grids de Apariencia a 1-2 columnas */
+  .admin-wrap{padding:1rem 1rem 1.5rem;}
+  .config-grid-4,.config-grid-3,.config-grid-2{grid-template-columns:repeat(2,1fr);}
+  #admin-iconos-list{grid-template-columns:repeat(2,1fr);}
+}
 </style>
 
 </head>
@@ -1348,7 +1413,10 @@ table.rt tr:last-child td{border-bottom:none;}
   <div class="tareas-tabpanel" id="tareastab-calendario" style="display:none;">
     <div class="cal-layout">
       <aside class="cal-sidebar">
-        <div class="cal-mini">
+        <button class="cal-mobile-toggle" onclick="toggleCalMobileAcc('mini',this)">
+          <span>&#128197; Ver mini-calendario</span><span class="cal-mobile-toggle-arrow">&#9660;</span>
+        </button>
+        <div class="cal-mini" id="cal-mini-acc">
           <div class="cal-mini-hdr">
             <button class="cal-mini-nav" onclick="calMiniNav(-1)">&#8592;</button>
             <span class="cal-mini-mes" id="cal-mini-mes-lbl">&mdash;</span>
@@ -1357,7 +1425,10 @@ table.rt tr:last-child td{border-bottom:none;}
           <div class="cal-mini-dow"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
           <div class="cal-mini-grid" id="cal-mini-grid"></div>
         </div>
-        <div class="cal-sinfecha">
+        <button class="cal-mobile-toggle" onclick="toggleCalMobileAcc('sinfecha',this)">
+          <span>Sin fecha asignada</span><span class="cal-mobile-toggle-badge" id="cal-sinfecha-count">0</span>
+        </button>
+        <div class="cal-sinfecha" id="cal-sinfecha-acc">
           <div class="cal-sinfecha-ttl">Sin fecha asignada</div>
           <div id="cal-sinfecha-list"></div>
         </div>
@@ -1658,7 +1729,7 @@ table.rt tr:last-child td{border-bottom:none;}
       <div class="admin-section" id="admin-iconos-section">
         <div class="admin-section-title">&#128161; &Iacute;conos del sidebar</div>
         <div style="font-size:11px;color:var(--gray3);margin-bottom:1rem;">Elige el &iacute;cono y color de cada secci&oacute;n del men&uacute; lateral. Click en cualquiera para cambiarlo.</div>
-        <div id="admin-iconos-list" style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;"></div>
+        <div id="admin-iconos-list" class="admin-iconos-grid"></div>
       </div>
 
       <div class="admin-section" id="config-visual-section">
@@ -6213,6 +6284,8 @@ function renderCalSinFecha(){
   let sinFecha=tareas.filter(t=>!t.fecha&&t.estado!=='aprobado');
   if(resp)sinFecha=sinFecha.filter(t=>t.responsable===resp);
   if(PERFIL?.rol==='colaborador')sinFecha=sinFecha.filter(t=>t.responsable===USER.id);
+  const badge=document.getElementById('cal-sinfecha-count');
+  if(badge)badge.textContent=sinFecha.length;
   if(!sinFecha.length){cont.innerHTML='<div class="cal-sf-empty">Todo tiene fecha asignada.</div>';return;}
   cont.innerHTML='';
   sinFecha.forEach(t=>{
@@ -6226,6 +6299,15 @@ function renderCalSinFecha(){
     div.addEventListener('click',e=>editarTarea(t.id,e));
     cont.appendChild(div);
   });
+}
+// Acordeón mobile: expande/colapsa el mini-calendario o la lista de sin-fecha,
+// que en desktop siempre están visibles en el sidebar, pero en mobile no caben.
+function toggleCalMobileAcc(cual,btn){
+  const el=document.getElementById(cual==='mini'?'cal-mini-acc':'cal-sinfecha-acc');
+  if(!el)return;
+  const abierto=el.classList.toggle('open');
+  const arrow=btn?.querySelector('.cal-mobile-toggle-arrow');
+  if(arrow)arrow.classList.toggle('rotated',abierto);
 }
 
 function calNav(dir){
@@ -6368,13 +6450,13 @@ function renderCRTabla(){
     const cls=cat?crCategoriaClase(cat.nombre):'otro';
     const comentarioCorto=r.comentario_texto?(r.comentario_texto.length>60?esc(r.comentario_texto.slice(0,60))+'…':esc(r.comentario_texto)):'—';
     html+=`<tr onclick="editarCR('${r.id}')" style="${soloLectura?'cursor:default;':''}">
-      <td>${r.fecha?fechaLocal(r.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'}):'—'}</td>
-      <td>${esc(getCRNombre(crFuentes,r.fuente_id))}</td>
-      <td>${cat?`<span class="cr-badge ${cls}">${esc(cat.nombre)}</span>`:'—'}</td>
-      <td style="max-width:220px;color:var(--gray3);font-size:11.5px;" title="${r.comentario_texto?esc(r.comentario_texto):''}">${comentarioCorto}</td>
-      <td>${r.tienda_id?esc(getTiendaNombre(r.tienda_id)):'—'}</td>
-      <td>${r.tipo_reclamo_id?esc(getCRNombre(crTiposReclamo,r.tipo_reclamo_id)):'—'}</td>
-      <td>${r.prioridad_id?esc(getCRNombre(crPrioridades,r.prioridad_id)):'—'}</td>
+      <td data-label="Fecha">${r.fecha?fechaLocal(r.fecha).toLocaleDateString('es-PA',{day:'numeric',month:'short'}):'—'}</td>
+      <td data-label="Fuente">${esc(getCRNombre(crFuentes,r.fuente_id))}</td>
+      <td data-label="Categoría">${cat?`<span class="cr-badge ${cls}">${esc(cat.nombre)}</span>`:'—'}</td>
+      <td data-label="Comentario" style="max-width:220px;color:var(--gray3);font-size:11.5px;" title="${r.comentario_texto?esc(r.comentario_texto):''}">${comentarioCorto}</td>
+      <td data-label="Tienda">${r.tienda_id?esc(getTiendaNombre(r.tienda_id)):'—'}</td>
+      <td data-label="Tipo de reclamo">${r.tipo_reclamo_id?esc(getCRNombre(crTiposReclamo,r.tipo_reclamo_id)):'—'}</td>
+      <td data-label="Prioridad">${r.prioridad_id?esc(getCRNombre(crPrioridades,r.prioridad_id)):'—'}</td>
     </tr>`;
   });
   html+=`</tbody></table>`;

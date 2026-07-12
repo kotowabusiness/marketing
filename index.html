@@ -117,9 +117,20 @@ body{font-family:var(--font-body);background:var(--bg-app);color:var(--dark);min
 .notif-item-time{font-size:10px;color:var(--gray3);margin-top:2px;}
 .notif-empty{text-align:center;color:var(--gray3);font-size:12px;padding:2rem 1rem;}
 
-.user-chip{display:flex;align-items:center;gap:.55rem;}
+.user-menu-wrap{position:relative;}
+.user-chip{display:flex;align-items:center;gap:.55rem;background:none;border:none;cursor:pointer;padding:4px 6px;border-radius:8px;transition:background .12s;}
+.user-chip:hover{background:var(--gray1);}
+.user-chip-arrow{font-size:8px;color:var(--gray3);margin-left:2px;}
 .user-avatar-sm{width:34px;height:34px;border-radius:50%;background:var(--v-700);color:var(--white);font-family:var(--font-display);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .huser{font-size:11.5px;color:var(--ink);font-weight:600;}
+.user-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;background:var(--white);border:1px solid var(--gray2);border-radius:10px;box-shadow:0 4px 16px rgba(20,20,18,.1);width:190px;padding:6px;z-index:95;}
+.user-menu.open{display:block;}
+.user-menu-item{width:100%;display:flex;align-items:center;gap:8px;padding:8px 10px;background:none;border:none;border-radius:7px;font-family:var(--font-body);font-size:12.5px;color:var(--dark);cursor:pointer;text-align:left;position:relative;}
+.user-menu-item:hover{background:var(--gray1);}
+.user-menu-item.danger{color:var(--urgente);}
+.user-menu-item.danger:hover{background:var(--urgente-lt);}
+.user-menu-item i{font-size:16px;color:var(--gray3);}
+.user-menu-divider{height:1px;background:var(--gray1);margin:4px 0;}
 .huser strong{color:var(--ink);}
 .btn-new{background:var(--dark);color:var(--white);border:none;padding:8px 15px;font-family:var(--font-body);font-size:12px;font-weight:500;cursor:pointer;border-radius:7px;transition:background .12s;}
 .btn-new:hover{background:#000;}
@@ -1217,60 +1228,26 @@ table.rt tr:last-child td{border-bottom:none;}
 <div id="bottom-nav">
   <div class="bnav-inner">
     <button class="bnav-btn active" id="bnav-miDia" onclick="setVistaMobile('miDia',this)">
-      <span class="bnav-icon">
-        <svg width="20" height="20" viewBox="0 0 70 76"><path d="M35 4C15 6 2 22 4 42C2 60 16 74 35 76C54 74 68 60 66 42C68 22 55 6 35 4Z" fill="#4A90D9"/><circle cx="35" cy="38" r="17" fill="#F7EDE1"/><circle cx="35" cy="38" r="11" fill="#4A90D9"/><line x1="35" y1="10" x2="35" y2="18" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="35" y1="58" x2="35" y2="66" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="8" y1="38" x2="16" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/><line x1="54" y1="38" x2="62" y2="38" stroke="#4A90D9" stroke-width="5" stroke-linecap="round"/></svg>
-      </span>
+      <span class="bnav-icon" id="bnavicon-miDia"></span>
       <span class="bnav-lbl">Mi d&iacute;a</span>
     </button>
     <button class="bnav-btn" id="bnav-tareas" onclick="setVistaMobile('tareas',this)">
-      <span class="bnav-icon">
-        <svg width="20" height="20" viewBox="0 0 64 79"><path d="M13 20C9 20 6 24 6 28L6 68C6 74 11 79 17 79L53 79C59 79 64 74 64 68L64 28C64 24 61 20 57 20L51 20L51 13C51 10 49 8 46 8C43 8 41 10 41 13L41 20L29 20L29 13C29 10 27 8 24 8C21 8 19 10 19 13L19 20Z" fill="#E8804D"/><rect x="6" y="20" width="58" height="11" fill="#C96436"/><circle cx="24" cy="13" r="4.5" fill="#C96436"/><circle cx="46" cy="13" r="4.5" fill="#C96436"/></svg>
-      </span>
+      <span class="bnav-icon" id="bnavicon-tareas"></span>
       <span class="bnav-lbl">Tareas</span>
     </button>
     <button class="bnav-btn" id="bnav-proyectos" onclick="setVistaMobile('proyectos',this)">
-      <span class="bnav-icon">
-        <svg width="20" height="20" viewBox="0 0 68 69"><path d="M12 26L34 12L58 26L58 60C58 65 54 69 49 69L19 69C14 69 10 65 10 60Z" fill="#5AA469"/><rect x="24" y="42" width="20" height="27" fill="#3D7A48"/><circle cx="34" cy="8" r="5" fill="#5AA469"/></svg>
-      </span>
+      <span class="bnav-icon" id="bnavicon-proyectos"></span>
       <span class="bnav-lbl">Proyectos</span>
     </button>
-    <div class="bnav-center-wrap">
-      <button class="bnav-center-btn" onclick="abrirModal()">+</button>
-    </div>
-    <button class="bnav-btn" id="bnav-proyectos" onclick="setVistaMobile('proyectos',this)">
-      <span class="bnav-icon">
-        <svg width="20" height="20" viewBox="0 0 68 69"><path d="M12 26L34 12L58 26L58 60C58 65 54 69 49 69L19 69C14 69 10 65 10 60Z" fill="#5AA469"/><rect x="24" y="42" width="20" height="27" fill="#3D7A48"/><circle cx="34" cy="8" r="5" fill="#5AA469"/></svg>
-      </span>
-      <span class="bnav-lbl">Proyectos</span>
+    <button class="bnav-btn" id="bnav-comentarios" onclick="setVistaMobile('comentarios',this)">
+      <span class="bnav-icon" id="bnavicon-comentarios"></span>
+      <span class="bnav-lbl">Comentarios</span>
     </button>
-    <button class="bnav-btn" id="bnav-mas" onclick="toggleMobileMenu()">
-      <span class="bnav-icon">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-      </span>
-      <span class="bnav-lbl">Más</span>
+    <button class="bnav-btn" id="bnav-reportes" onclick="setVistaMobile('reportes',this)">
+      <span class="bnav-icon" id="bnavicon-reportes"></span>
+      <span class="bnav-lbl">Reportes</span>
     </button>
   </div>
-</div>
-
-<!-- MENU MÁS (mobile) -->
-<div id="mobile-menu" style="display:none;position:fixed;bottom:60px;left:0;right:0;z-index:89;background:var(--white);border-top:1px solid var(--gray2);box-shadow:0 -4px 16px rgba(26,18,10,.1);padding:.75rem 1rem;max-height:70vh;overflow-y:auto;">
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;">
-    <button onclick="setVistaMobile('comentarios',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer;color:var(--dark);display:flex;flex-direction:column;align-items:center;gap:5px;">
-      <i class="ti ti-message-circle-2" style="font-size:20px;color:#2471A3;"></i>
-      <span>Comentarios</span>
-    </button>
-    <button onclick="abrirAdminPropuestas();toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer;color:var(--dark);position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;" id="mmenu-propuestas">
-      <i class="ti ti-checklist" style="font-size:20px;color:#4AB894;"></i>
-      <span>Propuestas</span>
-      <span class="notif-badge" id="propuestas-badge-mobile" style="display:none;position:absolute;top:6px;right:6px;">0</span>
-    </button>
-    <button onclick="setVistaMobile('admin',null);toggleMobileMenu()" style="padding:.75rem;background:var(--gray1);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer;color:var(--dark);display:flex;flex-direction:column;align-items:center;gap:5px;" id="mmenu-admin">
-      <svg width="20" height="20" viewBox="0 0 70 70"><path d="M35 5L43 12L53 10L56 20L65 26L60 35L65 44L56 50L53 60L43 58L35 65L27 58L17 60L14 50L5 44L10 35L5 26L14 20L17 10L27 12Z" fill="#8A8578"/><circle cx="35" cy="35" r="13" fill="#F7EDE1"/><circle cx="35" cy="35" r="7" fill="#8A8578"/></svg>
-      <span>Admin</span>
-    </button>
-    <button onclick="doLogout()" style="padding:.75rem;background:var(--urgente-lt);border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:11px;font-weight:600;cursor:pointer;color:var(--urgente);grid-column:span 3;">&#9166; Salir</button>
-  </div>
-  <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--gray1);font-size:11px;color:var(--gray3);text-align:center;" id="mmenu-user"></div>
 </div>
 
 <!-- LOGIN -->
@@ -1321,7 +1298,6 @@ table.rt tr:last-child td{border-bottom:none;}
         <div class="topbar-ttl" id="topbar-ttl">Mi d&iacute;a</div>
       </div>
       <div class="topbar-right">
-        <button class="btn-new" id="btn-new" onclick="abrirModal()">+ Nueva tarea</button>
         <div class="notif-wrap">
           <button class="icon-btn" id="notif-bell" onclick="toggleNotifPanel()">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
@@ -1335,9 +1311,18 @@ table.rt tr:last-child td{border-bottom:none;}
             <div class="notif-list" id="notif-list"></div>
           </div>
         </div>
-        <div class="user-chip">
-          <div class="user-avatar-sm" id="h-user-avatar">?</div>
-          <span class="huser" id="h-user"></span>
+        <div class="user-menu-wrap">
+          <button class="user-chip" onclick="toggleUserMenu()">
+            <div class="user-avatar-sm" id="h-user-avatar">?</div>
+            <span class="huser" id="h-user"></span>
+            <span class="user-chip-arrow">&#9660;</span>
+          </button>
+          <div class="user-menu" id="user-menu">
+            <button class="user-menu-item" onclick="abrirEditarPerfilPropio()"><i class="ti ti-user-circle"></i> Editar perfil</button>
+            <button class="user-menu-item" id="user-menu-admin" style="display:none;" onclick="toggleUserMenu();irAAdminDesdeMenu();"><span id="usermenuicon-admin" style="display:flex;"></span> Admin<span class="notif-badge" id="propuestas-badge-usermenu" style="display:none;">0</span></button>
+            <div class="user-menu-divider"></div>
+            <button class="user-menu-item danger" onclick="doLogout()"><i class="ti ti-logout"></i> Salir</button>
+          </div>
         </div>
       </div>
     </div>
@@ -1363,6 +1348,7 @@ table.rt tr:last-child td{border-bottom:none;}
   </div>
 
   <div class="tareas-tabpanel active" id="tareastab-tablero">
+    <div class="proy-top"><div class="proy-titulo">Tablero</div><button class="btn-new" id="btn-new" onclick="abrirModal()">+ Nueva tarea</button></div>
     <!-- FILTROS MOBILE — dropdowns -->
     <div class="filter-mobile-wrap" id="filter-mobile-wrap">
       <select class="fselect" id="fm-responsable" onchange="setFilterMobile('responsable',this)">
@@ -2148,7 +2134,7 @@ table.rt tr:last-child td{border-bottom:none;}
 <!-- MODAL EDITAR USUARIO -->
 <div class="modal-ov" id="modal-edit-user">
   <div class="modal">
-    <div class="mhdr"><span class="mttl">Editar usuario</span><button class="mclose" onclick="cerrarModal('modal-edit-user')">&#215;</button></div>
+    <div class="mhdr"><span class="mttl" id="edit-user-ttl">Editar usuario</span><button class="mclose" onclick="cerrarModal('modal-edit-user')">&#215;</button></div>
     <div class="mbody">
       <input type="hidden" id="euf-id">
       <div class="fg"><label class="flabel">Nombre completo</label><input type="text" class="fi" id="euf-nombre" placeholder="Nombre completo"></div>
@@ -2461,6 +2447,8 @@ async function iniciarApp(user){
   // Mostrar tab admin solo si es admin o gerente
   if(rolFinal==='admin'||rolFinal==='gerente'){
     document.getElementById('admin-tab').style.display='flex';
+    const userMenuAdmin=document.getElementById('user-menu-admin');
+    if(userMenuAdmin)userMenuAdmin.style.display='flex';
   }
   // Cargar todos los datos
   await Promise.all([cargarUsuarios(),cargarMatriz(),cargarTareas(),cargarProyectos(),cargarDepts(),cargarConfig(),cargarNotificaciones(),cargarPropuestas(),cargarPlantillas(),cargarHistorialEntregas(),cargarTiendas(),cargarKpiPuestos(),cargarComentariosRedesCatalogos()]);
@@ -4316,12 +4304,42 @@ function toggleNotifPanel(){
   panel.classList.add('open');
 }
 
+// Menú de usuario (avatar + nombre en el header) — Editar perfil, Admin, Salir
+function toggleUserMenu(){
+  const menu=document.getElementById('user-menu');
+  menu.classList.toggle('open');
+}
+// Navegar a Admin desde el menú de usuario, activando el botón de sidebar real
+// para que toda la lógica existente de renderAdmin()/pestañas siga funcionando igual.
+function irAAdminDesdeMenu(){
+  const adminBtn=document.getElementById('admin-tab');
+  if(adminBtn)setVista('admin',adminBtn);
+}
+// Editar el perfil propio — reutiliza el modal de usuario, pero solo permite
+// cambiar el nombre. Rol/departamento/permisos quedan bloqueados porque esos
+// los debe tocar un admin/gerente desde Admin, no la persona sobre sí misma.
+function abrirEditarPerfilPropio(){
+  toggleUserMenu();
+  editarUsuario(USER.id);
+  // Bloquear campos administrativos — esta persona solo edita su propio nombre
+  ['euf-rol','euf-activo','euf-dept','euf-kpi-puesto','euf-permiso-directo'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.disabled=true;
+  });
+  document.getElementById('edit-user-ttl').textContent='Editar mi perfil';
+}
+
 // Cerrar panel al hacer click fuera
 document.addEventListener('click',e=>{
   const wrap=document.querySelector('.notif-wrap');
   const panel=document.getElementById('notif-panel');
   if(wrap&&panel&&panel.classList.contains('open')&&!wrap.contains(e.target)){
     panel.classList.remove('open');
+  }
+  const userWrap=document.querySelector('.user-menu-wrap');
+  const userMenu=document.getElementById('user-menu');
+  if(userWrap&&userMenu&&userMenu.classList.contains('open')&&!userWrap.contains(e.target)){
+    userMenu.classList.remove('open');
   }
 });
 
@@ -4368,7 +4386,7 @@ async function marcarListo(id,e){
 const VISTA_TITULOS={miDia:['General','Mi día'],tareas:['General','Tareas'],proyectos:['General','Proyectos'],comentarios:['General','Comentarios de redes'],reportes:['Equipo','Reportes'],admin:['Equipo','Admin']};
 function setVista(v,btn){
   if(v==='propuestas'){abrirAdminPropuestas();return;}
-  localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');document.getElementById('btn-new').style.display='none';sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='comentarios'){renderComentariosRedes();}if(v==='miDia'){renderMiDia();}if(v==='tareas'){const activeTab=document.querySelector('.tareas-tab-btn.active')||document.querySelector('.tareas-tab-btn');const tabId=activeTab?.getAttribute('onclick')?.match(/'([a-z]+)'/)?.[1]||'tablero';setTareasTab(tabId,activeTab);}
+  localStorage.setItem('ktw_vista',v);document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));document.getElementById(`vista-${v}`).classList.add('active');btn.classList.add('active');sessionStorage.setItem('ktw_vista',v);const tit=VISTA_TITULOS[v];if(tit){document.getElementById('topbar-eyebrow').textContent=tit[0];document.getElementById('topbar-ttl').textContent=tit[1];}if(v==='reportes')renderReporte();if(v==='proyectos')renderProyectos();if(v==='admin'){renderAdmin();}if(v==='comentarios'){renderComentariosRedes();}if(v==='miDia'){renderMiDia();}if(v==='tareas'){const activeTab=document.querySelector('.tareas-tab-btn.active')||document.querySelector('.tareas-tab-btn');const tabId=activeTab?.getAttribute('onclick')?.match(/'([a-z]+)'/)?.[1]||'tablero';setTareasTab(tabId,activeTab);}
 }
 // Cualquier lugar que antes navegaba directo a "Propuestas" (ej. notificaciones) ahora
 // abre Admin en su pestaña de Propuestas, ya que dejó de ser una vista independiente.
@@ -4759,12 +4777,14 @@ async function cargarPropuestas(){
 }
 
 function renderPropuestasBadge(){
-  // Tres badges: ícono Admin del sidebar, pestaña Propuestas dentro de Admin, y menú Más mobile
+  // Cuatro badges: ícono Admin del sidebar, pestaña Propuestas dentro de Admin,
+  // menú de usuario (desktop), y Admin dentro del menú de usuario mobile
   const badgeSidebar=document.getElementById('propuestas-badge');
   const badgeTab=document.getElementById('propuestas-badge-tab');
   const badgeMobile=document.getElementById('propuestas-badge-mobile');
+  const badgeUserMenu=document.getElementById('propuestas-badge-usermenu');
   const n=propuestas.length;
-  [badgeSidebar,badgeTab,badgeMobile].forEach(badge=>{
+  [badgeSidebar,badgeTab,badgeMobile,badgeUserMenu].forEach(badge=>{
     if(!badge)return;
     if(n>0){badge.textContent=n>9?'9+':n;badge.style.display='flex';}
     else badge.style.display='none';
@@ -5542,7 +5562,6 @@ function setTareasTab(tab,btn){
   document.querySelectorAll('.tareas-tabpanel').forEach(p=>{p.style.display='none';p.classList.remove('active');});
   const panel=document.getElementById(`tareastab-${tab}`);
   if(panel){panel.style.display='block';panel.classList.add('active');}
-  document.getElementById('btn-new').style.display=tab==='tablero'?'':'none';
   if(tab==='tablero')render();
   if(tab==='calendario'){poblarFiltrosCal();renderCal();}
   if(tab==='portienda')renderPorTienda();
@@ -5567,6 +5586,9 @@ async function renderAdmin(){
   // Mostrar/ocultar sección de departamentos (solo admin)
   const deptSection=document.getElementById('admin-deptos-section');
   if(deptSection)deptSection.style.display=esAdmin?'':'none';
+  // Mostrar/ocultar pestaña de Propuestas (solo admin o gerente pueden aprobar)
+  const propuestasTabBtn=document.getElementById('admintabbtn-propuestas');
+  if(propuestasTabBtn)propuestasTabBtn.style.display=(esAdmin||PERFIL?.rol==='gerente')?'flex':'none';
   // Usuarios
   const grid=document.getElementById('users-grid');grid.innerHTML='';
   todosUsuarios.forEach(u=>{
@@ -5648,13 +5670,17 @@ function toggleAsistentePermiso(){
 
 function editarUsuario(id){
   const esAdmin=PERFIL?.rol==='admin';
+  document.getElementById('edit-user-ttl').textContent='Editar usuario';
   // Para buscar el usuario, buscar en todos (puede no estar en la lista filtrada)
   const u=usuarios.find(x=>x.id===id)||{id,nombre:'',rol:'colaborador',activo:true};
   document.getElementById('euf-id').value=id;
   document.getElementById('euf-nombre').value=u.nombre||'';
   document.getElementById('euf-activo').value=String(u.activo!==false);
+  document.getElementById('euf-activo').disabled=false;
+  document.getElementById('euf-permiso-directo').disabled=false;
   // Rol: admin puede asignar cualquier rol, gerente solo colaborador/asistente/gerente
   const selRol=document.getElementById('euf-rol');
+  selRol.disabled=false;
   selRol.innerHTML='';
   const roles=esAdmin
     ?[['colaborador','Colaborador'],['asistente','Asistente / Coordinador'],['gerente','Gerente'],['admin','Admin']]
@@ -5667,6 +5693,7 @@ function editarUsuario(id){
   departamentos.forEach(d=>{const o=document.createElement('option');o.value=d.id;o.textContent=d.nombre;if(d.id===u.departamento_id)o.selected=true;selDept.appendChild(o);});
   // Puesto KPI — lista de puestos configurados en este departamento
   const selKpi=document.getElementById('euf-kpi-puesto');
+  selKpi.disabled=false;
   selKpi.innerHTML='<option value="">Sin puesto asignado</option>';
   kpiPuestos.forEach(p=>{const o=document.createElement('option');o.value=p.id;o.textContent=p.nombre;if(p.id===u.kpi_puesto_id)o.selected=true;selKpi.appendChild(o);});
   // Permiso directo (solo aplica a asistente)
@@ -6062,10 +6089,16 @@ function aplicarIconosSidebar(){
   const cfg=configData.iconos_sidebar;
   if(!cfg)return;
   Object.keys(cfg).forEach(vista=>{
-    const el=document.getElementById(`sbicon-${vista}`);
-    if(!el)return;
     const{lib,cls,color}=cfg[vista];
-    el.innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:18px;color:${color};" aria-hidden="true"></i>`;
+    const el=document.getElementById(`sbicon-${vista}`);
+    if(el)el.innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:18px;color:${color};" aria-hidden="true"></i>`;
+    // Mismo ícono y color en el bottom-nav mobile — nunca se queda desactualizado
+    // respecto a lo que se configura en Admin → Apariencia → Íconos del sidebar.
+    const elMobile=document.getElementById(`bnavicon-${vista}`);
+    if(elMobile)elMobile.innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:20px;color:${color};" aria-hidden="true"></i>`;
+    // Ícono de Admin dentro del menú de usuario, mismo sistema
+    const elUserMenu=document.getElementById(`usermenuicon-${vista}`);
+    if(elUserMenu)elUserMenu.innerHTML=`<i class="${claseIconoCompleta(lib,cls)}" style="font-size:16px;color:${color};" aria-hidden="true"></i>`;
   });
 }
 
@@ -6153,7 +6186,6 @@ function setVistaMobile(v, btn){
     // Vista sin ntab (admin, matriz)
     document.querySelectorAll('.vista').forEach(el=>el.classList.remove('active'));
     document.getElementById(`vista-${v}`)?.classList.add('active');
-    document.getElementById('btn-new').style.display='none';
     if(v==='reportes')renderReporte();
     if(v==='proyectos')renderProyectos();
     if(v==='calendario')renderCal();
@@ -6168,12 +6200,10 @@ function toggleMobileMenu(){
   menu.style.display=isOpen?'none':'block';
   if(!isOpen){
     document.getElementById('mmenu-user').textContent=`${PERFIL?.nombre||''} · ${PERFIL?.rol||''}`;
-    // Ocultar admin y propuestas si no tiene permiso
+    // Ocultar admin si no tiene permiso
     const puedeVerAdmin=(PERFIL?.rol==='admin'||PERFIL?.rol==='gerente');
     const adminBtn=document.getElementById('mmenu-admin');
     if(adminBtn)adminBtn.style.display=puedeVerAdmin?'':'none';
-    const propuestasBtn=document.getElementById('mmenu-propuestas');
-    if(propuestasBtn)propuestasBtn.style.display=puedeVerAdmin?'':'none';
   }
 }
 
